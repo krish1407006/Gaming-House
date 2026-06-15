@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@import "./styles/themes.css";
+
+/* Custom styles for search input cross button */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f5c518'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+/* For Firefox (uses different pseudo-element) */
+input[type="search"]::-moz-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f5c518'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+/* Hover effect for the cross button */
+input[type="search"]::-webkit-search-cancel-button:hover {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e5b91f'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+}
+
+/* Mobile Responsive Enhancements */
+
+/* Ensure proper mobile viewport */
+@media (max-width: 1024px) {
+  /* Mobile sidebar adjustments */
+  .mobile-sidebar-transform {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .mobile-sidebar-open {
+    transform: translateX(0);
+  }
+  
+  /* Mobile text adjustments */
+  .mobile-text-responsive {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.25rem; /* 20px */
+  }
+  
+  /* Mobile padding adjustments */
+  .mobile-padding-responsive {
+    padding: 1rem; /* 16px */
+  }
+  
+  /* Mobile grid adjustments */
+  .mobile-grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem; /* 12px */
+  }
+}
+
+@media (max-width: 640px) {
+  /* Extra mobile adjustments */
+  .mobile-extra-small {
+    font-size: 0.75rem; /* 12px */
+    padding: 0.5rem; /* 8px */
+  }
+  
+  .mobile-grid-single {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* Touch-friendly buttons */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile scrollbar styles */
+.mobile-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-tertiary, #2a2a2a);
+  border-radius: 3px;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--accent-color, #f5c518);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+/* Safe area for mobile devices with notches */
+@supports (padding: max(0px)) {
+  .mobile-safe-area {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Mobile-first responsive utilities */
+.mobile-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .mobile-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}

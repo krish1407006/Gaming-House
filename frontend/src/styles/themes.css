@@ -1,0 +1,758 @@
+/* Theme Variables */
+:root {
+  --bg-primary: #181818;
+  --bg-secondary: #232323;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --accent-color: #7c3aed;
+  --accent-color-rgb: 92, 94, 242;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #e96a0f 100%);
+  --border-color: #374151;
+  --success-color: #10b981;
+  --error-color: #4444ef;
+  --warning-color: #f59e0b;
+}
+
+/* Dark Theme */
+.dark-theme {
+  --bg-primary: #181818;
+  --bg-secondary: #232323;
+  --bg-tertiary: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --accent-color: #7c3aed;
+  --accent-color-rgb: 92, 94, 242;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #dbbc1f 100%);
+  --accent-hover: #5b21b6;
+  --border-color: #374151;
+  --border-hover: var(--accent-color);
+  --card-bg: #232323;
+  --card-shadow: rgba(0, 0, 0, 0.3);
+  --input-bg: #232323;
+  --input-border: #374151;
+  --button-primary: #7c3aed;
+  --button-primary-hover: #6d28d9;
+  --button-secondary: #374151;
+  --button-secondary-hover: #4b5563;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+}
+
+/* Light Theme */
+.light-theme {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f3f4;
+  --bg-tertiary: #e8eaed;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5f6368;
+  --text-muted: #80868b;
+  --accent-color: #7c3aed;
+  --accent-color-rgb: 92, 94, 242;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #00fe62 100%);
+  --accent-hover: #5b21b6;
+  --border-color: #dadce0;
+  --border-hover: var(--accent-color);
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --input-bg: #ffffff;
+  --input-border: #dadce0;
+  --button-primary: var(--accent-color);
+  --button-primary-hover: var(--accent-hover);
+  --button-secondary: #f1f3f4;
+  --button-secondary-hover: #e8eaed;
+  --success-color: #0d7377;
+  --error-color: #d93025;
+  --warning-color: #f9ab00;
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --bg-primary: #000000;
+  --bg-secondary: #111111;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --accent-color: #ff0000;
+  --border-color: #ffffff;
+}
+
+/* Theme-aware components */
+.theme-bg-primary {
+  background-color: var(--bg-primary);
+}
+
+.theme-bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.theme-bg-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.theme-card {
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+
+.theme-text-primary {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+}
+
+.theme-accent {
+  color: var(--accent-color) !important;
+}
+
+.theme-border {
+  border-color: var(--border-color);
+}
+
+.theme-border-hover:hover {
+  border-color: var(--border-hover);
+}
+
+.theme-bg-accent {
+  background: var(--accent-gradient);
+}
+
+.theme-text-accent-contrast {
+  color: var(--bg-primary);
+}
+
+.theme-border-accent {
+  border-color: var(--accent-color);
+}
+
+.theme-gradient-overlay {
+  background: linear-gradient(to right, var(--bg-primary), rgba(24, 24, 24, 0.7), transparent);
+}
+
+.light-theme .theme-gradient-overlay {
+  background: linear-gradient(to right, var(--bg-primary), rgba(255, 255, 255, 0.7), transparent);
+}
+
+.theme-error-bg {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.theme-error-border {
+  border-color: var(--error-color);
+}
+
+.theme-error-text {
+  color: var(--error-color);
+}
+
+.theme-input {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.theme-input:focus {
+  border-color: var(--accent-color);
+}
+
+.theme-button-primary {
+  background: var(--accent-gradient);
+  color: var(--bg-primary);
+  background-size: cover;
+}
+
+.theme-button-primary:hover {
+  background-color: var(--button-primary-hover);
+}
+
+.theme-button-secondary {
+  background-color: var(--button-secondary);
+  color: var(--text-primary);
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--button-secondary-hover);
+}
+
+.theme-accent-hover:hover {
+  color: var(--accent-hover);
+}
+
+.theme-border-accent {
+  border-color: var(--accent-color);
+}
+
+.hover\\:theme-bg-accent:hover {
+  background: var(--accent-gradient);
+}
+
+.hover\\:theme-text-accent-contrast:hover {
+  color: var(--bg-primary);
+}
+
+.theme-border-accent {
+  border-color: var(--accent-color);
+}
+
+.theme-input {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.theme-input:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
+}
+
+.theme-button-primary {
+  background: var(--accent-gradient);
+  color: var(--bg-primary);
+  border: none;
+  background-size: cover;
+}
+
+.theme-button-primary:hover {
+  background-color: var(--button-primary-hover);
+}
+
+.theme-button-secondary {
+  background-color: var(--button-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--button-secondary-hover);
+}
+
+.theme-bg-accent {
+  background: var(--accent-gradient);
+}
+
+.theme-text-on-accent {
+  color: var(--bg-primary);
+}
+
+.theme-bg-hover {
+  background-color: var(--button-secondary-hover);
+}
+
+/* Smooth transitions for theme changes */
+body, 
+.theme-transition,
+.theme-bg-primary,
+.theme-bg-secondary,
+.theme-text-primary,
+.theme-text-secondary,
+.theme-accent {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Settings page specific styling */
+.settings-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Toggle switch styling */
+.settings-toggle-unchecked {
+  background-color: var(--border-color);
+}
+
+.settings-toggle-checked {
+  background-color: var(--accent-color);
+}
+
+.settings-input {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.settings-input:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
+}
+
+.settings-button {
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.settings-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Animation for theme switching */
+@keyframes themeSwitch {
+  0% { opacity: 0.8; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.theme-switching {
+  animation: themeSwitch 0.3s ease-in-out;
+}
+
+/* Responsive design for settings */
+@media (max-width: 768px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Profile edit animations */
+.profile-edit-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.profile-edit-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.profile-edit-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.profile-edit-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+/* Loading states */
+.settings-loading-spinner {
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success/Error states */
+.settings-success {
+  background-color: var(--success-color);
+  animation: fadeIn 0.3s ease;
+}
+
+.settings-error {
+  background-color: var(--error-color);
+  animation: shake 0.5s ease;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ========== CLERK COMPONENT STYLING ========== */
+
+/* Dark Theme Clerk Styles */
+.dark-theme .cl-userButtonPopoverCard,
+.dark-theme .cl-modalContent,
+.dark-theme .cl-userButtonPopover,
+.dark-theme .cl-popoverContent {
+  background-color: var(--bg-secondary) !important;
+  /* border: 1px solid var(--border-color) !important; */
+  color: var(--text-primary) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 12px !important;
+}
+
+.dark-theme .cl-userButtonPopoverActionButton,
+.dark-theme .cl-modalCloseButton,
+.dark-theme .cl-userButtonPopoverActionButtonText {
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+}
+
+.dark-theme .cl-userButtonPopoverActionButton:hover {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--accent-color) !important;
+}
+
+.dark-theme .cl-userButtonPopoverFooter {
+  border-top: 1px solid var(--border-color) !important;
+  background-color: var(--bg-secondary) !important;
+}
+
+.dark-theme .cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton {
+  color: var(--text-secondary) !important;
+}
+
+.dark-theme .cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton:hover {
+  color: var(--accent-color) !important;
+}
+
+/* Clerk Avatar and User Info */
+.dark-theme .cl-userButtonPopoverMain {
+  background-color: var(--bg-secondary) !important;
+}
+
+.dark-theme .cl-userButtonPopoverMainIdentifier {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .cl-userButtonPopoverMainIdentifierText {
+  color: var(--text-secondary) !important;
+}
+
+/* Light Theme Clerk Styles */
+.light-theme .cl-userButtonPopoverCard,
+.light-theme .cl-modalContent,
+.light-theme .cl-userButtonPopover,
+.light-theme .cl-popoverContent {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.light-theme .cl-userButtonPopoverActionButton,
+.light-theme .cl-modalCloseButton,
+.light-theme .cl-userButtonPopoverActionButtonText {
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+}
+
+.light-theme .cl-userButtonPopoverActionButton:hover {
+  background-color: var(--bg-secondary) !important;
+  color: var(--accent-color) !important;
+}
+
+.light-theme .cl-userButtonPopoverFooter {
+  border-top: 1px solid var(--border-color) !important;
+  background-color: var(--bg-primary) !important;
+}
+
+/* General Clerk Styling (applies to both themes) */
+.cl-userButtonPopoverCard {
+  /* border-radius: 12px !important; */
+  padding: 0 !important;
+  min-width: 280px !important;
+}
+
+.cl-userButtonPopoverActionButton {
+  padding: 12px 16px !important;
+  /* border-radius: 8px !important; */
+  margin: 4px 8px !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+.cl-userButtonPopoverActionButtonIcon {
+  opacity: 0.8 !important;
+}
+
+.cl-userButtonPopoverActionButton:hover .cl-userButtonPopoverActionButtonIcon {
+  opacity: 1 !important;
+}
+
+.cl-userButtonPopoverMain {
+  padding: 16px !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.cl-userButtonPopoverFooter {
+  padding: 8px !important;
+}
+
+/* Clerk Modal Styles */
+.cl-modalContent {
+  /* border-radius: 16px !important; */
+  padding: 0 !important;
+}
+
+.cl-modalHeader {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 20px 24px !important;
+}
+
+.cl-modalCloseButton {
+  color: var(--text-secondary) !important;
+}
+
+.cl-modalCloseButton:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Clerk Form Elements */
+.cl-formFieldInput {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--text-primary) !important;
+  border-radius: 8px !important;
+}
+
+.cl-formFieldInput:focus {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2) !important;
+}
+
+.cl-formFieldLabel {
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+}
+
+/* .cl-button {
+  color: var(--bg-primary) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+} */
+/* 
+.cl-button:hover {
+  background-color: var(--accent-hover) !important;
+  transform: translateY(-1px) !important;
+} */
+
+/* Override Clerk's default theme detection */
+.cl-rootBox {
+  color-scheme: none !important;
+}
+
+/* Ensure smooth transitions */
+.cl-userButtonPopoverCard,
+.cl-userButtonPopoverActionButton,
+.cl-modalContent {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
+
+/* ========== CLERK FOOTER CUSTOMIZATION ========== */
+
+/* Option 1: Hide Clerk branding completely */
+.cl-userButtonPopoverFooter {
+  display: none !important;
+}
+
+/* Option 2: If you want to keep it but style it (uncomment the styles below and comment out the display: none above) */
+/*
+.cl-userButtonPopoverFooter {
+  padding: 8px 16px !important;
+  text-align: center !important;
+}
+
+.cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton {
+  font-size: 11px !important;
+  opacity: 0.6 !important;
+  padding: 4px 8px !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+}
+
+.dark-theme .cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton {
+  color: var(--text-muted) !important;
+}
+
+.light-theme .cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton {
+  color: var(--text-muted) !important;
+}
+*/
+
+/* Option 3: Completely remove the footer section (more aggressive) */
+.cl-userButtonPopover > div:last-child {
+  display: none !important;
+}
+
+/* Style the footer border to match when footer is hidden */
+.cl-userButtonPopoverMain {
+  border-bottom: none !important;
+}
+
+/* ========== CLERK ACCOUNT MANAGEMENT MODAL - DARK MODE ========== */
+
+/* Main modal content - Dark background */
+.dark-theme .cl-modalContent,
+.dark-theme .cl-card,
+.dark-theme .cl-profilePage,
+.dark-theme .cl-page,
+.dark-theme .cl-pageScrollBox,
+.dark-theme .cl-main {
+  background-color: var(--bg-secondary) !important;
+  color: white !important;
+}
+
+/* Modal backdrop */
+.dark-theme .cl-modalBackdrop {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Sidebar navigation - More specific targeting */
+.dark-theme .cl-navbar,
+.dark-theme .cl-modalContent .cl-navbar,
+.dark-theme .cl-profilePage .cl-navbar,
+.dark-theme div[class*="cl-navbar"] {
+  background-color: var(--bg-primary) !important;
+  
+}
+
+.dark-theme .cl-navbarButton,
+.dark-theme .cl-modalContent .cl-navbarButton,
+.dark-theme .cl-profilePage .cl-navbarButton,
+.dark-theme button[class*="cl-navbarButton"] {
+  background-color: var(--bg-primary) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.dark-theme .cl-navbarButton:hover,
+.dark-theme .cl-modalContent .cl-navbarButton:hover,
+.dark-theme .cl-profilePage .cl-navbarButton:hover {
+  background-color: var(--bg-tertiary) !important;
+  color: white !important;
+}
+
+.dark-theme .cl-navbarButton[aria-current="page"],
+.dark-theme .cl-navbarButton[data-active="true"],
+.dark-theme .cl-navbarButton[aria-selected="true"] {
+  background-color: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
+}
+
+/* Force sidebar background with broader selectors */
+.dark-theme .cl-modalContent > div:first-child,
+.dark-theme .cl-profilePage > div:first-child {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Target any div within the sidebar area */
+.dark-theme .cl-modalContent > div:first-child *,
+.dark-theme .cl-profilePage > div:first-child * {
+  background-color: inherit !important;
+  color: white !important;
+}
+
+/* Content sections */
+.dark-theme .cl-profileSectionContent,
+.dark-theme .cl-profileSectionPrimaryContent {
+  background-color: var(--bg-secondary) !important;
+  color: white !important;
+}
+
+/* Headers and titles */
+.dark-theme .cl-headerTitle,
+.dark-theme .cl-headerSubtitle,
+.dark-theme .cl-profileSectionTitle,
+.dark-theme .cl-profileSectionTitleText {
+  color: white !important;
+}
+
+.dark-theme .cl-profileSectionSubtitle {
+  color: var(--text-secondary) !important;
+}
+
+/* Profile items and sections */
+.dark-theme .cl-profileSectionItem {
+  background-color: var(--bg-primary) !important;
+  /* border: 1px solid var(--border-color) !important; */
+  color: white !important;
+}
+
+.dark-theme .cl-profileSectionItemHeader,
+.dark-theme .cl-profileSectionItemText {
+  color: white !important;
+}
+
+/* Form elements */
+.dark-theme .cl-formFieldInput,
+.dark-theme .cl-input {
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: white !important;
+}
+
+.dark-theme .cl-formFieldLabel {
+  color: white !important;
+}
+
+/* Buttons */
+.dark-theme .cl-profileSectionItemButton,
+.dark-theme .cl-menuButton {
+  background-color: var(--bg-tertiary) !important;
+  color: white !important;
+  /* border: 1px solid var(--border-color) !important; */
+}
+
+.dark-theme .cl-profileSectionItemButton:hover,
+.dark-theme .cl-menuButton:hover {
+  background-color: var(--bg-primary) !important;
+  color: white !important;
+}
+
+/* Close button */
+.dark-theme .cl-modalCloseButton {
+  background-color: var(--bg-tertiary) !important;
+  color: white !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.dark-theme .cl-modalCloseButton:hover {
+  background-color: var(--error-color) !important;
+  color: white !important;
+}
+
+/* Any additional text elements */
+.dark-theme .cl-profilePage * {
+  color: white !important;
+}
+
+/* Override any remaining light backgrounds */
+.dark-theme .cl-profilePage,
+.dark-theme .cl-profilePage > *,
+.dark-theme .cl-profilePage * {
+  background-color: inherit !important;
+}
+
+/* Ensure white text for all text elements */
+.dark-theme .cl-profilePage p,
+.dark-theme .cl-profilePage span,
+.dark-theme .cl-profilePage div,
+.dark-theme .cl-profilePage label {
+  color: white !important;
+}
+.dark-theme  .cl-internal-1pcqqbp{
+  background: none !important;
+  color: white !important;
+  border-right: 1px solid var(--border-color) !important;
+}
+.cl-internal-1dauvpw{
+  display: none !important;
+}
+
+
+

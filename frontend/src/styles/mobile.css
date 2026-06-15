@@ -1,0 +1,225 @@
+/* Mobile Responsive Utilities for Gaming House */
+
+/* Base responsive classes */
+.mobile-container {
+  @apply px-4 lg:px-8 py-4 lg:py-6;
+}
+
+.mobile-card {
+  @apply p-4 lg:p-6 mb-6 lg:mb-8 rounded-lg;
+}
+
+.mobile-title {
+  @apply text-xl lg:text-2xl font-bold mb-3 lg:mb-4;
+}
+
+.mobile-subtitle {
+  @apply text-lg lg:text-xl font-semibold mb-2 lg:mb-3;
+}
+
+.mobile-text {
+  @apply text-sm lg:text-base;
+}
+
+.mobile-button {
+  @apply px-4 lg:px-6 py-2 lg:py-3 text-sm lg:text-base rounded-lg;
+}
+
+.mobile-input {
+  @apply px-3 lg:px-4 py-2 lg:py-3 text-sm lg:text-base rounded-lg;
+}
+
+.mobile-grid-2 {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6;
+}
+
+.mobile-grid-3 {
+  @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6;
+}
+
+.mobile-flex-col {
+  @apply flex flex-col lg:flex-row lg:items-center gap-4;
+}
+
+.mobile-icon {
+  @apply w-5 h-5 lg:w-6 lg:h-6;
+}
+
+.mobile-hidden {
+  @apply hidden lg:block;
+}
+
+.mobile-only {
+  @apply block lg:hidden;
+}
+
+/* Mobile Navigation */
+.mobile-nav-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden;
+}
+
+.mobile-nav-sidebar {
+  @apply transform transition-transform duration-300;
+}
+
+.mobile-nav-open {
+  @apply translate-x-0;
+}
+
+.mobile-nav-closed {
+  @apply -translate-x-full lg:translate-x-0;
+}
+
+/* Mobile Tables */
+.mobile-table {
+  @apply min-w-[600px] lg:min-w-full;
+}
+
+.mobile-table-cell {
+  @apply p-2 lg:p-4 text-sm lg:text-base;
+}
+
+.mobile-table-hidden {
+  @apply hidden sm:table-cell;
+}
+
+/* Mobile Modal */
+.mobile-modal {
+  @apply p-2 lg:p-4 max-h-[95vh] lg:max-h-[90vh];
+}
+
+.mobile-modal-content {
+  @apply p-4 lg:p-6;
+}
+
+/* Mobile Forms */
+.mobile-form-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8;
+}
+
+.mobile-form-section {
+  @apply space-y-4 lg:space-y-6 border-b theme-border pb-4 lg:pb-6;
+}
+
+.mobile-form-input {
+  @apply w-full px-4 py-3 rounded-lg border-2 transition-all duration-300;
+}
+
+/* Mobile Cards */
+.mobile-movie-card {
+  @apply h-[280px] sm:h-[320px] lg:h-[360px] w-full;
+}
+
+.mobile-movie-image {
+  @apply h-32 sm:h-36 lg:h-40;
+}
+
+.mobile-movie-content {
+  @apply p-2 sm:p-3 lg:p-4;
+}
+
+.mobile-movie-title {
+  @apply text-sm sm:text-base lg:text-lg h-8 sm:h-10 lg:h-14;
+}
+
+.mobile-movie-desc {
+  @apply text-xs sm:text-sm h-8 sm:h-12 lg:h-16;
+}
+
+/* Mobile Stats */
+.mobile-stats-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6;
+}
+
+.mobile-stats-card {
+  @apply p-4 lg:p-6 rounded-xl;
+}
+
+.mobile-stats-icon {
+  @apply w-8 h-8 lg:w-10 lg:h-10;
+}
+
+.mobile-stats-title {
+  @apply text-xl lg:text-2xl;
+}
+
+.mobile-stats-subtitle {
+  @apply text-sm lg:text-base;
+}
+
+/* Mobile Header */
+.mobile-header {
+  @apply px-4 lg:px-8 py-4;
+}
+
+.mobile-header-content {
+  @apply flex items-center gap-2 lg:gap-4 justify-between w-full;
+}
+
+.mobile-search {
+  @apply w-full lg:w-[30rem] text-sm lg:text-base;
+}
+
+.mobile-hamburger {
+  @apply lg:hidden p-2 rounded-lg;
+}
+
+/* Responsive breakpoints helper classes */
+@media (max-width: 640px) {
+  .mobile-text-xs { font-size: 0.75rem; }
+  .mobile-text-sm { font-size: 0.875rem; }
+  .mobile-spacing-sm { padding: 0.5rem; }
+  .mobile-gap-sm { gap: 0.5rem; }
+ 
+}
+
+
+@media (min-width: 1024px) {
+  .desktop-text-base { font-size: 1rem; }
+  .desktop-text-lg { font-size: 1.125rem; }
+  .desktop-spacing-lg { padding: 1.5rem; }
+  .desktop-gap-lg { gap: 1.5rem; }
+  .cl-internal-1x28sfr { 
+    background: none !important;
+    /* Add your styles here */ }
+}
+@media (max-width: 48em) {
+    .cl-internal-1x28sfr {
+        display: none;
+    }
+  }
+
+/* Mobile-first utility classes */
+.touch-friendly {
+  @apply min-h-[44px] min-w-[44px]; /* iOS recommended touch target size */
+}
+
+.mobile-safe-area {
+  @apply pt-safe-top pb-safe-bottom pl-safe-left pr-safe-right;
+}
+
+/* Custom scrollbar for mobile */
+.mobile-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-color) var(--bg-tertiary);
+}
+
+.mobile-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
