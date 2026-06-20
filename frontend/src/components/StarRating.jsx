@@ -65,7 +65,7 @@ export default function StarRating({
         type="button"
         className={`${sizes[size]} transition-all duration-200 ${
           interactive
-            ? "cursor-pointer hover:scale-110 focus:outline-none"
+            ? "cursor-pointer hover:scale-125 focus:outline-none hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
             : "cursor-default"
         }`}
         onClick={() => interactive && handleStarClick(i)}
@@ -75,7 +75,7 @@ export default function StarRating({
       >
         {isFilled ? (
             <svg
-            className="w-full h-full text-[var(--accent-color)]"
+            className="w-full h-full text-yellow-400"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -84,7 +84,7 @@ export default function StarRating({
         ) : isHalfFilled ? (
           <div className="relative w-full h-full">
             <svg
-              className="w-full h-full text-[var(--accent-color)]"
+              className="w-full h-full text-yellow-400"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -106,7 +106,7 @@ export default function StarRating({
         ) : (
           <svg
             className={`w-full h-full ${
-              interactive && hover >= i ? "text-[var(--accent-color)]" : "text-gray-300"
+              interactive && hover >= i ? "text-yellow-400" : "text-gray-300"
             }`}
             fill="currentColor"
             viewBox="0 0 20 20"
