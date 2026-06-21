@@ -115,7 +115,7 @@ export default function CategoriesPage({ allMovies, loading, error }) {
 
       {/* Genre Filter */}
       <div className="mb-6 lg:mb-8">
-        <h3 className="text-xl lg:text-2xl font-bold theme-accent mb-3 lg:mb-4">Select Genre</h3>
+        <h3 className="text-xl lg:text-2xl font-bold theme-accent mb-3 lg:mb-4">Select genre</h3>
         <div className="flex flex-wrap gap-2 lg:gap-3">
           {genres.map((genre) => (
             <button
@@ -128,7 +128,7 @@ export default function CategoriesPage({ allMovies, loading, error }) {
               }`}
             >
               {genre === "all" ? (
-                <span className="flex items-center"><GenreIcon genre="all" size={16} className="lg:w-4 lg:h-4 mr-1 lg:mr-2" />All Gaming</span>
+                <span className="flex items-center"><GenreIcon genre="all" size={16} className="lg:w-4 lg:h-4 mr-1 lg:mr-2" />All Games</span>
               ) : (
                 <span className="flex items-center"><GenreIcon genre={genre} size={16} className="lg:w-4 lg:h-4 mr-1 lg:mr-2" />{genre}</span>
               )}
