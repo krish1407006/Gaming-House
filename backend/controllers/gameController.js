@@ -1,5 +1,5 @@
 import { getAuth } from "@clerk/express";
-import * as movieService from "../services/movieService.js";
+import * as gameService from "../services/gameService.js";
 import * as ratingService from "../services/ratingService.js";
 
 export const getMovies = async (req, res) => {
@@ -7,7 +7,7 @@ export const getMovies = async (req, res) => {
     const { page, limit, genre, search, sortBy, sortOrder, featured } =
       req.query;
 
-    const result = await movieService.getMovies({
+    const result = await gameService.getMovies({
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       genre,
@@ -34,7 +34,7 @@ export const getMovieById = async (req, res) => {
     const { id } = req.params;
     const { userId } = getAuth(req);
 
-    const result = await movieService.getMovieById(id, true);
+    const result = await gameService.getMovieById(id, true);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
@@ -69,7 +69,7 @@ export const getMovieRatings = async (req, res) => {
     const { id } = req.params;
     const { page, limit, sortBy, sortOrder } = req.query;
 
-    const movieResult = await movieService.getMovieById(id, false);
+    const movieResult = await gameService.getMovieById(id, false);
     if (!movieResult.success) {
       return res.status(404).json({ error: "Movie not found" });
     }
@@ -109,7 +109,7 @@ export const rateMovie = async (req, res) => {
       });
     }
 
-    const movieResult = await movieService.getMovieById(movieId, false);
+    const movieResult = await gameService.getMovieById(movieId, false);
     if (!movieResult.success) {
       return res.status(404).json({ error: "Movie not found" });
     }

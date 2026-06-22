@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const movieSchema = new mongoose.Schema(
+const gameSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -131,14 +131,14 @@ const movieSchema = new mongoose.Schema(
   }
 );
 
-movieSchema.index(
+gameSchema.index(
   { title: "text", description: "text", director: "text" },
   { default_language: "none" }
 );
-movieSchema.index({ genre: 1 });
-movieSchema.index({ releaseDate: -1 });
-movieSchema.index({ averageRating: -1 });
-movieSchema.index({ isActive: 1 });
-movieSchema.index({ featured: -1 });
+gameSchema.index({ genre: 1 });
+gameSchema.index({ releaseDate: -1 });
+gameSchema.index({ averageRating: -1 });
+gameSchema.index({ isActive: 1 });
+gameSchema.index({ featured: -1 });
 
-export default mongoose.model("Movie", movieSchema);
+export default mongoose.model("Movie", gameSchema);
