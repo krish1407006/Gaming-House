@@ -94,7 +94,7 @@ export const setUserAdminStatus = async (req, res) => {
   }
 };
 
-export const getAllMovies = async (req, res) => {
+export const getAllGames = async (req, res) => {
   try {
     const {
       page,
@@ -124,12 +124,12 @@ export const getAllMovies = async (req, res) => {
 
     res.json(result.data);
   } catch (error) {
-    console.error("Error in admin getAllMovies:", error);
+    console.error("Error in admin getAllGames:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const createMovie = async (req, res) => {
+export const createGame = async (req, res) => {
   try {
     const { userId } = getAuth(req);
     const movieData = req.body;
@@ -151,48 +151,48 @@ export const createMovie = async (req, res) => {
       }
     }
 
-    const result = await gameService.createMovie(movieData, userId);
+    const result = await gameService.createGame(movieData, userId);
 
     if (!result.success) {
       return res.status(400).json({ error: result.error });
     }
 
     res.status(201).json({
-      message: "Movie created successfully",
+      message: "game created successfully",
       data: result.data,
     });
   } catch (error) {
-    console.error("Error in admin createMovie:", error);
+    console.error("Error in admin createGame:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const updateMovie = async (req, res) => {
+export const updateGame = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
 
-    const result = await gameService.updateMovie(id, updateData);
+    const result = await gameService.updateGame(id, updateData);
 
     if (!result.success) {
       return res.status(400).json({ error: result.error });
     }
 
     res.json({
-      message: "Movie updated successfully",
+      message: "game updated successfully",
       data: result.data,
     });
   } catch (error) {
-    console.error("Error in admin updateMovie:", error);
+    console.error("Error in admin updateGame:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const deleteMovie = async (req, res) => {
+export const deleteGame = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await gameService.deleteMovie(id);
+    const result = await gameService.deleteGame(id);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
@@ -200,12 +200,12 @@ export const deleteMovie = async (req, res) => {
 
     res.json({ message: result.message });
   } catch (error) {
-    console.error("Error in admin deleteMovie:", error);
+    console.error("Error in admin deleteGame:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const toggleMovieStatus = async (req, res) => {
+export const toggleGameStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { isActive } = req.body;
@@ -216,23 +216,23 @@ export const toggleMovieStatus = async (req, res) => {
       });
     }
 
-    const result = await gameService.toggleMovieStatus(id, isActive);
+    const result = await gameService.toggleGameStatus(id, isActive);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
     }
 
     res.json({
-      message: `Movie ${isActive ? "activated" : "deactivated"} successfully`,
+      message: `game ${isActive ? "activated" : "deactivated"} successfully`,
       data: result.data,
     });
   } catch (error) {
-    console.error("Error in admin toggleMovieStatus:", error);
+    console.error("Error in admin toggleGameStatus:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const toggleMovieFeatured = async (req, res) => {
+export const toggleGameFeatured = async (req, res) => {
   try {
     const { id } = req.params;
     const { featured } = req.body;
@@ -243,18 +243,18 @@ export const toggleMovieFeatured = async (req, res) => {
       });
     }
 
-    const result = await gameService.toggleMovieFeatured(id, featured);
+    const result = await gameService.toggleGameFeatured(id, featured);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
     }
 
     res.json({
-      message: `Movie ${featured ? "featured" : "unfeatured"} successfully`,
+      message: `game ${featured ? "featured" : "unfeatured"} successfully`,
       data: result.data,
     });
   } catch (error) {
-    console.error("Error in admin toggleMovieFeatured:", error);
+    console.error("Error in admin toggleGameFeatured:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -279,7 +279,7 @@ export const getDashboardStats = async (req, res) => {
   }
 };
 
-export const getMovieRatingsAdmin = async (req, res) => {
+export const getGameRatingsAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     const { page, limit, sortBy, sortOrder } = req.query;
@@ -298,7 +298,7 @@ export const getMovieRatingsAdmin = async (req, res) => {
 
     res.json(result.data);
   } catch (error) {
-    console.error("Error in admin getMovieRatingsAdmin:", error);
+    console.error("Error in admin getGameRatingsAdmin:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

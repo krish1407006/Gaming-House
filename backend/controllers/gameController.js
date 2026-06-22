@@ -2,12 +2,12 @@ import { getAuth } from "@clerk/express";
 import * as gameService from "../services/gameService.js";
 import * as ratingService from "../services/ratingService.js";
 
-export const getMovies = async (req, res) => {
+export const getGames = async (req, res) => {
   try {
     const { page, limit, genre, search, sortBy, sortOrder, featured } =
       req.query;
 
-    const result = await gameService.getMovies({
+    const result = await gameService.getGames({
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       genre,
@@ -24,17 +24,17 @@ export const getMovies = async (req, res) => {
 
     res.json(result.data);
   } catch (error) {
-    console.error("Error in getMovies:", error);
+    console.error("Error in getGames:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const getMovieById = async (req, res) => {
+export const getGameById = async (req, res) => {
   try {
     const { id } = req.params;
     const { userId } = getAuth(req);
 
-    const result = await gameService.getMovieById(id, true);
+    const result = await gameService.getGameById(id, true);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
@@ -59,7 +59,7 @@ export const getMovieById = async (req, res) => {
       userRating,
     });
   } catch (error) {
-    console.error("Error in getMovieById:", error);
+    console.error("Error in getGameById:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -69,7 +69,7 @@ export const getGameRatings = async (req, res) => {
     const { id } = req.params;
     const { page, limit, sortBy, sortOrder } = req.query;
 
-    const movieResult = await gameService.getMovieById(id, false);
+    const movieResult = await gameService.getGameById(id, false);
     if (!movieResult.success) {
       return res.status(404).json({ error: "game not found" });
     }
@@ -97,7 +97,7 @@ export const getGameRatings = async (req, res) => {
   }
 };
 
-export const rateMovie = async (req, res) => {
+export const rateGame = async (req, res) => {
   try {
     const { id: movieId } = req.params;
     const { userId } = getAuth(req);
@@ -109,7 +109,7 @@ export const rateMovie = async (req, res) => {
       });
     }
 
-    const movieResult = await gameService.getMovieById(movieId, false);
+    const movieResult = await gameService.getGameById(movieId, false);
     if (!movieResult.success) {
       return res.status(404).json({ error: "game not found" });
     }
@@ -135,12 +135,12 @@ export const rateMovie = async (req, res) => {
       data: result.data,
     });
   } catch (error) {
-    console.error("Error in rateMovie:", error);
+    console.error("Error in rateGame:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const deleteMovieRating = async (req, res) => {
+export const deleteGameRating = async (req, res) => {
   try {
     const { id: movieId } = req.params;
     const { userId } = getAuth(req);
@@ -153,7 +153,7 @@ export const deleteMovieRating = async (req, res) => {
 
     res.json({ message: result.message });
   } catch (error) {
-    console.error("Error in deleteMovieRating:", error);
+    console.error("Error in deleteGameRating:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

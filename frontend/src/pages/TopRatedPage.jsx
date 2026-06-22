@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import MovieCard from "../components/MovieCard";
+import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 
 export default function TopRatedPage({ allMovies, loading, error }) {
@@ -12,30 +12,30 @@ export default function TopRatedPage({ allMovies, loading, error }) {
     }
 
     return allMovies
-      .map((movie) => {
+      .map((game) => {
         // Handle both backend and local data structures
         let avgRating, reviewCount;
         
-        if (movie.ratings && Array.isArray(movie.ratings)) {
+        if (game.ratings && Array.isArray(game.ratings)) {
           // Backend data with ratings array
-          if (movie.ratings.length < 1) return null;
-          avgRating = movie.ratings.reduce((sum, r) => sum + r.rating, 0) / movie.ratings.length;
-          reviewCount = movie.ratings.length;
+          if (game.ratings.length < 1) return null;
+          avgRating = game.ratings.reduce((sum, r) => sum + r.rating, 0) / game.ratings.length;
+          reviewCount = game.ratings.length;
         } else {
           // Local data or backend data with averageRating
-          avgRating = movie.averageRating || movie.rating || 0;
-          reviewCount = movie.totalRatings || 0;
+          avgRating = game.averageRating || game.rating || 0;
+          reviewCount = game.totalRatings || 0;
         }
 
         // Apply rating filter based on selected threshold
         if (avgRating < minRatings) return null;
 
         return { 
-          ...movie, 
+          ...game, 
           avgRating, 
           reviewCount,
           // Ensure we have the correct ID field
-          id: movie._id || movie.movieId || movie.id
+          id: game._id || game.movieId || game.id
         };
       })
       .filter(Boolean) // Remove null entries
@@ -116,20 +116,20 @@ export default function TopRatedPage({ allMovies, loading, error }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {topRatedMovies.map((movie, idx) => (
-              <div key={movie.id || movie._id || movie.movieId || idx} className="relative">
+            {topRatedMovies.map((game, idx) => (
+              <div key={game.id || game._id || game.movieId || idx} className="relative">
                 <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
                   #{idx + 1}
                 </div>
-                <MovieCard movie={movie} />
+                <GameCard game={game} />
                 <div className="mt-2 text-center">
                   <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm">
                     <div className="flex items-center gap-1 text-[var(--accent-color)] font-semibold">
-                      <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{movie.avgRating?.toFixed(1)}/10
+                      <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{game.avgRating?.toFixed(1)}/10
                     </div>
                     <span style={{ color: 'var(--text-muted)' }}>•</span>
                     <span className="truncate" style={{ color: 'var(--text-secondary)' }}>
-                      {movie.reviewCount > 0 ? `${movie.reviewCount} reviews` : 'Community rated'}
+                      {game.reviewCount > 0 ? `${game.reviewCount} reviews` : 'Community rated'}
                     </span>
                   </div>
                 </div>
