@@ -214,12 +214,12 @@ class ApiService {
   }
 
   // Admin Methods for Game Management
-  async createGame(movieData) {
+  async createGame(gameData) {
     try {
-      console.log("� Creating new game:", movieData.title);
-      return await this.request("/api/admin/movies", {
+      console.log("� Creating new game:", gameData.title);
+      return await this.request("/api/admin/games", {
         method: "POST",
-        body: JSON.stringify(movieData),
+        body: JSON.stringify(gameData),
       });
     } catch (error) {
       console.error("Error creating game:", error);
@@ -227,12 +227,12 @@ class ApiService {
     }
   }
 
-  async updateGame(gameId, movieData) {
+  async updateGame(gameId, gameData) {
     try {
       console.log("� Updating game:", gameId);
-      return await this.request(`/api/admin/movies/${gameId}`, {
+      return await this.request(`/api/admin/games/${gameId}`, {
         method: "PUT",
-        body: JSON.stringify(movieData),
+        body: JSON.stringify(gameData),
       });
     } catch (error) {
       console.error("Error updating game:", error);
@@ -243,7 +243,7 @@ class ApiService {
   async deleteGame(gameId) {
     try {
       console.log("� Deleting game:", gameId);
-      return await this.request(`/api/admin/movies/${gameId}`, {
+      return await this.request(`/api/admin/games/${gameId}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -265,7 +265,7 @@ class ApiService {
   async toggleGameFeatured(gameId) {
     try {
       console.log("⭐ Toggling featured status for movie:", gameId);
-      return await this.request(`/api/admin/movies/${gameId}/featured`, {
+      return await this.request(`/api/admin/games/${gameId}/featured`, {
         method: "PATCH",
       });
     } catch (error) {
@@ -274,12 +274,12 @@ class ApiService {
     }
   }
 
-  async bulkUpdateGames(movieIds, updateData) {
+  async bulkUpdateGames(gameIds, updateData) {
     try {
-      console.log("🔄 Bulk updating games:", movieIds.length);
-      return await this.request("/api/admin/movies/bulk", {
+      console.log("🔄 Bulk updating games:", gameIds.length);
+      return await this.request("/api/admin/games/bulk", {
         method: "PATCH",
-        body: JSON.stringify({ movieIds, updateData }),
+        body: JSON.stringify({ gameIds, updateData }),
       });
     } catch (error) {
       console.error("Error bulk updating games:", error);

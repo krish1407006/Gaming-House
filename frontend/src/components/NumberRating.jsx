@@ -32,7 +32,7 @@ export default function NumberRating({
     <div className="flex flex-col items-center gap-2">
       {showLabel && (
         <label className="text-sm font-medium text-gray-300">
-          Rate this movie (1-10)
+          Rate this game (1-10)
         </label>
       )}
 

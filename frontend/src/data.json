@@ -10,7 +10,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game1"
+    "gameId": "game1"
   },
   {
     "name": "The Legend of Zelda: Breath of the Wild",
@@ -23,7 +23,7 @@
     "category": "Adventure",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game2"
+    "gameId": "game2"
   },
   {
     "name": "Cyberpunk 2077",
@@ -36,7 +36,7 @@
     "category": "Sci-Fi",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game3"
+    "gameId": "game3"
   },
   {
     "name": "God of War Ragnarök",
@@ -49,7 +49,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game4"
+    "gameId": "game4"
   },
   {
     "name": "Baldur's Gate 3",
@@ -62,7 +62,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game5"
+    "gameId": "game5"
   },
   {
     "name": "Hogwarts Legacy",
@@ -75,7 +75,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game6"
+    "gameId": "game6"
   },
   {
     "name": "The Witcher 3: Wild Hunt",
@@ -88,7 +88,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game7"
+    "gameId": "game7"
   },
   {
     "name": "Red Dead Redemption 2",
@@ -101,7 +101,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game8"
+    "gameId": "game8"
   },
   {
     "name": "Ghost of Tsushima",
@@ -114,7 +114,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game9"
+    "gameId": "game9"
   },
   {
     "name": "Final Fantasy XVI",
@@ -127,7 +127,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game10"
+    "gameId": "game10"
   },
   {
     "name": "Starfield",
@@ -140,7 +140,7 @@
     "category": "Sci-Fi",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game11"
+    "gameId": "game11"
   },
   {
     "name": "Palworld",
@@ -153,7 +153,7 @@
     "category": "Adventure",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game12"
+    "gameId": "game12"
   },
   {
     "name": "Dragon's Dogma 2",
@@ -166,7 +166,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game13"
+    "gameId": "game13"
   },
   {
     "name": "Helldivers 2",
@@ -179,7 +179,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game14"
+    "gameId": "game14"
   },
   {
     "name": "Tekken 8",
@@ -192,7 +192,7 @@
     "category": "Fighting",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game15"
+    "gameId": "game15"
   },
   {
     "name": "Final Fantasy VII Remake",
@@ -205,7 +205,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game16"
+    "gameId": "game16"
   },
   {
     "name": "Dark Souls III",
@@ -218,7 +218,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game17"
+    "gameId": "game17"
   },
   {
     "name": "Bloodborne",
@@ -231,7 +231,7 @@
     "category": "Horror",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game18"
+    "gameId": "game18"
   },
   {
     "name": "Monster Hunter: World",
@@ -244,7 +244,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game19"
+    "gameId": "game19"
   },
   {
     "name": "Metal Gear Solid V: The Phantom Pain",
@@ -257,7 +257,7 @@
     "category": "Stealth",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game20"
+    "gameId": "game20"
   },
   {
     "name": "Death Stranding",
@@ -270,7 +270,7 @@
     "category": "Adventure",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game21"
+    "gameId": "game21"
   },
   {
     "name": "Persona 5 Royal",
@@ -283,7 +283,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game22"
+    "gameId": "game22"
   },
   {
     "name": "Devil May Cry 5",
@@ -296,7 +296,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game23"
+    "gameId": "game23"
   },
   {
     "name": "Resident Evil 4 Remake",
@@ -309,7 +309,7 @@
     "category": "Horror",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game24"
+    "gameId": "game24"
   },
   {
     "name": "Street Fighter 6",
@@ -322,7 +322,7 @@
     "category": "Fighting",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game25"
+    "gameId": "game25"
   },
   {
     "name": "Mortal Kombat 1",
@@ -335,7 +335,7 @@
     "category": "Fighting",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game26"
+    "gameId": "game26"
   },
   {
     "name": "NBA 2K24",
@@ -348,7 +348,7 @@
     "category": "Sports",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game27"
+    "gameId": "game27"
   },
   {
     "name": "EA Sports FC 24",
@@ -361,7 +361,7 @@
     "category": "Sports",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game28"
+    "gameId": "game28"
   },
   {
     "name": "Gran Turismo 7",
@@ -374,7 +374,7 @@
     "category": "Racing",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game29"
+    "gameId": "game29"
   },
   {
     "name": "Forza Motorsport",
@@ -387,7 +387,7 @@
     "category": "Racing",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game30"
+    "gameId": "game30"
   },
   {
     "name": "Alan Wake 2",
@@ -400,7 +400,7 @@
     "category": "Horror",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game31"
+    "gameId": "game31"
   },
   {
     "name": "Star Wars Jedi: Survivor",
@@ -413,7 +413,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game32"
+    "gameId": "game32"
   },
   {
     "name": "Minecraft",
@@ -426,7 +426,7 @@
     "category": "Sandbox",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game33"
+    "gameId": "game33"
   },
   {
     "name": "Fortnite",
@@ -439,7 +439,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game34"
+    "gameId": "game34"
   },
   {
     "name": "Call of Duty: Modern Warfare III",
@@ -452,7 +452,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game35"
+    "gameId": "game35"
   },
   {
     "name": "Grand Theft Auto V",
@@ -465,7 +465,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game36"
+    "gameId": "game36"
   },
   {
     "name": "League of Legends",
@@ -478,7 +478,7 @@
     "category": "MOBA",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game37"
+    "gameId": "game37"
   },
   {
     "name": "Dota 2",
@@ -491,7 +491,7 @@
     "category": "MOBA",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game38"
+    "gameId": "game38"
   },
   {
     "name": "Counter-Strike 2",
@@ -504,7 +504,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game39"
+    "gameId": "game39"
   },
   {
     "name": "Valorant",
@@ -517,7 +517,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game40"
+    "gameId": "game40"
   },
   {
     "name": "Overwatch 2",
@@ -530,7 +530,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game41"
+    "gameId": "game41"
   },
   {
     "name": "Apex Legends",
@@ -543,7 +543,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game42"
+    "gameId": "game42"
   },
   {
     "name": "Warframe",
@@ -556,7 +556,7 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game43"
+    "gameId": "game43"
   },
   {
     "name": "Path of Exile",
@@ -569,7 +569,7 @@
     "category": "RPG",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game44"
+    "gameId": "game44"
   },
   {
     "name": "Lost Ark",
@@ -582,7 +582,7 @@
     "category": "MMORPG",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game45"
+    "gameId": "game45"
   },
   {
     "name": "New World",
@@ -595,7 +595,7 @@
     "category": "MMORPG",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game46"
+    "gameId": "game46"
   },
   {
     "name": "Final Fantasy XIV",
@@ -608,7 +608,7 @@
     "category": "MMORPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game47"
+    "gameId": "game47"
   },
   {
     "name": "World of Warcraft",
@@ -621,7 +621,7 @@
     "category": "MMORPG",
     "upcoming": false,
     "watchlist": true,
-    "movieId": "game48"
+    "gameId": "game48"
   },
   {
     "name": "Halo Infinite",
@@ -634,7 +634,7 @@
     "category": "Shooter",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game49"
+    "gameId": "game49"
   },
   {
     "name": "Assassin's Creed Mirage",
@@ -647,6 +647,6 @@
     "category": "Action",
     "upcoming": false,
     "watchlist": false,
-    "movieId": "game50"
+    "gameId": "game50"
   }
 ]

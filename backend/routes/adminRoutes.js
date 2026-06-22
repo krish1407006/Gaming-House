@@ -13,13 +13,13 @@ router.put("/users/:id/ban", adminController.banUser);
 router.delete("/users/:id", adminController.deleteUser);
 router.put("/users/:id/admin", adminController.setUserAdminStatus);
 
-router.get("/movies", adminController.getAllMovies);
-router.post("/movies", adminController.createMovie);
-router.put("/movies/:id", adminController.updateMovie);
-router.delete("/movies/:id", adminController.deleteMovie);
-router.put("/movies/:id/status", adminController.toggleMovieStatus);
-router.put("/movies/:id/featured", adminController.toggleMovieFeatured);
-router.get("/movies/:id/ratings", adminController.getMovieRatingsAdmin);
+router.get("/games", adminController.getAllGames);
+router.post("/games", adminController.createGame);
+router.put("/games/:id", adminController.updateGame);
+router.delete("/games/:id", adminController.deleteGame);
+router.put("/games/:id/status", adminController.toggleGameStatus);
+router.put("/games/:id/featured", adminController.toggleGameFeatured);
+router.get("/games/:id/ratings", adminController.getGameRatingsAdmin);
 
 router.get("/stats", adminController.getDashboardStats);
 

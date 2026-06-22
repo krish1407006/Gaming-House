@@ -5,7 +5,7 @@ import StarRating from "./StarRating";
 import NumberRating from "./NumberRating";
 import apiService from "../services/api";
 
-export default function ReviewSection({ movieId, onReviewUpdate }) {
+export default function ReviewSection({ gameId, onReviewUpdate }) {
   const { isSignedIn, getToken } = useAuth();
   const [userRating, setUserRating] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -32,14 +32,14 @@ export default function ReviewSection({ movieId, onReviewUpdate }) {
     setError(null);
 
     try {
-      // Only try to load from backend if movieId looks like a valid MongoDB ObjectId
-      if (!movieId || movieId.length < 20) {
+      // Only try to load from backend if gameId looks like a valid MongoDB ObjectId
+      if (!gameId || gameId.length < 20) {
         setError("Invalid gaming ID");
         return;
       }
 
       // Load movie details including user rating
-      const movieData = await apiService.getMovieById(movieId);
+      const movieData = await apiService.getMovieById(gameId);
 
       if (movieData.userRating) {
         setUserRating(movieData.userRating);
@@ -61,7 +61,7 @@ export default function ReviewSection({ movieId, onReviewUpdate }) {
       }
 
       // Load movie reviews
-      const ratingsData = await apiService.getMovieRatings(movieId, {
+      const ratingsData = await apiService.getMovieRatings(gameId, {
         limit: 10,
         sortBy: "helpfulVotes",
         sortOrder: "desc",
@@ -74,7 +74,7 @@ export default function ReviewSection({ movieId, onReviewUpdate }) {
     } finally {
       setLoading(false);
     }
-  }, [movieId]);
+  }, [gameId]);
 
   // Load user rating and movie reviews
   useEffect(() => {
@@ -105,7 +105,7 @@ export default function ReviewSection({ movieId, onReviewUpdate }) {
     setError(null);
 
     try {
-      const result = await apiService.createOrUpdateRating(movieId, {
+      const result = await apiService.createOrUpdateRating(gameId, {
         rating: reviewForm.rating,
         review: reviewForm.review.trim(),
         isPublic: reviewForm.isPublic,
@@ -137,7 +137,7 @@ export default function ReviewSection({ movieId, onReviewUpdate }) {
 
     setSubmitting(true);
     try {
-      await apiService.deleteRating(movieId);
+      await apiService.deleteRating(gameId);
       setUserRating(null);
       setReviewForm({ rating: 0, review: "", isPublic: true });
       setShowReviewForm(false);
