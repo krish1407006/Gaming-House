@@ -40,12 +40,12 @@ export const getMovieById = async (req, res) => {
       return res.status(404).json({ error: result.error });
     }
 
-    // Check if movie is active (unless user is admin)
+    // Check if game is active (unless user is admin)
     if (!result.data.isActive && !req.isAdmin) {
-      return res.status(404).json({ error: "Movie not found" });
+      return res.status(404).json({ error: "game not found" });
     }
 
-    // If user is authenticated, get their rating for this movie
+    // If user is authenticated, get their rating for this game
     let userRating = null;
     if (userId) {
       const userRatingResult = await ratingService.getUserRating(userId, id);
@@ -71,11 +71,11 @@ export const getGameRatings = async (req, res) => {
 
     const movieResult = await gameService.getMovieById(id, false);
     if (!movieResult.success) {
-      return res.status(404).json({ error: "Movie not found" });
+      return res.status(404).json({ error: "game not found" });
     }
 
     if (!movieResult.data.isActive && !req.isAdmin) {
-      return res.status(404).json({ error: "Movie not found" });
+      return res.status(404).json({ error: "game not found" });
     }
 
     const result = await ratingService.getGameRatings(id, {
@@ -111,11 +111,11 @@ export const rateMovie = async (req, res) => {
 
     const movieResult = await gameService.getMovieById(movieId, false);
     if (!movieResult.success) {
-      return res.status(404).json({ error: "Movie not found" });
+      return res.status(404).json({ error: "game not found" });
     }
 
     if (!movieResult.data.isActive) {
-      return res.status(400).json({ error: "Cannot rate inactive movie" });
+      return res.status(400).json({ error: "Cannot rate inactive game" });
     }
 
     const result = await ratingService.createOrUpdateRating(userId, movieId, {

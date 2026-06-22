@@ -4,8 +4,8 @@ import { updateGameRatingStats } from "./gameService.js";
 
 export const createOrUpdateRating = async (userId, gameId, ratingData) => {
   try {
-    const movie = await Game.findById(gameId);
-    if (!movie) {
+    const game = await Game.findById(gameId);
+    if (!game) {
       return {
         success: false,
         error: "Game not found",
@@ -171,10 +171,10 @@ export const getGameRatings = async (gameId, options = {}) => {
       },
     };
   } catch (error) {
-    console.error("Error fetching movie ratings:", error);
+    console.error("Error fetching game ratings:", error);
     return {
       success: false,
-      error: "Failed to fetch movie ratings",
+      error: "Failed to fetch game ratings",
     };
   }
 };

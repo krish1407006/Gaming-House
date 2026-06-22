@@ -8,10 +8,10 @@ const router = express.Router();
 router.use(clerkMiddleware());
 router.use(requireAuth());
 
-// Add movie to watchlist
+// Add game to watchlist
 router.post("/add", watchlistController.addToWatchlist);
 
-// Remove movie from watchlist
+// Remove game from watchlist
 router.delete("/:movieId", watchlistController.removeFromWatchlist);
 
 // Get user's watchlist
@@ -20,7 +20,7 @@ router.get("/", watchlistController.getUserWatchlist);
 // Clear entire watchlist
 router.delete("/", watchlistController.clearWatchlist);
 
-// Check if movie is in watchlist
+// Check if game is in watchlist
 router.get("/check/:movieId", watchlistController.checkWatchlistStatus);
 
 // Test endpoint to debug

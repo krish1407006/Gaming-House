@@ -67,9 +67,9 @@ export const getGames = async (options = {}) => {
 
 export const getGameById = async (movieId, includeReviews = true) => {
   try {
-    const movie = await Game.findById(movieId).lean();
+    const game = await Game.findById(movieId).lean();
 
-    if (!movie) {
+    if (!game) {
       return {
         success: false,
         error: "Game not found",
@@ -91,34 +91,34 @@ export const getGameById = async (movieId, includeReviews = true) => {
     return {
       success: true,
       data: {
-        ...movie,
+        ...game,
         reviews,
       },
     };
   } catch (error) {
-    console.error("Error fetching movie:", error);
+    console.error("Error fetching game:", error);
     return {
       success: false,
-      error: "Failed to fetch movie",
+      error: "Failed to fetch game",
     };
   }
 };
 
 export const createGame = async (movieData, adminUserId) => {
   try {
-    const movie = new Game({
+    const game = new Game({
       ...movieData,
       addedBy: adminUserId,
     });
 
-    const savedGame = await movie.save();
+    const savedGame = await game.save();
 
     return {
       success: true,
       data: savedGame,
     };
   } catch (error) {
-    console.error("Error creating movie:", error);
+    console.error("Error creating game:", error);
     return {
       success: false,
       error:
@@ -126,7 +126,7 @@ export const createGame = async (movieData, adminUserId) => {
           ? Object.values(error.errors)
               .map((e) => e.message)
               .join(", ")
-          : "Failed to create movie",
+          : "Failed to create game",
     };
   }
 };
@@ -136,12 +136,12 @@ export const updateGame = async (movieId, updateData) => {
     const { averageRating, totalRatings, addedBy, ...validUpdateData } =
       updateData;
 
-    const movie = await Game.findByIdAndUpdate(movieId, validUpdateData, {
+    const game = await Game.findByIdAndUpdate(movieId, validUpdateData, {
       new: true,
       runValidators: true,
     });
 
-    if (!movie) {
+    if (!game) {
       return {
         success: false,
         error: "Game not found",
@@ -150,10 +150,10 @@ export const updateGame = async (movieId, updateData) => {
 
     return {
       success: true,
-      data: movie,
+      data: game,
     };
   } catch (error) {
-    console.error("Error updating movie:", error);
+    console.error("Error updating game:", error);
     return {
       success: false,
       error:
@@ -161,16 +161,16 @@ export const updateGame = async (movieId, updateData) => {
           ? Object.values(error.errors)
               .map((e) => e.message)
               .join(", ")
-          : "Failed to update movie",
+          : "Failed to update game",
     };
   }
 };
 
 export const deleteGame = async (movieId) => {
   try {
-    const movie = await Game.findByIdAndDelete(movieId);
+    const game = await Game.findByIdAndDelete(movieId);
 
-    if (!movie) {
+    if (!game) {
       return {
         success: false,
         error: "Game not found",
@@ -184,23 +184,23 @@ export const deleteGame = async (movieId) => {
       message: "Game and associated ratings deleted successfully",
     };
   } catch (error) {
-    console.error("Error deleting movie:", error);
+    console.error("Error deleting game:", error);
     return {
       success: false,
-      error: "Failed to delete movie",
+      error: "Failed to delete game",
     };
   }
 };
 
 export const toggleGameStatus = async (movieId, isActive) => {
   try {
-    const movie = await Game.findByIdAndUpdate(
+    const game = await Game.findByIdAndUpdate(
       movieId,
       { isActive },
       { new: true }
     );
 
-    if (!movie) {
+    if (!game) {
       return {
         success: false,
         error: "Game not found",
@@ -209,26 +209,26 @@ export const toggleGameStatus = async (movieId, isActive) => {
 
     return {
       success: true,
-      data: movie,
+      data: game,
     };
   } catch (error) {
-    console.error("Error toggling movie status:", error);
+    console.error("Error toggling game status:", error);
     return {
       success: false,
-      error: "Failed to update movie status",
+      error: "Failed to update game status",
     };
   }
 };
 
 export const toggleGameFeatured = async (movieId, featured) => {
   try {
-    const movie = await Game.findByIdAndUpdate(
+    const game = await Game.findByIdAndUpdate(
       movieId,
       { featured },
       { new: true }
     );
 
-    if (!movie) {
+    if (!game) {
       return {
         success: false,
         error: "Game not found",
@@ -237,13 +237,13 @@ export const toggleGameFeatured = async (movieId, featured) => {
 
     return {
       success: true,
-      data: movie,
+      data: game,
     };
   } catch (error) {
-    console.error("Error toggling movie featured status:", error);
+    console.error("Error toggling game featured status:", error);
     return {
       success: false,
-      error: "Failed to update movie featured status",
+      error: "Failed to update game featured status",
     };
   }
 };
@@ -277,10 +277,10 @@ export const getGameStats = async () => {
       },
     };
   } catch (error) {
-    console.error("Error fetching movie stats:", error);
+    console.error("Error fetching game stats:", error);
     return {
       success: false,
-      error: "Failed to fetch movie statistics",
+      error: "Failed to fetch game statistics",
     };
   }
 };
@@ -300,7 +300,7 @@ export const updateGameRatingStats = async (movieId) => {
 
     const { averageRating = 0, totalRatings = 0 } = stats[0] || {};
 
-    const movie = await Game.findByIdAndUpdate(
+    const game = await Game.findByIdAndUpdate(
       movieId,
       {
         averageRating: Math.round(averageRating * 10) / 10,
@@ -312,12 +312,12 @@ export const updateGameRatingStats = async (movieId) => {
     return {
       success: true,
       data: {
-        averageRating: movie.averageRating,
-        totalRatings: movie.totalRatings,
+        averageRating: game.averageRating,
+        totalRatings: game.totalRatings,
       },
     };
   } catch (error) {
-    console.error("Error updating movie rating stats:", error);
+    console.error("Error updating game rating stats:", error);
     return {
       success: false,
       error: "Failed to update rating statistics",

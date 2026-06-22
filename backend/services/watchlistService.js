@@ -19,8 +19,8 @@ export const addToWatchlist = async (userId, movieId) => {
     return { success: true, data: savedItem };
   } catch (error) {
     if (error.code === 11000) {
-      // Duplicate key error - movie already in watchlist
-      return { success: false, error: "Movie already in watchlist" };
+      // Duplicate key error - game already in watchlist
+      return { success: false, error: "game already in watchlist" };
     }
     console.error("Error adding to watchlist:", error);
     return { success: false, error: "Failed to add to watchlist" };
@@ -35,7 +35,7 @@ export const removeFromWatchlist = async (userId, movieId) => {
     });
 
     if (!result) {
-      return { success: false, error: "Movie not found in watchlist" };
+      return { success: false, error: "game not found in watchlist" };
     }
 
     return { success: true, data: result };
