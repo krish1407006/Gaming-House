@@ -6,7 +6,7 @@ export const getMovies = async (options = {}) => {
   try {
     const {
       page = 1,
-      limit = 20,
+      limit = 100,
       genre,
       search,
       sortBy = "createdAt",
