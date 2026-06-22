@@ -1,33 +1,33 @@
 import React, { useState, useMemo } from "react";
-import MovieCard from "../components/MovieCard";
+import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 
-export default function CategoriesPage({ allMovies, loading, error }) {
+export default function CategoriesPage({ allgames, loading, error }) {
   const [activeCategory, setActiveCategory] = useState(null);
 
-  const movies = Array.isArray(allMovies) ? allMovies : [];
+  const games = Array.isArray(allgames) ? allgames : [];
 
   const categories = useMemo(() => {
     const cats = new Set();
-    movies.forEach((m) => {
+    games.forEach((m) => {
       const genre = m.category || m.genre?.[0] || "Unknown";
       cats.add(genre);
     });
     return Array.from(cats).sort();
-  }, [movies]);
+  }, [games]);
 
-  const filteredMovies = activeCategory
-    ? movies.filter((m) => (m.category || m.genre?.[0]) === activeCategory)
-    : movies;
+  const filteredgames = activeCategory
+    ? games.filter((m) => (m.category || m.genre?.[0]) === activeCategory)
+    : games;
 
   const categoryCounts = useMemo(() => {
     const counts = {};
-    movies.forEach((m) => {
+    games.forEach((m) => {
       const cat = m.category || m.genre?.[0] || "Unknown";
       counts[cat] = (counts[cat] || 0) + 1;
     });
     return counts;
-  }, [movies]);
+  }, [games]);
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
@@ -51,7 +51,7 @@ export default function CategoriesPage({ allMovies, loading, error }) {
               : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[var(--accent-color)]"
           }`}
         >
-          All ({movies.length})
+          All ({games.length})
         </button>
         {categories.map((cat) => (
           <button
@@ -78,7 +78,7 @@ export default function CategoriesPage({ allMovies, loading, error }) {
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
             {error}
           </div>
-        ) : filteredMovies.length === 0 ? (
+        ) : filteredgames.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl lg:text-6xl mb-4">🎮</div>
             <h3 className="text-xl lg:text-2xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
@@ -87,8 +87,8 @@ export default function CategoriesPage({ allMovies, loading, error }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {filteredMovies.map((movie, idx) => (
-              <MovieCard key={movie._id || movie.movieId || movie.id || idx} movie={movie} />
+            {filteredgames.map((game, idx) => (
+              <GameCard key={game._id || game.gameId || game.id || idx} game={game} />
             ))}
           </div>
         )}

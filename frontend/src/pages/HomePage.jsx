@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import MovieCard from "../components/MovieCard";
+import GameCard from "../components/GameCard";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
 
-export default function HomePage({ allMovies, loading, error }) {
+export default function HomePage({ allgames, loading, error }) {
   const [activeCategory, setActiveCategory] = useState(null);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
@@ -17,16 +17,16 @@ export default function HomePage({ allMovies, loading, error }) {
     return () => clearInterval(intervalId);
   }, []);
   
-  // Safety check for allMovies
-  const movies = Array.isArray(allMovies) ? allMovies : [];
+  // Safety check for allgames
+  const games = Array.isArray(allgames) ? allgames : [];
   
-  let filteredMovies = movies;
+  let filteredgames = games;
   if (activeCategory) {
-    filteredMovies = filteredMovies.filter((m) => m.category === activeCategory);
+    filteredgames = filteredgames.filter((m) => m.category === activeCategory);
   }
 
-  const categories = Array.from(new Set(movies.map((m) => m.category || m.genre?.[0] || 'Unknown')));
-  const bannerImg = movies[0]?.image || movies[0]?.poster || "";
+  const categories = Array.from(new Set(games.map((m) => m.category || m.genre?.[0] || 'Unknown')));
+  const bannerImg = games[0]?.image || games[0]?.poster || "";
   const bannerTitle = "Discover Amazing Games ";
   const bannerDesc = "Experience the best ratings and reviews from the Gaming House community.";
 
@@ -104,14 +104,14 @@ export default function HomePage({ allMovies, loading, error }) {
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
             {error}
           </div>
-        ) : filteredMovies.length === 0 ? (
+        ) : filteredgames.length === 0 ? (
           <div className="text-gray-400 text-base lg:text-lg px-4">
             No games found for this page.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {filteredMovies.map((movie, idx) => (
-              <MovieCard key={idx} movie={movie} />
+            {filteredgames.map((game, idx) => (
+              <GameCard key={idx} game={game} />
             ))}
           </div>
         )}

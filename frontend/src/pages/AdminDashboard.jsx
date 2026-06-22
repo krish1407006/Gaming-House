@@ -5,12 +5,12 @@ import ApiService from "../services/api";
 
 import { isUserAdmin } from "../adminDetails";
 
-export default function AdminDashboard({ onMovieChange }) {
+export default function AdminDashboard({ ongameChange }) {
   const { user } = useUser();
-  const [movies, setMovies] = useState([]);
+  const [games, setgames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingMovie, setEditingMovie] = useState(null);
+  const [editinggame, setEditinggame] = useState(null);
 
   // Debug user info and admin promotion helper
   React.useEffect(() => {
@@ -62,17 +62,17 @@ export default function AdminDashboard({ onMovieChange }) {
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
 
-  // Load movies
+  // Load games
   useEffect(() => {
-    loadMovies();
+    loadgames();
   }, []);
 
-  const loadMovies = async () => {
+  const loadgames = async () => {
     try {
       setLoading(true);
-      const response = await ApiService.getMovies();
-      const movieData = Array.isArray(response) ? response : response.movies || [];
-      setMovies(movieData);
+      const response = await ApiService.getgames();
+      const gameData = Array.isArray(response) ? response : response.games || [];
+      setgames(gameData);
     } catch (error) {
       console.error("Error loading games:", error);
     } finally {
@@ -134,7 +134,7 @@ export default function AdminDashboard({ onMovieChange }) {
     
     try {
       // Format data for backend API
-      const movieData = {
+      const gameData = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         director: formData.director.trim(),
@@ -158,70 +158,70 @@ export default function AdminDashboard({ onMovieChange }) {
         cast: []
       };
 
-      console.log('📤 Sending movie data to backend:', movieData);
+      console.log('📤 Sending game data to backend:', gameData);
 
-      if (editingMovie) {
-        await ApiService.updateMovie(editingMovie._id, movieData);
+      if (editinggame) {
+        await ApiService.updategame(editinggame._id, gameData);
   console.log('✅ Gaming updated successfully');
   alert("Gaming updated successfully!");
       } else {
-        const result = await ApiService.createMovie(movieData);
+        const result = await ApiService.creategame(gameData);
   console.log('✅ Game created successfully:', result);
   alert("Game created successfully!");
       }
       
       resetForm();
-      loadMovies();
+      loadgames();
       
-      // Update global movies state in other pages
-      if (onMovieChange) {
-        onMovieChange();
+      // Update global games state in other pages
+      if (ongameChange) {
+        ongameChange();
       }
     } catch (error) {
-  console.error("❌ Error saving movie:", error);
-  alert(`Error ${editingMovie ? 'updating' : 'creating'} gaming: ${error.message}`);
+  console.error("❌ Error saving game:", error);
+  alert(`Error ${editinggame ? 'updating' : 'creating'} gaming: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleEdit = (movie) => {
-    setEditingMovie(movie);
+  const handleEdit = (game) => {
+    setEditinggame(game);
     setFormData({
-      title: movie.title || "",
-      description: movie.description || "",
-      poster: movie.poster || "",
-      trailer: movie.trailer || "",
-      backdrop: movie.backdrop || "",
-      screenshots: Array.isArray(movie.screenshots) ? movie.screenshots.join(", ") : movie.screenshots || "",
-      year: movie.year || new Date(movie.releaseDate).getFullYear() || "",
-      runtime: movie.runtime || movie.duration || "",
-      genre: Array.isArray(movie.genre) ? movie.genre.join(", ") : movie.genre || "",
-      director: movie.director || "",
-      language: movie.language || "English",
-      country: movie.country || "USA",
-      budget: movie.budget || "",
-      boxOffice: movie.boxOffice || "",
-      awards: movie.awards || "",
-      featured: movie.featured || false,
-      isActive: movie.isActive !== false,
+      title: game.title || "",
+      description: game.description || "",
+      poster: game.poster || "",
+      trailer: game.trailer || "",
+      backdrop: game.backdrop || "",
+      screenshots: Array.isArray(game.screenshots) ? game.screenshots.join(", ") : game.screenshots || "",
+      year: game.year || new Date(game.releaseDate).getFullYear() || "",
+      runtime: game.runtime || game.duration || "",
+      genre: Array.isArray(game.genre) ? game.genre.join(", ") : game.genre || "",
+      director: game.director || "",
+      language: game.language || "English",
+      country: game.country || "USA",
+      budget: game.budget || "",
+      boxOffice: game.boxOffice || "",
+      awards: game.awards || "",
+      featured: game.featured || false,
+      isActive: game.isActive !== false,
     });
     setFormErrors({});
     setShowCreateForm(true);
   };
 
-  const handleDelete = async (movieId) => {
+  const handleDelete = async (gameId) => {
   if (window.confirm("Are you sure you want to delete this game?")) {
       try {
-        await ApiService.deleteMovie(movieId);
-        loadMovies();
+        await ApiService.deletegame(gameId);
+        loadgames();
         
-        // Update global movies state in other pages
-        if (onMovieChange) {
-          onMovieChange();
+        // Update global games state in other pages
+        if (ongameChange) {
+          ongameChange();
         }
       } catch (error) {
-        console.error("Error deleting movie:", error);
+        console.error("Error deleting game:", error);
         alert("Error deleting gaming. Please try again.");
       }
     }
@@ -248,7 +248,7 @@ export default function AdminDashboard({ onMovieChange }) {
       isActive: true,
     });
     setFormErrors({});
-    setEditingMovie(null);
+    setEditinggame(null);
     setShowCreateForm(false);
   };
 
@@ -391,7 +391,7 @@ export default function AdminDashboard({ onMovieChange }) {
             <div className="flex items-center gap-3 lg:gap-4">
               <Icon name="film" size={32} className="theme-accent lg:w-10 lg:h-10" />
               <div>
-                <h3 className="text-xl lg:text-2xl font-bold">{movies.length}</h3>
+                <h3 className="text-xl lg:text-2xl font-bold">{games.length}</h3>
                 <p className="theme-text-secondary text-sm lg:text-base">Total Games</p>
               </div>
             </div>
@@ -402,7 +402,7 @@ export default function AdminDashboard({ onMovieChange }) {
               <Icon name="star" size={32} className="lg:w-10 lg:h-10" style={{ color: 'var(--accent-color)' }} />
               <div>
                 <h3 className="text-xl lg:text-2xl font-bold">
-                  {movies.filter(m => m.featured).length}
+                  {games.filter(m => m.featured).length}
                 </h3>
                 <p className="theme-text-secondary text-sm lg:text-base">Featured Games</p>
               </div>
@@ -414,7 +414,7 @@ export default function AdminDashboard({ onMovieChange }) {
               <Icon name="trending" size={32} className="text-green-400 lg:w-10 lg:h-10" />
               <div>
                 <h3 className="text-xl lg:text-2xl font-bold">
-                  {movies.filter(m => m.averageRating > 8).length}
+                  {games.filter(m => m.averageRating > 8).length}
                 </h3>
                 <p className="theme-text-secondary text-sm lg:text-base">High Rated (8+)</p>
               </div>
@@ -450,56 +450,56 @@ export default function AdminDashboard({ onMovieChange }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {movies.map((movie) => (
-                    <tr key={movie._id} className="border-b theme-border hover:theme-bg-hover">
+                  {games.map((game) => (
+                    <tr key={game._id} className="border-b theme-border hover:theme-bg-hover">
                       <td className="p-2 lg:p-4">
                         <div className="flex items-center gap-2 lg:gap-3">
                           <img
-                            src={movie.poster}
-                            alt={movie.title}
+                            src={game.poster}
+                            alt={game.title}
                             className="w-8 h-10 lg:w-12 lg:h-16 object-cover rounded"
                           />
                           <div className="min-w-0 flex-1">
-                            <h4 className="font-semibold text-sm lg:text-base truncate">{movie.title}</h4>
+                            <h4 className="font-semibold text-sm lg:text-base truncate">{game.title}</h4>
                             <p className="text-xs lg:text-sm theme-text-secondary truncate sm:hidden">
-                              {movie.director}
+                              {game.director}
                             </p>
                             <p className="text-xs theme-text-secondary truncate hidden lg:block">
-                              {Array.isArray(movie.genre) ? movie.genre.join(", ") : movie.genre}
+                              {Array.isArray(game.genre) ? game.genre.join(", ") : game.genre}
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="p-2 lg:p-4 hidden sm:table-cell">
-                        <div className="text-sm lg:text-base truncate">{movie.director}</div>
+                        <div className="text-sm lg:text-base truncate">{game.director}</div>
                       </td>
                       <td className="p-2 lg:p-4 text-sm lg:text-base">
-                        {movie.year || new Date(movie.releaseDate).getFullYear()}
+                        {game.year || new Date(game.releaseDate).getFullYear()}
                       </td>
                       <td className="p-2 lg:p-4 hidden md:table-cell">
                         <div className="flex items-center gap-1">
                           <Icon name="star" size={14} className="lg:w-4 lg:h-4" style={{ color: 'var(--accent-color)' }} />
-                          <span className="text-sm lg:text-base">{movie.averageRating?.toFixed(1) || "N/A"}</span>
+                          <span className="text-sm lg:text-base">{game.averageRating?.toFixed(1) || "N/A"}</span>
                         </div>
                       </td>
                       <td className="p-2 lg:p-4 hidden lg:table-cell">
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          movie.featured ? "bg-red-600 text-white" : "theme-bg-secondary"
+                          game.featured ? "bg-red-600 text-white" : "theme-bg-secondary"
                         }`}>
-                          {movie.featured ? "Featured" : "Regular"}
+                          {game.featured ? "Featured" : "Regular"}
                         </span>
                       </td>
                       <td className="p-2 lg:p-4">
                         <div className="flex items-center gap-1 lg:gap-2">
                           <button
-                            onClick={() => handleEdit(movie)}
+                            onClick={() => handleEdit(game)}
                             className="p-1.5 lg:p-2 theme-bg-secondary hover:theme-bg-hover rounded transition-colors"
                             title="Edit"
                           >
                             <Icon name="edit" size={14} className="lg:w-4 lg:h-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(movie._id)}
+                            onClick={() => handleDelete(game._id)}
                             className="p-1.5 lg:p-2 bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
                             title="Delete"
                           >
@@ -515,14 +515,14 @@ export default function AdminDashboard({ onMovieChange }) {
           )}
         </div>
 
-        {/* Create/Edit Movie Modal */}
+        {/* Create/Edit game Modal */}
         {showCreateForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 lg:p-4">
             <div className="theme-bg-secondary rounded-xl max-w-4xl w-full max-h-[95vh] lg:max-h-[90vh] overflow-y-auto modal-scrollbar shadow-2xl">
               <div className="p-4 lg:p-6 border-b theme-border">
                 <h3 className="text-lg lg:text-xl font-semibold flex items-center gap-2">
-                  <Icon name={editingMovie ? "edit" : "plus"} size={20} className="lg:w-6 lg:h-6" />
-                  <span className="truncate">{editingMovie ? "Edit Gaming" : "Add New Games"}</span>
+                  <Icon name={editinggame ? "edit" : "plus"} size={20} className="lg:w-6 lg:h-6" />
+                  <span className="truncate">{editinggame ? "Edit Gaming" : "Add New Games"}</span>
                 </h3>
               </div>
               
@@ -916,12 +916,12 @@ export default function AdminDashboard({ onMovieChange }) {
                         {isSubmitting ? (
                       <>
                         <div className="settings-loading-spinner w-4 h-4"></div>
-                        {editingMovie ? "Updating..." : "Creating..."}
+                        {editinggame ? "Updating..." : "Creating..."}
                       </>
                     ) : (
                       <>
-                        <Icon name={editingMovie ? "edit" : "plus"} size={18} />
-                        {editingMovie ? "Update Gaming" : "Create Gaming"}
+                        <Icon name={editinggame ? "edit" : "plus"} size={18} />
+                        {editinggame ? "Update Gaming" : "Create Gaming"}
                       </>
                     )}
                   </button>

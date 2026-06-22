@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MovieCard from "../components/MovieCard";
+import GameCard from "../components/GameCard";
 import ApiService from "../services/api";
 import { SignInButton, useUser } from "@clerk/clerk-react";
 
@@ -25,43 +25,43 @@ export default function WatchlistPage() {
         console.log("Watchlist items type:", typeof watchlistItems, "Array?", Array.isArray(watchlistItems));
 
         if (Array.isArray(watchlistItems)) {
-          // Extract movie IDs from watchlist items and ensure they're strings
-          const movieIds = watchlistItems.map((item) => String(item.movieId));
-          console.log("Movie IDs from watchlist:", movieIds);
-          console.log("MovieIds after string conversion:", movieIds.map(id => `'${id}' (${typeof id})`));
+          // Extract game IDs from watchlist items and ensure they're strings
+          const gameIds = watchlistItems.map((item) => String(item.gameId));
+          console.log("game IDs from watchlist:", gameIds);
+          console.log("gameIds after string conversion:", gameIds.map(id => `'${id}' (${typeof id})`));
           
-          // Fetch full movie details for each movie ID
-          const allMoviesResponse = await ApiService.getMovies();
-          console.log("🌐 Full API Response:", allMoviesResponse);
+          // Fetch full game details for each game ID
+          const allgamesResponse = await ApiService.getgames();
+          console.log("🌐 Full API Response:", allgamesResponse);
           
           // Handle new API response structure with pagination
-          const movies = Array.isArray(allMoviesResponse) 
-            ? allMoviesResponse 
-            : (allMoviesResponse?.movies || []);
+          const games = Array.isArray(allgamesResponse) 
+            ? allgamesResponse 
+            : (allgamesResponse?.games || []);
           
-          console.log("[Watchlist] Extracted movies array:", movies);
-          console.log("All movies structure (first movie):", movies[0]);
-          console.log("Movie _id type:", typeof movies[0]?._id, "Value:", movies[0]?._id);
-          console.log("Looking for movie IDs:", movieIds);
-          console.log("MovieIds types:", movieIds.map(id => typeof id));
+          console.log("[Watchlist] Extracted games array:", games);
+          console.log("All games structure (first game):", games[0]);
+          console.log("game _id type:", typeof games[0]?._id, "Value:", games[0]?._id);
+          console.log("Looking for game IDs:", gameIds);
+          console.log("gameIds types:", gameIds.map(id => typeof id));
           
-          const watchlistMovies = movies.filter((movie) => {
-            const movieId = movie._id || movie.movieId || movie.id;
-            console.log("Comparing movieId:", movieId, "(type:", typeof movieId, ") with watchlist IDs:", movieIds);
+          const watchlistgames = games.filter((game) => {
+            const gameId = game._id || game.gameId || game.id;
+            console.log("Comparing gameId:", gameId, "(type:", typeof gameId, ") with watchlist IDs:", gameIds);
             
             // Convert both to strings for comparison (handles ObjectId vs String)
-            const movieIdStr = String(movieId);
-            const isMatch = movieIds.includes(movieIdStr);
+            const gameIdStr = String(gameId);
+            const isMatch = gameIds.includes(gameIdStr);
             
             if (isMatch) {
-              console.log("[Watchlist] Found matching movie:", movie.title, "with ID:", movieId);
+              console.log("[Watchlist] Found matching game:", game.title, "with ID:", gameId);
             } else {
-              console.log("[Watchlist] No match for movie:", movie.title, "ID:", movieId);
+              console.log("[Watchlist] No match for game:", game.title, "ID:", gameId);
             }
             return isMatch;
           });
-          console.log("Full watchlist movies:", watchlistMovies);
-          setWatchlist(watchlistMovies);
+          console.log("Full watchlist games:", watchlistgames);
+          setWatchlist(watchlistgames);
         } else {
           console.error("Unexpected watchlist format:", watchlistItems);
           setWatchlist([]);
@@ -77,15 +77,15 @@ export default function WatchlistPage() {
           console.log("Local watchlist:", localWatchlist);
 
           if (localWatchlist.length > 0) {
-            const allMoviesResponse = await ApiService.getMovies();
-            const movies = Array.isArray(allMoviesResponse) 
-              ? allMoviesResponse 
-              : (allMoviesResponse?.movies || []);
-            const watchlistMovies = movies.filter((movie) =>
-              localWatchlist.includes(movie._id || movie.movieId)
+            const allgamesResponse = await ApiService.getgames();
+            const games = Array.isArray(allgamesResponse) 
+              ? allgamesResponse 
+              : (allgamesResponse?.games || []);
+            const watchlistgames = games.filter((game) =>
+              localWatchlist.includes(game._id || game.gameId)
             );
-            console.log("Local watchlist movies:", watchlistMovies);
-            setWatchlist(watchlistMovies);
+            console.log("Local watchlist games:", watchlistgames);
+            setWatchlist(watchlistgames);
             setError(null); // Clear error since we found local data
           }
         } catch (localErr) {
@@ -99,24 +99,24 @@ export default function WatchlistPage() {
     fetchWatchlist();
   }, [isSignedIn, user]);
 
-  const removeFromWatchlist = async (movieId) => {
+  const removeFromWatchlist = async (gameId) => {
     if (!isSignedIn) return;
 
     try {
-      await ApiService.removeFromWatchlist(movieId);
+      await ApiService.removeFromWatchlist(gameId);
       // Remove from local state using flexible ID matching
-      setWatchlist((prev) => prev.filter((movie) => {
-        const id = movie._id || movie.movieId || movie.id;
-        return id !== movieId;
+      setWatchlist((prev) => prev.filter((game) => {
+        const id = game._id || game.gameId || game.id;
+        return id !== gameId;
       }));
     } catch (error) {
       console.error("Failed to remove from watchlist:", error);
       // Fallback to localStorage
-      ApiService.removeFromWatchlistLocal(user.id, movieId);
+      ApiService.removeFromWatchlistLocal(user.id, gameId);
       // Remove from local state using flexible ID matching
-      setWatchlist((prev) => prev.filter((movie) => {
-        const id = movie._id || movie.movieId || movie.id;
-        return id !== movieId;
+      setWatchlist((prev) => prev.filter((game) => {
+        const id = game._id || game.gameId || game.id;
+        return id !== gameId;
       }));
     }
   };
@@ -212,11 +212,11 @@ export default function WatchlistPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {watchlist.map((movie, index) => (
-              <div key={movie._id || movie.movieId || movie.id || `movie-${index}`} className="relative">
-                <MovieCard movie={movie} />
+            {watchlist.map((game, index) => (
+              <div key={game._id || game.gameId || game.id || `game-${index}`} className="relative">
+                <GameCard game={game} />
                 <button
-                  onClick={() => removeFromWatchlist(movie._id || movie.movieId || movie.id)}
+                  onClick={() => removeFromWatchlist(game._id || game.gameId || game.id)}
                   className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 lg:p-2 transition-colors z-10 touch-target flex justify-center items-center"
                   title="Remove from watchlist"
                 >

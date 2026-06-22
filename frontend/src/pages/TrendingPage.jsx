@@ -1,36 +1,36 @@
 import React from "react";
-import MovieCard from "../components/MovieCard";
+import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 
-export default function TrendingPage({ allMovies, loading, error }) {
-  // Filter and process only trending movies - use useMemo to force re-computation when allMovies changes
-  const trendingMovies = React.useMemo(() => {
-    if (!allMovies || !Array.isArray(allMovies)) {
+export default function TrendingPage({ allgames, loading, error }) {
+  // Filter and process only trending games - use useMemo to force re-computation when allgames changes
+  const trendinggames = React.useMemo(() => {
+    if (!allgames || !Array.isArray(allgames)) {
       return [];
     }
 
-    return allMovies
-      .filter((movie) => {
+    return allgames
+      .filter((game) => {
         // Check both local data (trending) and backend data (featured) fields
-        return movie.trending === true || movie.featured === true;
+        return game.trending === true || game.featured === true;
       })
-      .map((movie) => {
+      .map((game) => {
         // Handle data structure
-        const avgRating = movie.averageRating || movie.rating || 0;
-        const reviewCount = movie.totalRatings || 0;
+        const avgRating = game.averageRating || game.rating || 0;
+        const reviewCount = game.totalRatings || 0;
 
         return { 
-          ...movie, 
+          ...game, 
           avgRating, 
           reviewCount,
           // Ensure we have the correct ID field
-          id: movie._id || movie.movieId || movie.id
+          id: game._id || game.gameId || game.id
         };
       })
       .sort((a, b) => b.avgRating - a.avgRating); // Sort by rating
-  }, [allMovies]); // Re-compute when allMovies changes
+  }, [allgames]); // Re-compute when allgames changes
 
-  const bannerImg = trendingMovies[0]?.poster || trendingMovies[0]?.image || null;
+  const bannerImg = trendinggames[0]?.poster || trendinggames[0]?.image || null;
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
@@ -54,11 +54,11 @@ export default function TrendingPage({ allMovies, loading, error }) {
 
       <div className="flex items-center justify-between mb-4 lg:mb-6">
         <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide">
-          Trending Now ({trendingMovies.length} gaming)
+          Trending Now ({trendinggames.length} gaming)
         </h3>
       </div>
 
-      {/* Trending Movies Content Area */}
+      {/* Trending games Content Area */}
       <div className="min-h-[300px] lg:min-h-[400px] relative">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-64 lg:h-96 text-[var(--accent-color)]">
@@ -70,7 +70,7 @@ export default function TrendingPage({ allMovies, loading, error }) {
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
             {error}
           </div>
-        ) : trendingMovies.length === 0 ? (
+        ) : trendinggames.length === 0 ? (
           <div className="text-center py-8 lg:py-12">
             <div className="text-4xl lg:text-6xl mb-3 lg:mb-4">
               🔥
@@ -84,21 +84,21 @@ export default function TrendingPage({ allMovies, loading, error }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {trendingMovies.map((movie, idx) => (
-              <div key={movie.id || movie._id || movie.movieId || idx} className="relative">
+            {trendinggames.map((game, idx) => (
+              <div key={game.id || game._id || game.gameId || idx} className="relative">
                 <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
                   #{idx + 1}
                 </div>
-                <MovieCard movie={movie} />
+                <GameCard game={game} />
                 <div className="mt-2 text-center">
                   <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>
                     <span className="flex items-center gap-1">
-                      <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{movie.avgRating?.toFixed(1)}
+                      <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{game.avgRating?.toFixed(1)}
                     </span>
                     <span>•</span>
                     <span className="truncate">
-                      {movie.reviewCount > 0 ? `${movie.reviewCount} reviews` : 'Trending'}
-                      {movie.trending && ' 🔥'}
+                      {game.reviewCount > 0 ? `${game.reviewCount} reviews` : 'Trending'}
+                      {game.trending && ' 🔥'}
                     </span>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/clerk-react";
 import apiService from "../services/api";
 
 export default function TestPage() {
-  const [movies, setMovies] = useState([]);
+  const [games, setgames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [testResult, setTestResult] = useState("");
@@ -21,26 +21,26 @@ export default function TestPage() {
     setTestResult("Testing API...");
 
     try {
-      // Test 1: Fetch movies
-      const moviesData = await apiService.getMovies();
-      setMovies(moviesData.movies || []);
+      // Test 1: Fetch games
+      const gamesData = await apiService.getgames();
+      setgames(gamesData.games || []);
       setTestResult(
         (prev) =>
           prev +
-          `\n✅ Games fetch: ${moviesData.movies?.length || 0} game found`
+          `\n✅ Games fetch: ${gamesData.games?.length || 0} game found`
       );
 
-      if (moviesData.movies && moviesData.movies.length > 0) {
-        const firstMovie = moviesData.movies[0];
+      if (gamesData.games && gamesData.games.length > 0) {
+        const firstgame = gamesData.games[0];
 
-        // Test 2: Fetch specific movie
-        const movieDetails = await apiService.getMovieById(firstMovie._id);
+        // Test 2: Fetch specific game
+        const gameDetails = await apiService.getgameById(firstgame._id);
         setTestResult(
-          (prev) => prev + `\n✅ Game details: ${movieDetails.title}`
+          (prev) => prev + `\n✅ Game details: ${gameDetails.title}`
         );
 
-        // Test 3: Fetch movie ratings
-        const ratingsData = await apiService.getMovieRatings(firstMovie._id);
+        // Test 3: Fetch game ratings
+        const ratingsData = await apiService.getgameRatings(firstgame._id);
         setTestResult(
           (prev) =>
             prev +
@@ -112,26 +112,26 @@ export default function TestPage() {
         </div>
       )}
 
-      {movies.length > 0 && (
+      {games.length > 0 && (
         <div className="bg-[#232323] rounded-lg p-4">
           <h3 className="text-lg font-semibold text-white mb-2">
             Gaming from Backend:
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {movies.slice(0, 3).map((movie) => (
-              <div key={movie._id} className="bg-[#1a1a1a] rounded-lg p-4">
+            {games.slice(0, 3).map((game) => (
+              <div key={game._id} className="bg-[#1a1a1a] rounded-lg p-4">
                 <img
-                  src={movie.poster}
-                  alt={movie.title}
+                  src={game.poster}
+                  alt={game.title}
                   className="w-full h-32 object-cover rounded mb-2"
                 />
-                <h4 className="text-[#f5c518] font-semibold">{movie.title}</h4>
+                <h4 className="text-[#f5c518] font-semibold">{game.title}</h4>
                 <p className="text-gray-400 text-sm">
-                  {movie.description?.slice(0, 100)}...
+                  {game.description?.slice(0, 100)}...
                 </p>
-                <p className="text-gray-500 text-xs mt-1">ID: {movie._id}</p>
+                <p className="text-gray-500 text-xs mt-1">ID: {game._id}</p>
                 <p className="text-gray-500 text-xs">
-                  Rating: {movie.averageRating || 0}/10
+                  Rating: {game.averageRating || 0}/10
                 </p>
               </div>
             ))}
