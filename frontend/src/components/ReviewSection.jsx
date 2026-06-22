@@ -39,7 +39,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       }
 
       // Load movie details including user rating
-      const movieData = await apiService.getMovieById(gameId);
+      const movieData = await apiService.getGameById(gameId);
 
       if (movieData.userRating) {
         setUserRating(movieData.userRating);
@@ -61,7 +61,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       }
 
       // Load movie reviews
-      const ratingsData = await apiService.getMovieRatings(gameId, {
+      const ratingsData = await apiService.getGameRatings(gameId, {
         limit: 10,
         sortBy: "helpfulVotes",
         sortOrder: "desc",
