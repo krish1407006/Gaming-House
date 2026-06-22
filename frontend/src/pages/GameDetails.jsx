@@ -11,13 +11,13 @@ import { Link, useParams } from "react-router-dom";
 import ReviewSection from "../components/ReviewSection";
 import apiService from "../services/api";
 
-export default function MovieDetailPage({ allMovies }) {
+export default function GameDetailPage({ allGames }) {
   const { id } = useParams();
   const { getToken } = useAuth();
   const {  isSignedIn } = useUser();
 
   // Use backend data if available, fallback to prop data
-  const [movie, setMovie] = useState(null);
+  const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState("");
@@ -49,8 +49,8 @@ export default function MovieDetailPage({ allMovies }) {
     const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
 
     try {
-      // Try to get movie from backend first
-      const movieData = await apiService.getMovieById(id);
+      // Try to get game from backend first
+      const movieData = await apiService.getGameById(id);
 
       if (movieData && (movieData._id || movieData.id)) {
         setMovie(movieData);
@@ -58,7 +58,7 @@ export default function MovieDetailPage({ allMovies }) {
 
         // Load user preferences from localStorage
         const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-        const liked = JSON.parse(localStorage.getItem("likedMovies") || "[]");
+        const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
 
         setIsWatchlisted(watchlist.includes(id));
         setIsLiked(liked.includes(id));
@@ -70,8 +70,8 @@ export default function MovieDetailPage({ allMovies }) {
     }
 
     // Fallback to local data - try exact match with all possible ID fields
-    let fallbackMovie = allMovies?.find((m) => 
-      m.movieId === id || m._id === id || m.id === id
+    let fallbackMovie = allGames?.find((m) => 
+      m.gameId === id || m._id === id || m.id === id
     );
     
     // If not found and it's an ObjectId, we can't match local data
@@ -83,8 +83,8 @@ export default function MovieDetailPage({ allMovies }) {
 
     // If not found with simple ID, show available options
       if (!fallbackMovie) {
-        const availableIds = allMovies?.map(m => 
-          m.movieId || m._id || m.id || 'no-id'
+        const availableIds = allGames?.map(m => 
+          m.gameId || m._id || m.id || 'no-id'
         ).join(', ') || 'none';
         setError(`Gaming with ID "${id}" not found. Available IDs: ${availableIds}`);
       setLoading(false);
@@ -94,13 +94,13 @@ export default function MovieDetailPage({ allMovies }) {
     // Found in local data
     setMovie({
       _id: id,
-      title: fallbackMovie.name,
-      description: fallbackMovie.desc,
-      poster: fallbackMovie.image,
-      releaseDate: new Date(fallbackMovie.year, 0, 1),
-      averageRating: fallbackMovie.rating || 0,
+      title: fallbackgame.name,
+      description: fallbackgame.desc,
+      poster: fallbackgame.image,
+      releaseDate: new Date(fallbackgame.year, 0, 1),
+      averageRating: fallbackgame.rating || 0,
       totalRatings: 0,
-      genre: [fallbackMovie.category],
+      genre: [fallbackgame.category],
       // Add other required fields with defaults
       director: "Unknown",
       cast: [],
@@ -112,46 +112,46 @@ export default function MovieDetailPage({ allMovies }) {
 
     // Load user preferences from localStorage for fallback
     const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-    const liked = JSON.parse(localStorage.getItem("likedMovies") || "[]");
+    const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
 
     setIsWatchlisted(watchlist.includes(id));
     setIsLiked(liked.includes(id));
     setLoading(false);
-  }, [id, allMovies]);
+  }, [id, allGames]);
 
-  // Load movie data (wait for allMovies to be available)
+  // Load game data (wait for allGames to be available)
   useEffect(() => {
-    // Only load if we have allMovies or if it's null (meaning it failed to load)
-    if (allMovies !== undefined) {
+    // Only load if we have allGames or if it's null (meaning it failed to load)
+    if (allGames !== undefined) {
       loadMovieData();
     }
-  }, [loadMovieData, allMovies]);
+  }, [loadMovieData, allGames]);
 
   // Check watchlist status when user signs in (with error handling)
   useEffect(() => {
     const checkWatchlistStatus = async () => {
-      if (isSignedIn && movie) {
-        const movieId = movie?._id || movie?.id || movie?.movieId || id;
+      if (isSignedIn && game) {
+        const gameId = game?._id || game?.id || game?.gameId || id;
 
         
-        if (!movieId) {
+        if (!gameId) {
           console.error('No valid game ID found for watchlist check');
           return;
         }
         
         try {
-          const watchlistStatus = await apiService.checkWatchlistStatus(movieId);
+          const watchlistStatus = await apiService.checkWatchlistStatus(gameId);
           setIsWatchlisted(watchlistStatus.isInWatchlist);
         } catch {
           // Silently fallback to localStorage without logging errors
           const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
-          setIsWatchlisted(watchlist.includes(movieId));
+          setIsWatchlisted(watchlist.includes(gameId));
         }
       }
     };
 
     checkWatchlistStatus();
-  }, [isSignedIn, movie, id]);
+  }, [isSignedIn, game, id]);
 
   // Show notification helper
   const showNotification = (message) => {
@@ -166,10 +166,10 @@ export default function MovieDetailPage({ allMovies }) {
       return;
     }
 
-    // Get the correct movie ID - try different possible properties
-    const movieId = movie?._id || movie?.id || movie?.movieId || id;
+    // Get the correct game ID - try different possible properties
+    const gameId = game?._id || game?.id || game?.gameId || id;
     
-    if (!movieId) {
+    if (!gameId) {
       showNotification("Error: Gaming ID not found");
       return;
     }
@@ -177,21 +177,21 @@ export default function MovieDetailPage({ allMovies }) {
     try {
       if (isWatchlisted) {
         // Remove from watchlist
-        await apiService.removeFromWatchlist(movieId);
+        await apiService.removeFromWatchlist(gameId);
         setIsWatchlisted(false);
         showNotification("Removed from watchlist");
-        console.log('Game removed from watchlist:', movieId);
+        console.log('Game removed from watchlist:', gameId);
       } else {
         // Add to watchlist
-        await apiService.addToWatchlist(movieId);
+        await apiService.addToWatchlist(gameId);
         setIsWatchlisted(true);
         showNotification("Added to watchlist");
-        console.log('Game added to watchlist:', movieId);
+        console.log('Game added to watchlist:', gameId);
       }
     } catch (error) {
       console.error('Error toggling watchlist:', error);
       
-      // Handle 409 conflict (movie already in watchlist)
+      // Handle 409 conflict (game already in watchlist)
       if (error.message.includes('already in watchlist')) {
         setIsWatchlisted(true);
         showNotification("Gaming is already in watchlist");
@@ -203,11 +203,11 @@ export default function MovieDetailPage({ allMovies }) {
       let updatedWatchlist;
 
       if (isWatchlisted) {
-        updatedWatchlist = watchlist.filter((movieId) => movieId !== movie.movieId);
+        updatedWatchlist = watchlist.filter((gameId) => gameId !== game.gameId);
         setIsWatchlisted(false);
         showNotification("Removed from watchlist (offline)");
       } else {
-        updatedWatchlist = [...watchlist, movie.movieId];
+        updatedWatchlist = [...watchlist, game.gameId];
         setIsWatchlisted(true);
         showNotification("Added to watchlist (offline)");
       }
@@ -218,11 +218,11 @@ export default function MovieDetailPage({ allMovies }) {
 
   // Handle like toggle
   const handleLikeToggle = () => {
-    const liked = JSON.parse(localStorage.getItem("likedMovies") || "[]");
+    const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
     let updatedLiked;
 
     if (isLiked) {
-      updatedLiked = liked.filter((movieId) => movieId !== id);
+      updatedLiked = liked.filter((gameId) => gameId !== id);
       setIsLiked(false);
       showNotification("Removed from favorites");
     } else {
@@ -231,14 +231,14 @@ export default function MovieDetailPage({ allMovies }) {
       showNotification("Added to favorites");
     }
 
-    localStorage.setItem("likedMovies", JSON.stringify(updatedLiked));
+    localStorage.setItem("likedGames", JSON.stringify(updatedLiked));
   };
 
   // Handle share functionality
   const handleShare = async () => {
     const url = window.location.href;
-  const title = `${movie.title} - Gaming House`;
-    const text = `${movie.description}\n\nRated ${movie.averageRating}/10 stars`;
+  const title = `${game.title} - Gaming House`;
+    const text = `${game.description}\n\nRated ${game.averageRating}/10 stars`;
 
     if (navigator.share) {
       try {
@@ -275,7 +275,7 @@ export default function MovieDetailPage({ allMovies }) {
       showNotification("Review deleted successfully!");
     }
 
-    // Optionally refresh movie data to get updated averages
+    // Optionally refresh game data to get updated averages
     loadMovieData();
   };
 
@@ -289,7 +289,7 @@ export default function MovieDetailPage({ allMovies }) {
     );
   }
 
-  if (error || !movie) {
+  if (error || !game) {
     return (
       <section className="px-8 py-6 theme-bg-primary min-h-screen flex items-center justify-center">
         <div className="text-center p-8 theme-bg-secondary rounded-xl shadow-lg max-w-md mx-auto">
@@ -345,48 +345,48 @@ export default function MovieDetailPage({ allMovies }) {
         <div className="relative mb-8 rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
-            src={movie.backdrop || movie.poster}
-            alt={movie.title}
+            src={game.backdrop || game.poster}
+            alt={game.title}
             className="w-full h-96 object-cover"
             onError={(e) => {
-              if (e.target.src !== movie.poster) {
-                e.target.src = movie.poster;
+              if (e.target.src !== game.poster) {
+                e.target.src = game.poster;
               }
             }}
           />
           <div className="absolute inset-0 z-20 flex items-center px-12">
             <div className="flex gap-8 items-center max-w-4xl">
               <img
-                src={movie.poster}
-                alt={movie.title}
+                src={game.poster}
+                alt={game.title}
                 className="w-48 h-72 object-cover rounded-xl shadow-2xl border-2 theme-border-accent"
               />
               <div className="flex-1">
                 <h1 className="text-5xl font-bold theme-accent mb-4 drop-shadow-lg">
-                  {movie.title}
+                  {game.title}
                 </h1>
                 
 
-                {/* Movie Info */}
+                {/* game Info */}
                 <div className="flex items-center gap-6 mb-6">
                   <span className="text-lg font-bold theme-bg-accent theme-text-accent-contrast px-3 py-1 rounded">
-                    {new Date(movie.releaseDate).getFullYear()}
+                    {new Date(game.releaseDate).getFullYear()}
                   </span>
                   <div className="flex items-center gap-2">
                     <FaStar className="theme-accent" />
                     <span className="theme-text-primary text-lg font-semibold">
-                      {movie.averageRating
-                        ? movie.averageRating.toFixed(1)
+                      {game.averageRating
+                        ? game.averageRating.toFixed(1)
                         : "N/A"}
                       /10
                     </span>
                     <span className="theme-text-secondary text-sm">
-                      ({movie.totalRatings || 0}{" "}
-                      {movie.totalRatings === 1 ? "rating" : "ratings"})
+                      ({game.totalRatings || 0}{" "}
+                      {game.totalRatings === 1 ? "rating" : "ratings"})
                     </span>
                   </div>
                   <span className="theme-bg-secondary theme-accent px-3 py-1 rounded border theme-border-accent">
-                    {movie.genre?.[0] || "Adventure"}
+                    {game.genre?.[0] || "Adventure"}
                   </span>
                 </div>
 
@@ -429,7 +429,7 @@ export default function MovieDetailPage({ allMovies }) {
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {/* Movie Overview */}
+            {/* game Overview */}
             <div className="theme-bg-secondary rounded-xl p-8 mb-8">
               <div className="flex items-center gap-4 mb-6">
                 <span className="w-1 theme-bg-accent h-6 inline-block rounded-full"></span>
@@ -441,7 +441,7 @@ export default function MovieDetailPage({ allMovies }) {
                     Synopsis
                   </h3>
                   <p className="theme-text-secondary leading-relaxed">
-                    {movie.description}
+                    {game.description}
                   </p>
                   
                 </div>
@@ -456,27 +456,27 @@ export default function MovieDetailPage({ allMovies }) {
                         <span className="theme-text-primary font-medium">
                           Release Year:
                         </span>{" "}
-                        {new Date(movie.releaseDate).getFullYear()}
+                        {new Date(game.releaseDate).getFullYear()}
                       </p>
                       <p>
                         <span className="theme-text-primary font-medium">Genre:</span>{" "}
-                        {movie.genre?.join(", ") || "N/A"}
+                        {game.genre?.join(", ") || "N/A"}
                       </p>
                       <p>
                         <span className="theme-text-primary font-medium">
                           Duration:
                         </span>{" "}
-                        {movie.duration ? `${movie.duration} min` : "N/A"}
+                        {game.duration ? `${game.duration} min` : "N/A"}
                       </p>
                       <p>
                         <span className="theme-text-primary font-medium">
                           Language:
                         </span>{" "}
-                        {movie.language || "N/A"}
+                        {game.language || "N/A"}
                       </p>
                       <p>
                         <span className="theme-text-primary font-medium">Country:</span>{" "}
-                        {movie.country || "N/A"}
+                        {game.country || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -490,26 +490,26 @@ export default function MovieDetailPage({ allMovies }) {
                         <span className="theme-text-primary font-medium">
                           Director:
                         </span>{" "}
-                        {movie.director || "N/A"}
+                        {game.director || "N/A"}
                       </p>
                       <p>
                         <span className="theme-text-primary font-medium">Cast:</span>{" "}
-                        {movie.cast?.join(", ") || "N/A"}
+                        {game.cast?.join(", ") || "N/A"}
                       </p>
-                      {movie.budget && (
+                      {game.budget && (
                         <p>
                           <span className="theme-text-primary font-medium">
                             Budget:
                           </span>{" "}
-                          ${(movie.budget / 1000000).toFixed(1)}M
+                          ${(game.budget / 1000000).toFixed(1)}M
                         </p>
                       )}
-                      {movie.boxOffice && (
+                      {game.boxOffice && (
                         <p>
                           <span className="theme-text-primary font-medium">
                             Box Office:
                           </span>{" "}
-                          ${(movie.boxOffice / 1000000).toFixed(1)}M
+                          ${(game.boxOffice / 1000000).toFixed(1)}M
                         </p>
                       )}
                     </div>
@@ -519,18 +519,18 @@ export default function MovieDetailPage({ allMovies }) {
             </div>
 
             {/* Screenshots / Gallery */}
-            {movie.screenshots && movie.screenshots.length > 0 && (
+            {game.screenshots && game.screenshots.length > 0 && (
               <div className="theme-bg-secondary rounded-xl p-8 mb-8">
                 <div className="flex items-center gap-4 mb-6">
                   <span className="w-1 theme-bg-accent h-6 inline-block rounded-full"></span>
                   <h2 className="text-2xl font-bold theme-text-primary">Screenshots</h2>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {movie.screenshots.map((screenshot, index) => (
+                  {game.screenshots.map((screenshot, index) => (
                     <div key={index} className="rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
                       <img
                         src={screenshot}
-                        alt={`${movie.title} screenshot ${index + 1}`}
+                        alt={`${game.title} screenshot ${index + 1}`}
                         className="w-full h-40 object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -544,7 +544,7 @@ export default function MovieDetailPage({ allMovies }) {
 
             {/* Reviews Section */}
             <ReviewSection
-              movieId={movie._id || movie.movieId || id}
+              gameId={game._id || game.gameId || id}
               onReviewUpdate={handleReviewUpdate}
             />
           </div>
@@ -560,8 +560,8 @@ export default function MovieDetailPage({ allMovies }) {
                 <div className="flex justify-between items-center">
                   <span className="theme-text-secondary">Gaming House Rating</span>
                   <span className="theme-text-primary font-semibold">
-                    {movie.averageRating
-                      ? movie.averageRating.toFixed(1)
+                    {game.averageRating
+                      ? game.averageRating.toFixed(1)
                       : "N/A"}
                     /10
                   </span>
@@ -569,30 +569,30 @@ export default function MovieDetailPage({ allMovies }) {
                 <div className="flex justify-between items-center">
                   <span className="theme-text-secondary">Total Ratings</span>
                   <span className="theme-text-primary font-semibold">
-                    {movie.totalRatings || 0}
+                    {game.totalRatings || 0}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="theme-text-secondary">Release Date</span>
                   <span className="theme-text-primary font-semibold">
-                    {new Date(movie.releaseDate).toLocaleDateString()}
+                    {new Date(game.releaseDate).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="theme-text-secondary">Status</span>
                   <span className="theme-text-primary font-semibold">
-                    {movie.isActive ? "Available" : "Unavailable"}
+                    {game.isActive ? "Available" : "Unavailable"}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Movie Poster */}
+            {/* game Poster */}
             <div className="theme-bg-secondary rounded-xl p-6">
               <h3 className="text-xl font-bold theme-accent mb-4">Poster</h3>
               <img
-                src={movie.poster}
-                alt={movie.title}
+                src={game.poster}
+                alt={game.title}
                 className="w-full rounded-lg shadow-lg"
               />
             </div>
