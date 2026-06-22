@@ -147,6 +147,7 @@ export default function CategoriesPage({ allMovies, loading, error }) {
             : `${selectedGenre} Gaming (${filteredMovies.length})`}
         </h3>
       </div>
+      
 
       {loading ? (
         <div className="flex items-center justify-center w-full h-32 theme-accent text-xl font-bold">
