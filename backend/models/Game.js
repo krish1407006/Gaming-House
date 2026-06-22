@@ -84,6 +84,14 @@ const gameSchema = new mongoose.Schema(
       type: String,
       trim: true,
     }],
+    publisher: {
+      type: String,
+      trim: true,
+    },
+    highlights: [{
+      type: String,
+      trim: true,
+    }],
     trailer: {
       type: String,
       trim: true,
