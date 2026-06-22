@@ -141,4 +141,4 @@ gameSchema.index({ averageRating: -1 });
 gameSchema.index({ isActive: 1 });
 gameSchema.index({ featured: -1 });
 
-export default mongoose.model("Movie", gameSchema);
+export default mongoose.model("Game", gameSchema);
