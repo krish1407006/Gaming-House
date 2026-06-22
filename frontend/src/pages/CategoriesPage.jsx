@@ -2,10 +2,10 @@ import React, { useState, useMemo } from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 
-export default function CategoriesPage({ allgames, loading, error }) {
+export default function CategoriesPage({ allGames, loading, error }) {
   const [activeCategory, setActiveCategory] = useState(null);
 
-  const games = Array.isArray(allgames) ? allgames : [];
+  const games = Array.isArray(allGames) ? allGames : [];
 
   const categories = useMemo(() => {
     const cats = new Set();

@@ -2,14 +2,14 @@ import React from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 
-export default function TrendingPage({ allgames, loading, error }) {
-  // Filter and process only trending games - use useMemo to force re-computation when allgames changes
+export default function TrendingPage({ allGames, loading, error }) {
+  // Filter and process only trending games - use useMemo to force re-computation when allGames changes
   const trendinggames = React.useMemo(() => {
-    if (!allgames || !Array.isArray(allgames)) {
+    if (!allGames || !Array.isArray(allGames)) {
       return [];
     }
 
-    return allgames
+    return allGames
       .filter((game) => {
         // Check both local data (trending) and backend data (featured) fields
         return game.trending === true || game.featured === true;
@@ -28,7 +28,7 @@ export default function TrendingPage({ allgames, loading, error }) {
         };
       })
       .sort((a, b) => b.avgRating - a.avgRating); // Sort by rating
-  }, [allgames]); // Re-compute when allgames changes
+  }, [allGames]); // Re-compute when allGames changes
 
   const bannerImg = trendinggames[0]?.poster || trendinggames[0]?.image || null;
 

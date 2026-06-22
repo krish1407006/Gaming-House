@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import GameCard from "../components/GameCard";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
 
-export default function HomePage({ allgames, loading, error }) {
+export default function HomePage({ allGames, loading, error }) {
   const [activeCategory, setActiveCategory] = useState(null);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
@@ -17,8 +17,8 @@ export default function HomePage({ allgames, loading, error }) {
     return () => clearInterval(intervalId);
   }, []);
   
-  // Safety check for allgames
-  const games = Array.isArray(allgames) ? allgames : [];
+  // Safety check for allGames
+  const games = Array.isArray(allGames) ? allGames : [];
   
   let filteredgames = games;
   if (activeCategory) {

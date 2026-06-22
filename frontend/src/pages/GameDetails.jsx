@@ -94,13 +94,13 @@ export default function GameDetailPage({ allGames }) {
     // Found in local data
     setMovie({
       _id: id,
-      title: fallbackgame.name,
-      description: fallbackgame.desc,
-      poster: fallbackgame.image,
-      releaseDate: new Date(fallbackgame.year, 0, 1),
-      averageRating: fallbackgame.rating || 0,
+      title: fallbackMovie.name,
+      description: fallbackMovie.desc,
+      poster: fallbackMovie.image,
+      releaseDate: new Date(fallbackMovie.year, 0, 1),
+      averageRating: fallbackMovie.rating || 0,
       totalRatings: 0,
-      genre: [fallbackgame.category],
+      genre: [fallbackMovie.category],
       // Add other required fields with defaults
       director: "Unknown",
       cast: [],
