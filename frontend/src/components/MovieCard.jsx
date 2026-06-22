@@ -45,9 +45,10 @@ function MovieCard({ movie }) {
           </span>
         </h4>
 
-        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-2 lg:mb-3 line-clamp-3 sm:line-clamp-5 lg:line-clamp-6 overflow-y-auto flex-1 scrollbar-thin">
+        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 line-clamp-2 flex-1 leading-relaxed">
           {movie.desc || movie.description}
         </p>
+        <span className="text-[10px] sm:text-xs text-[var(--accent-color)]/60 mb-1.5 sm:mb-2 font-medium">Click for full details →</span>
 
         <div className="flex-shrink-0">
           <div className="flex items-center justify-between mb-1 sm:mb-2">
