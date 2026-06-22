@@ -70,7 +70,7 @@ export default function AdminDashboard({ ongameChange }) {
   const loadgames = async () => {
     try {
       setLoading(true);
-      const response = await ApiService.getgames();
+      const response = await ApiService.getGames();
       const gameData = Array.isArray(response) ? response : response.games || [];
       setgames(gameData);
     } catch (error) {
@@ -161,11 +161,11 @@ export default function AdminDashboard({ ongameChange }) {
       console.log('📤 Sending game data to backend:', gameData);
 
       if (editinggame) {
-        await ApiService.updategame(editinggame._id, gameData);
+        await ApiService.updateGame(editinggame._id, gameData);
   console.log('✅ Gaming updated successfully');
   alert("Gaming updated successfully!");
       } else {
-        const result = await ApiService.creategame(gameData);
+        const result = await ApiService.createGame(gameData);
   console.log('✅ Game created successfully:', result);
   alert("Game created successfully!");
       }
@@ -213,7 +213,7 @@ export default function AdminDashboard({ ongameChange }) {
   const handleDelete = async (gameId) => {
   if (window.confirm("Are you sure you want to delete this game?")) {
       try {
-        await ApiService.deletegame(gameId);
+        await ApiService.deleteGame(gameId);
         loadgames();
         
         // Update global games state in other pages

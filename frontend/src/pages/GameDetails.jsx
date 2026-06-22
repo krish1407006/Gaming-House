@@ -53,7 +53,7 @@ export default function GameDetailPage({ allGames }) {
       const movieData = await apiService.getGameById(id);
 
       if (movieData && (movieData._id || movieData.id)) {
-        setMovie(movieData);
+        setGame(movieData);
         console.log("🎬 Loaded games from backend:", movieData.title || movieData.name);
 
         // Load user preferences from localStorage
@@ -92,7 +92,7 @@ export default function GameDetailPage({ allGames }) {
     }
 
     // Found in local data
-    setMovie({
+    setGame({
       _id: id,
       title: fallbackMovie.name,
       description: fallbackMovie.desc,
