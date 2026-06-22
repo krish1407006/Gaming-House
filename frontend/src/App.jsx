@@ -36,12 +36,12 @@ function GetToken() {
 async function fetchGames() {
   try {
     console.log("� Fetching games from backend API...");
-    const response = await apiService.getMovies();
+    const response = await apiService.getGames();
     console.log("🔍 Raw backend response:", response);
     
-    // Backend returns { movies: [...], pagination: {...} }
-    const movies = Array.isArray(response) ? response : (response?.movies || response?.data || []);
-    console.log("✅ Backend games loaded:", movies.length, "games");
+    // Backend returns { games: [...], pagination: {...} }
+    const games = Array.isArray(response) ? response : (response?.games || response?.data || []);
+    console.log("✅ Backend games loaded:", games.length, "games");
     return movies;
   } catch (error) {
     console.error("❌ Backend fetch failed:", error);
@@ -50,7 +50,7 @@ async function fetchGames() {
 }
 
 function App() {
-  const [allGames, setallGames] = useState([]);
+  const [allGames, setAllGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,10 +78,10 @@ function App() {
       return;
     }
 
-    // Search movies by name/title
-    const filtered = allGames.filter(movie =>
-      movie.title?.toLowerCase().includes(value.toLowerCase()) ||
-      movie.name?.toLowerCase().includes(value.toLowerCase())
+    // Search games by name/title
+    const filtered = allGames.filter(game =>
+      game.title?.toLowerCase().includes(value.toLowerCase()) ||
+      game.name?.toLowerCase().includes(value.toLowerCase())
     );
     
     setSearchResults(filtered);
@@ -100,12 +100,12 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Load movies function
-  const loadMovies = async () => {
+  // Load games function
+  const loadGames = async () => {
     setLoading(true);
     try {
       const data = await fetchGames();
-      setallGames(data);
+      setAllGames(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -114,7 +114,7 @@ function App() {
   };
 
   React.useEffect(() => {
-    loadMovies();
+    loadGames();
   }, []);
 
   return (
@@ -140,25 +140,25 @@ function App() {
                 <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
                   {searchResults.map((movie) => (
                     <div
-                      key={movie._id || movie.id}
+                      key={game._id || game.id}
                       className="flex items-center gap-3 p-3 hover:bg-[var(--bg-tertiary)] cursor-pointer border-b border-[var(--border-color)] last:border-b-0"
                       onClick={() => {
-                        window.location.href = `/game/${movie._id || movie.id}`;
+                        window.location.href = `/game/${game._id || game.id}`;
                         setShowResults(false);
                         setSearchQuery("");
                       }}
                     >
                       <img
-                        src={movie.poster || movie.image}
-                        alt={movie.title || movie.name}
+                        src={game.poster || game.image}
+                        alt={game.title || game.name}
                         className="w-12 h-16 object-cover rounded"
                       />
                       <div>
                         <h4 className="font-semibold text-[var(--text-primary)]">
-                          {movie.title || movie.name}
+                          {game.title || game.name}
                         </h4>
                         <p className="text-sm text-[var(--text-secondary)]">
-                          {movie.year || new Date(movie.releaseDate).getFullYear()}
+                          {game.year || new Date(game.releaseDate).getFullYear()}
                         </p>
                       </div>
                     </div>
@@ -203,7 +203,7 @@ function App() {
           <Route path="/categories" element={<CategoriesPage allGames={allGames} loading={loading} error={error} />} />
           <Route path="/watchlist" element={<WatchlistPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/admin" element={<AdminDashboard onGameChange={() => loadMovies()} />} />
+          <Route path="/admin" element={<AdminDashboard onGameChange={() => loadGames()} />} />
           <Route path="/test" element={<TestPage />} />
           <Route
             path="/game/:id"
