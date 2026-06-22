@@ -7,11 +7,6 @@ export const getUsers = async (req, res) => {
   try {
     const { limit, offset, emailAddress } = req.query;
 
-<<<<<<< HEAD
-    
-
-=======
->>>>>>> e1ad7233d75d56e1f08bd2d401c0e12056d63066
     const result = await userService.getUsers({
       limit: limit ? parseInt(limit) : undefined,
       offset: offset ? parseInt(offset) : undefined,
