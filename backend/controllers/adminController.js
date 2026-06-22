@@ -107,7 +107,7 @@ export const getAllGames = async (req, res) => {
       featuredOnly,
     } = req.query;
 
-    const result = await gameService.getMovies({
+    const result = await gameService.getGames({
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       genre,
@@ -261,17 +261,17 @@ export const toggleGameFeatured = async (req, res) => {
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const [movieStats, userStats] = await Promise.all([
-      gameService.getMovieStats(),
+    const [gameStats, userStats] = await Promise.all([
+      gameService.getGameStats(),
       Promise.resolve({ success: true, data: {} }),
     ]);
 
-    if (!movieStats.success) {
+    if (!gameStats.success) {
       return res.status(500).json({ error: "Failed to fetch statistics" });
     }
 
     res.json({
-      movies: movieStats.data,
+      games: gameStats.data,
     });
   } catch (error) {
     console.error("Error in admin getDashboardStats:", error);
@@ -284,7 +284,7 @@ export const getGameRatingsAdmin = async (req, res) => {
     const { id } = req.params;
     const { page, limit, sortBy, sortOrder } = req.query;
 
-    const result = await ratingService.getMovieRatings(id, {
+    const result = await ratingService.getGameRatings(id, {
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       sortBy,

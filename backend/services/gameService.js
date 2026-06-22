@@ -79,7 +79,7 @@ export const getGameById = async (movieId, includeReviews = true) => {
     let reviews = [];
     if (includeReviews) {
       reviews = await Rating.find({
-        movieId: movieId,
+        gameId: movieId,
         isPublic: true,
         review: { $exists: true, $ne: "" },
       })
@@ -177,7 +177,7 @@ export const deleteGame = async (movieId) => {
       };
     }
 
-    await Rating.deleteMany({ movieId });
+    await Rating.deleteMany({ gameId: movieId });
 
     return {
       success: true,
@@ -288,7 +288,7 @@ export const getGameStats = async () => {
 export const updateGameRatingStats = async (movieId) => {
   try {
     const stats = await Rating.aggregate([
-      { $match: { movieId: new mongoose.Types.ObjectId(movieId) } },
+      { $match: { gameId: new mongoose.Types.ObjectId(movieId) } },
       {
         $group: {
           _id: null,
