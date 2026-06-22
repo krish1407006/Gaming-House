@@ -12,8 +12,8 @@ class ApiService {
     
     // Reduce logging for frequently called endpoints
     const isWatchlistRequest = endpoint.includes('/watchlist/check/');
-    const isMovieRequest = endpoint.includes('/api/movies');
-    const shouldLog = !isWatchlistRequest && (Math.random() < 0.3 || !isMovieRequest); // Log 30% of requests
+    const isGameRequest = endpoint.includes('/api/games');
+    const shouldLog = !isWatchlistRequest && (Math.random() < 0.3 || !isGameRequest); // Log 30% of requests
     
     if (shouldLog) {
       console.log("🌐 API Request:", options.method || "GET", url);
@@ -50,7 +50,7 @@ class ApiService {
       return result;
     } catch (error) {
       // Use error handler for better error management
-      const shouldSilence = isWatchlistRequest || isMovieRequest;
+      const shouldSilence = isWatchlistRequest || isGameRequest;
       errorHandler.handleApiError(error, endpoint, shouldSilence);
       throw error;
     }
@@ -79,46 +79,46 @@ class ApiService {
   }
 
   // Movie endpoints
-  async getMovies(params = {}) {
+  async getGames(params = {}) {
     const queryString = new URLSearchParams(params).toString();
-    const endpoint = `/api/movies${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `/api/games${queryString ? `?${queryString}` : ""}`;
     return this.request(endpoint);
   }
 
-  async getMovieById(movieId) {
-    return this.request(`/api/movies/${movieId}`);
+  async getGameById(gameId) {
+    return this.request(`/api/games/${gameId}`);
   }
 
-  async getMovieRatings(movieId, params = {}) {
+  async getGameRatings(gameId, params = {}) {
     const queryString = new URLSearchParams(params).toString();
-    const endpoint = `/api/movies/${movieId}/ratings${
+    const endpoint = `/api/games/${gameId}/ratings${
       queryString ? `?${queryString}` : ""
     }`;
     return this.request(endpoint);
   }
 
   // Rating endpoints
-  async createOrUpdateRating(movieId, ratingData) {
-    return this.request(`/api/movies/${movieId}/rate`, {
+  async createOrUpdateRating(gameId, ratingData) {
+    return this.request(`/api/games/${gameId}/rate`, {
       method: "POST",
       body: JSON.stringify(ratingData),
     });
   }
 
-  async deleteRating(movieId) {
-    return this.request(`/api/movies/${movieId}/rate`, {
+  async deleteRating(gameId) {
+    return this.request(`/api/games/${gameId}/rate`, {
       method: "DELETE",
     });
   }
 
   async markReviewHelpful(ratingId) {
-    return this.request(`/api/movies/ratings/${ratingId}/helpful`, {
+    return this.request(`/api/games/ratings/${ratingId}/helpful`, {
       method: "POST",
     });
   }
 
   async removeHelpfulMark(ratingId) {
-    return this.request(`/api/movies/ratings/${ratingId}/helpful`, {
+    return this.request(`/api/games/ratings/${ratingId}/helpful`, {
       method: "DELETE",
     });
   }
@@ -137,18 +137,18 @@ class ApiService {
     return this.request("/api/watchlist");
   }
 
-  async addToWatchlist(movieId) {
-    console.log("🎬 addToWatchlist called with movieId:", movieId);
+  async addToWatchlist(gameId) {
+    console.log("🎬 addToWatchlist called with gameId:", gameId);
     const result = await this.request("/api/watchlist/add", {
       method: "POST",
-      body: JSON.stringify({ movieId }),
+      body: JSON.stringify({ gameId }),
     });
     console.log("🎬 addToWatchlist result:", result);
     return result;
   }
 
-  async removeFromWatchlist(movieId) {
-    return this.request(`/api/watchlist/${movieId}`, {
+  async removeFromWatchlist(gameId) {
+    return this.request(`/api/watchlist/${gameId}`, {
       method: "DELETE",
     });
   }
@@ -159,8 +159,8 @@ class ApiService {
     });
   }
 
-  async checkWatchlistStatus(movieId) {
-    return this.request(`/api/watchlist/check/${movieId}`);
+  async checkWatchlistStatus(gameId) {
+    return this.request(`/api/watchlist/check/${gameId}`);
   }
 
   // Legacy localStorage fallback methods
@@ -174,11 +174,11 @@ class ApiService {
     }
   }
 
-  addToWatchlistLocal(userId, movieId) {
+  addToWatchlistLocal(userId, gameId) {
     try {
       const watchlist = this.getWatchlistLocal(userId);
-      if (!watchlist.includes(movieId)) {
-        watchlist.push(movieId);
+      if (!watchlist.includes(gameId)) {
+        watchlist.push(gameId);
         localStorage.setItem(`watchlist_${userId}`, JSON.stringify(watchlist));
       }
       return true;
@@ -188,10 +188,10 @@ class ApiService {
     }
   }
 
-  removeFromWatchlistLocal(userId, movieId) {
+  removeFromWatchlistLocal(userId, gameId) {
     try {
       const watchlist = this.getWatchlistLocal(userId);
-      const updatedWatchlist = watchlist.filter((id) => id !== movieId);
+      const updatedWatchlist = watchlist.filter((id) => id !== gameId);
       localStorage.setItem(
         `watchlist_${userId}`,
         JSON.stringify(updatedWatchlist)
@@ -213,8 +213,8 @@ class ApiService {
     }
   }
 
-  // Admin Methods for Movie Management
-  async createMovie(movieData) {
+  // Admin Methods for Game Management
+  async createGame(movieData) {
     try {
       console.log("� Creating new game:", movieData.title);
       return await this.request("/api/admin/movies", {
@@ -227,10 +227,10 @@ class ApiService {
     }
   }
 
-  async updateMovie(movieId, movieData) {
+  async updateGame(gameId, movieData) {
     try {
-      console.log("� Updating game:", movieId);
-      return await this.request(`/api/admin/movies/${movieId}`, {
+      console.log("� Updating game:", gameId);
+      return await this.request(`/api/admin/movies/${gameId}`, {
         method: "PUT",
         body: JSON.stringify(movieData),
       });
@@ -240,10 +240,10 @@ class ApiService {
     }
   }
 
-  async deleteMovie(movieId) {
+  async deleteGame(gameId) {
     try {
-      console.log("� Deleting game:", movieId);
-      return await this.request(`/api/admin/movies/${movieId}`, {
+      console.log("� Deleting game:", gameId);
+      return await this.request(`/api/admin/movies/${gameId}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -262,10 +262,10 @@ class ApiService {
     }
   }
 
-  async toggleMovieFeatured(movieId) {
+  async toggleGameFeatured(gameId) {
     try {
-      console.log("⭐ Toggling featured status for movie:", movieId);
-      return await this.request(`/api/admin/movies/${movieId}/featured`, {
+      console.log("⭐ Toggling featured status for movie:", gameId);
+      return await this.request(`/api/admin/movies/${gameId}/featured`, {
         method: "PATCH",
       });
     } catch (error) {
@@ -274,7 +274,7 @@ class ApiService {
     }
   }
 
-  async bulkUpdateMovies(movieIds, updateData) {
+  async bulkUpdateGames(movieIds, updateData) {
     try {
       console.log("🔄 Bulk updating games:", movieIds.length);
       return await this.request("/api/admin/movies/bulk", {
