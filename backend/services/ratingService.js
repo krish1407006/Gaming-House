@@ -2,17 +2,17 @@ import Rating from "../models/Rating.js";
 import Game from "../models/Game.js";
 import { updateGameRatingStats } from "./gameService.js";
 
-export const createOrUpdateRating = async (userId, movieId, ratingData) => {
+export const createOrUpdateRating = async (userId, gameId, ratingData) => {
   try {
-    const movie = await Movie.findById(movieId);
+    const movie = await Game.findById(gameId);
     if (!movie) {
       return {
         success: false,
-        error: "Movie not found",
+        error: "Game not found",
       };
     }
 
-    const existingRating = await Rating.findOne({ userId, movieId });
+    const existingRating = await Rating.findOne({ userId, gameId });
 
     let rating;
     let isUpdate = false;
@@ -32,7 +32,7 @@ export const createOrUpdateRating = async (userId, movieId, ratingData) => {
     } else {
       rating = new Rating({
         userId,
-        movieId,
+        gameId,
         rating: ratingData.rating,
         review: ratingData.review || "",
         isPublic:
@@ -41,7 +41,7 @@ export const createOrUpdateRating = async (userId, movieId, ratingData) => {
       await rating.save();
     }
 
-    await updateGameRatingStats(movieId);
+    await updateGameRatingStats(gameId);
 
     return {
       success: true,
@@ -62,9 +62,9 @@ export const createOrUpdateRating = async (userId, movieId, ratingData) => {
   }
 };
 
-export const getUserRating = async (userId, movieId) => {
+export const getUserRating = async (userId, gameId) => {
   try {
-    const rating = await Rating.findOne({ userId, movieId }).lean();
+    const rating = await Rating.findOne({ userId, gameId }).lean();
 
     if (!rating) {
       return {
@@ -101,7 +101,7 @@ export const getUserRatings = async (userId, options = {}) => {
 
     const [ratings, totalCount] = await Promise.all([
       Rating.find({ userId })
-        .populate("movieId", "title poster releaseDate director")
+        .populate("gameId", "title poster releaseDate director")
         .sort(sort)
         .skip(skip)
         .limit(parseInt(limit))
@@ -131,7 +131,7 @@ export const getUserRatings = async (userId, options = {}) => {
   }
 };
 
-export const getMovieRatings = async (movieId, options = {}) => {
+export const getGameRatings = async (gameId, options = {}) => {
   try {
     const {
       page = 1,
@@ -147,7 +147,7 @@ export const getMovieRatings = async (movieId, options = {}) => {
 
     sort.createdAt = -1;
 
-    const query = { movieId };
+    const query = { gameId };
     if (publicOnly) {
       query.isPublic = true;
     }
@@ -179,9 +179,9 @@ export const getMovieRatings = async (movieId, options = {}) => {
   }
 };
 
-export const deleteRating = async (userId, movieId) => {
+export const deleteRating = async (userId, gameId) => {
   try {
-    const rating = await Rating.findOneAndDelete({ userId, movieId });
+    const rating = await Rating.findOneAndDelete({ userId, gameId });
 
     if (!rating) {
       return {
@@ -190,7 +190,7 @@ export const deleteRating = async (userId, movieId) => {
       };
     }
 
-    await updateGameRatingStats(movieId);
+    await updateGameRatingStats(gameId);
 
     return {
       success: true,
