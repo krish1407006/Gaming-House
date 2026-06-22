@@ -64,7 +64,7 @@ export const getMovieById = async (req, res) => {
   }
 };
 
-export const getMovieRatings = async (req, res) => {
+export const getGameRatings = async (req, res) => {
   try {
     const { id } = req.params;
     const { page, limit, sortBy, sortOrder } = req.query;
@@ -78,7 +78,7 @@ export const getMovieRatings = async (req, res) => {
       return res.status(404).json({ error: "Movie not found" });
     }
 
-    const result = await ratingService.getMovieRatings(id, {
+    const result = await ratingService.getGameRatings(id, {
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       sortBy,
@@ -92,7 +92,7 @@ export const getMovieRatings = async (req, res) => {
 
     res.json(result.data);
   } catch (error) {
-    console.error("Error in getMovieRatings:", error);
+    console.error("Error in getGameRatings:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
