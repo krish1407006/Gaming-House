@@ -1,0 +1,96 @@
+/* ========== GLOBAL VISUAL ENHANCEMENTS ========== */
+
+/* Animated gradient accent bar */
+.global-accent-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #f59e0b, #7c3aed);
+  background-size: 200% 100%;
+  animation: accentBarShimmer 3s ease-in-out infinite;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+@keyframes accentBarShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Card glow on hover */
+.card-glow {
+  position: relative;
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.card-glow:hover::before {
+  opacity: 0.4;
+}
+
+/* Smooth scrollbar for the whole page */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary, #181818);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color, #7c3aed);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover, #5b21b6);
+}
+
+/* Fade-in animation for cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-fade-in {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.card-fade-in:nth-child(1) { animation-delay: 0s; }
+.card-fade-in:nth-child(2) { animation-delay: 0.05s; }
+.card-fade-in:nth-child(3) { animation-delay: 0.1s; }
+.card-fade-in:nth-child(4) { animation-delay: 0.15s; }
+.card-fade-in:nth-child(5) { animation-delay: 0.2s; }
+.card-fade-in:nth-child(6) { animation-delay: 0.25s; }
+.card-fade-in:nth-child(7) { animation-delay: 0.3s; }
+.card-fade-in:nth-child(8) { animation-delay: 0.35s; }
+.card-fade-in:nth-child(9) { animation-delay: 0.4s; }
+.card-fade-in:nth-child(10) { animation-delay: 0.45s; }
+.card-fade-in:nth-child(11) { animation-delay: 0.5s; }
+.card-fade-in:nth-child(12) { animation-delay: 0.55s; }
+.card-fade-in:nth-child(13) { animation-delay: 0.6s; }
+.card-fade-in:nth-child(14) { animation-delay: 0.65s; }
+.card-fade-in:nth-child(15) { animation-delay: 0.7s; }
+.card-fade-in:nth-child(16) { animation-delay: 0.75s; }
+.card-fade-in:nth-child(17) { animation-delay: 0.8s; }
+.card-fade-in:nth-child(18) { animation-delay: 0.85s; }
+.card-fade-in:nth-child(19) { animation-delay: 0.9s; }
+.card-fade-in:nth-child(20) { animation-delay: 0.95s; }
