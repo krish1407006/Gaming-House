@@ -57,10 +57,10 @@ export const getGames = async (options = {}) => {
       },
     };
   } catch (error) {
-    console.error("Error fetching movies:", error);
+    console.error("Error fetching games:", error);
     return {
       success: false,
-      error: "Failed to fetch movies",
+      error: "Failed to fetch games",
     };
   }
 };
