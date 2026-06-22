@@ -345,9 +345,14 @@ export default function MovieDetailPage({ allMovies }) {
         <div className="relative mb-8 rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
-            src={movie.poster}
+            src={movie.backdrop || movie.poster}
             alt={movie.title}
             className="w-full h-96 object-cover"
+            onError={(e) => {
+              if (e.target.src !== movie.poster) {
+                e.target.src = movie.poster;
+              }
+            }}
           />
           <div className="absolute inset-0 z-20 flex items-center px-12">
             <div className="flex gap-8 items-center max-w-4xl">
@@ -512,6 +517,30 @@ export default function MovieDetailPage({ allMovies }) {
                 </div>
               </div>
             </div>
+
+            {/* Screenshots / Gallery */}
+            {movie.screenshots && movie.screenshots.length > 0 && (
+              <div className="theme-bg-secondary rounded-xl p-8 mb-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="w-1 theme-bg-accent h-6 inline-block rounded-full"></span>
+                  <h2 className="text-2xl font-bold theme-text-primary">Screenshots</h2>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {movie.screenshots.map((screenshot, index) => (
+                    <div key={index} className="rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+                      <img
+                        src={screenshot}
+                        alt={`${movie.title} screenshot ${index + 1}`}
+                        className="w-full h-40 object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Reviews Section */}
             <ReviewSection

@@ -141,6 +141,7 @@ export default function AdminDashboard({ onMovieChange }) {
         poster: formData.poster.trim() || undefined,
         trailer: formData.trailer.trim() || undefined,
         backdrop: formData.backdrop.trim() || undefined,
+        screenshots: formData.screenshots ? formData.screenshots.split(',').map(s => s.trim()).filter(s => s) : undefined,
         // Convert year to proper releaseDate for backend
         releaseDate: formData.year ? new Date(`${formData.year}-01-01`) : new Date(),
         // Convert runtime to duration (number) for backend
@@ -192,6 +193,7 @@ export default function AdminDashboard({ onMovieChange }) {
       poster: movie.poster || "",
       trailer: movie.trailer || "",
       backdrop: movie.backdrop || "",
+      screenshots: Array.isArray(movie.screenshots) ? movie.screenshots.join(", ") : movie.screenshots || "",
       year: movie.year || new Date(movie.releaseDate).getFullYear() || "",
       runtime: movie.runtime || movie.duration || "",
       genre: Array.isArray(movie.genre) ? movie.genre.join(", ") : movie.genre || "",
@@ -232,6 +234,7 @@ export default function AdminDashboard({ onMovieChange }) {
       poster: "",
       trailer: "",
       backdrop: "",
+      screenshots: "",
       year: "",
       runtime: "",
       genre: "",
@@ -787,6 +790,19 @@ export default function AdminDashboard({ onMovieChange }) {
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:shadow-md"
                             placeholder="https://example.com/backdrop.jpg"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold mb-2">Screenshots (comma-separated URLs)</label>
+                          <input
+                            type="text"
+                            name="screenshots"
+                            value={formData.screenshots}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:shadow-md"
+                            placeholder="https://example.com/screen1.jpg, https://example.com/screen2.jpg"
                             disabled={isSubmitting}
                           />
                         </div>
