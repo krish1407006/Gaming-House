@@ -10,11 +10,16 @@ export const requireAdmin = () => {
         return res.status(401).json({
           error: "Authentication required",
         });
+<<<<<<< HEAD
         
       }
 
 
 
+=======
+      }
+
+>>>>>>> e1ad7233d75d56e1f08bd2d401c0e12056d63066
       const adminStatus = await isUserAdmin(userId);
 
       if (!adminStatus) {
