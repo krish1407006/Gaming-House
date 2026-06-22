@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const ratingSchema = new mongoose.Schema(
   {
-    movieId: {
+    gameId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Movie",
+      ref: "Game",
       required: true,
     },
     userId: {
@@ -42,9 +42,9 @@ const ratingSchema = new mongoose.Schema(
   }
 );
 
-ratingSchema.index({ movieId: 1, userId: 1 }, { unique: true });
+ratingSchema.index({ gameId: 1, userId: 1 }, { unique: true });
 
-ratingSchema.index({ movieId: 1 });
+ratingSchema.index({ gameId: 1 });
 ratingSchema.index({ userId: 1 });
 ratingSchema.index({ rating: -1 });
 ratingSchema.index({ createdAt: -1 });
