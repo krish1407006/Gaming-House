@@ -1,6 +1,6 @@
 import { getAuth } from "@clerk/express";
 import * as userService from "../services/userService.js";
-import * as movieService from "../services/movieService.js";
+import * as gameService from "../services/gameService.js";
 import * as ratingService from "../services/ratingService.js";
 
 export const getUsers = async (req, res) => {
@@ -107,7 +107,7 @@ export const getAllMovies = async (req, res) => {
       featuredOnly,
     } = req.query;
 
-    const result = await movieService.getMovies({
+    const result = await gameService.getMovies({
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       genre,
@@ -151,7 +151,7 @@ export const createMovie = async (req, res) => {
       }
     }
 
-    const result = await movieService.createMovie(movieData, userId);
+    const result = await gameService.createMovie(movieData, userId);
 
     if (!result.success) {
       return res.status(400).json({ error: result.error });
@@ -172,7 +172,7 @@ export const updateMovie = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    const result = await movieService.updateMovie(id, updateData);
+    const result = await gameService.updateMovie(id, updateData);
 
     if (!result.success) {
       return res.status(400).json({ error: result.error });
@@ -192,7 +192,7 @@ export const deleteMovie = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await movieService.deleteMovie(id);
+    const result = await gameService.deleteMovie(id);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
@@ -216,7 +216,7 @@ export const toggleMovieStatus = async (req, res) => {
       });
     }
 
-    const result = await movieService.toggleMovieStatus(id, isActive);
+    const result = await gameService.toggleMovieStatus(id, isActive);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
@@ -243,7 +243,7 @@ export const toggleMovieFeatured = async (req, res) => {
       });
     }
 
-    const result = await movieService.toggleMovieFeatured(id, featured);
+    const result = await gameService.toggleMovieFeatured(id, featured);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });
@@ -262,7 +262,7 @@ export const toggleMovieFeatured = async (req, res) => {
 export const getDashboardStats = async (req, res) => {
   try {
     const [movieStats, userStats] = await Promise.all([
-      movieService.getMovieStats(),
+      gameService.getMovieStats(),
       Promise.resolve({ success: true, data: {} }),
     ]);
 

@@ -9,7 +9,7 @@ import {
 import connectDB from "./config/database.js";
 import { checkSuperAdmin } from "./utils/superAdmin.js";
 import userRoutes from "./routes/userRoutes.js";
-import movieRoutes from "./routes/movieRoutes.js";
+import gameRoutes from "./routes/gameRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import devRoutes from "./routes/devRoutes.js";
 import watchlistRoutes from "./routes/watchlistRoutes.js";
@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/health",
       users: "/api/users",
-      movies: "/api/movies",
+      games: "/api/games",
       watchlist: "/api/watchlist",
       admin: "/api/admin",
       chat: "/api/chat",
@@ -52,7 +52,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/users", userRoutes);
-app.use("/api/movies", movieRoutes);
+app.use("/api/games", gameRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/chat", chatbotRoutes);
@@ -81,7 +81,7 @@ app.use((req, res) => {
     availableEndpoints: {
       health: "/health",
       users: "/api/users",
-      movies: "/api/movies",
+      games: "/api/games",
       admin: "/api/admin",
       chat: "/api/chat",
     },

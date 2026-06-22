@@ -1,6 +1,6 @@
 import Rating from "../models/Rating.js";
-import Movie from "../models/Movie.js";
-import { updateMovieRatingStats } from "./movieService.js";
+import Game from "../models/Game.js";
+import { updateGameRatingStats } from "./gameService.js";
 
 export const createOrUpdateRating = async (userId, movieId, ratingData) => {
   try {
@@ -41,7 +41,7 @@ export const createOrUpdateRating = async (userId, movieId, ratingData) => {
       await rating.save();
     }
 
-    await updateMovieRatingStats(movieId);
+    await updateGameRatingStats(movieId);
 
     return {
       success: true,
@@ -190,7 +190,7 @@ export const deleteRating = async (userId, movieId) => {
       };
     }
 
-    await updateMovieRatingStats(movieId);
+    await updateGameRatingStats(movieId);
 
     return {
       success: true,
