@@ -16,6 +16,8 @@ import watchlistRoutes from "./routes/watchlistRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import cors from "cors";
 
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
