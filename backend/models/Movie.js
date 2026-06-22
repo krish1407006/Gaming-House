@@ -76,6 +76,14 @@ const movieSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    backdrop: {
+      type: String,
+      trim: true,
+    },
+    screenshots: [{
+      type: String,
+      trim: true,
+    }],
     trailer: {
       type: String,
       trim: true,

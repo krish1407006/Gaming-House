@@ -42,6 +42,7 @@ export default function AdminDashboard({ onMovieChange }) {
     poster: "",
     trailer: "",
     backdrop: "",
+    screenshots: "",
     year: "",
     runtime: "",
     genre: "",
