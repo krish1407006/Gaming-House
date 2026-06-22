@@ -1,10 +1,10 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import Movie from "../models/Movie.js";
+import Game from "../models/Game.js";
 import connectDB from "../config/database.js";
 
 // Sample game data - 51 popular games with enhanced descriptions and images
-const sampleMovies = [
+const sampleGames = [
   { title: "Elden Ring", description: "A masterpiece collaboration between FromSoftware and George R.R. Martin featuring a vast open-world filled with mystery and danger. Explore the Lands Between freely, engage in challenging combat with intricate boss battles, and uncover multiple branching storylines that reshape the world. Experience the perfect blend of beautiful landscapes, dark fantasy atmosphere, and rewarding exploration with deep RPG mechanics.", director: "Hidetaka Miyazaki", cast: ["FromSoftware"], genre: ["Action", "Adventure", "Fantasy"], releaseDate: new Date("2022-02-25"), duration: 100, language: "English", country: "Japan", poster: "https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg", featured: true, isActive: true, addedBy: "system" },
   { title: "The Legend of Zelda: Breath of the Wild", description: "A revolutionary open-world adventure that completely redefined the action-adventure genre with unprecedented freedom. Break free from linear gameplay, solve environmental puzzles creatively, and tackle massive dungeons in any order you choose. Discover countless secrets, master combat mechanics, and experience one of gaming's greatest achievements with breathtaking artwork and innovative gameplay systems.", director: "Eiji Aonuma", cast: ["Nintendo"], genre: ["Adventure", "Action", "Fantasy"], releaseDate: new Date("2017-03-03"), duration: 80, language: "English", country: "Japan", poster: "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg", featured: true, isActive: true, addedBy: "system" },
   { title: "Cyberpunk 2077", description: "Immerse yourself in Night City, a sprawling metropolis of 2077 where technology and humanity collide. Create your own character and navigate a rich, branching narrative filled with moral choices that impact your world. Experience next-gen graphics, fast-paced combat, hacking gameplay, and a soundtrack that captures the essence of a dystopian future.", director: "Adam Badowski", cast: ["CD Projekt Red"], genre: ["Action", "Adventure", "Sci-Fi"], releaseDate: new Date("2020-12-10"), duration: 120, language: "English", country: "Poland", poster: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg", featured: true, isActive: true, addedBy: "system" },
@@ -58,18 +58,18 @@ const sampleMovies = [
   { title: "Spider-Man 2", description: "Swing through NYC as Spider-Man in this superhero action game featuring Peter Parker and Miles Morales. Master web-slinging mechanics, engage in spectacular combat against super-villains, complete challenging missions. With dynamic city interaction, engaging narrative, and satisfying gameplay, Spider-Man 2 is the definitive web-slinger experience.", director: "Bryan Intihar", cast: ["Insomniac Games"], genre: ["Action", "Adventure", "Drama"], releaseDate: new Date("2023-10-20"), duration: 30, language: "English", country: "USA", poster: "https://cdn.akamai.steamstatic.com/steam/apps/2651280/header.jpg", featured: true, isActive: true, addedBy: "system" },
 ];
 
-async function seedMovies() {
+async function seedGames() {
   try {
     await connectDB();
 
     // Clear existing movies
-    await Movie.deleteMany({});
+    await Game.deleteMany({});
     console.log("Cleared existing movies");
 
     // Insert sample movies
-    const insertedMovies = await Movie.insertMany(sampleMovies);
-    console.log(`Inserted ${insertedMovies.length} movies:`);
-    insertedMovies.forEach((movie) => {
+    const insertedGames = await Game.insertMany(sampleGames);
+    console.log(`Inserted ${insertedGames.length} movies:`);
+    insertedGames.forEach((movie) => {
       console.log(`- ${movie.title} (ID: ${movie._id})`);
     });
 
@@ -81,4 +81,4 @@ async function seedMovies() {
   }
 }
 
-seedMovies();
+seedGames();

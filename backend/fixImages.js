@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Movie from './models/Movie.js';
+import Game from './models/Game.js';
 
 async function fixBrokenImages() {
   try {
@@ -7,12 +7,12 @@ async function fixBrokenImages() {
     console.log('Connected to MongoDB');
 
     // Fix broken poster URLs
-    const result1 = await Movie.updateMany(
+    const result1 = await Game.updateMany(
       { poster: { $regex: '81n5lHkQKGL._AC_UF894,1000_QL80_.jpg' } },
       { $set: { poster: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg' } }
     );
 
-    const result2 = await Movie.updateMany(
+    const result2 = await Game.updateMany(
       { poster: { $regex: '81Q1b6vK8zL._AC_UF894,1000_QL80_.jpg' } },
       { $set: { poster: 'https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg' } }
     );
@@ -20,7 +20,7 @@ async function fixBrokenImages() {
     console.log(`Updated ${result1.modifiedCount + result2.modifiedCount} broken poster URLs`);
     
     // List all movies to verify
-    const movies = await Movie.find({});
+    const movies = await Game.find({});
     console.log('\nCurrent movies in database:');
     movies.forEach(movie => {
       console.log(`- ${movie.title}: ${movie.poster}`);

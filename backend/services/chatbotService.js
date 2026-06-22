@@ -1,4 +1,4 @@
-import Movie from "../models/Movie.js";
+import Game from "../models/Game.js";
 
 export const chatbotService = {
   // Check if message is a greeting
@@ -46,7 +46,7 @@ export const chatbotService = {
         .trim();
 
       // Search for the game in database
-      const game = await Movie.findOne({
+      const game = await Game.findOne({
         $or: [
           { title: { $regex: gameName, $options: "i" } },
           { description: { $regex: gameName, $options: "i" } }
@@ -175,7 +175,7 @@ export const chatbotService = {
   // Provide suggestions when game not found
   async provideSuggestions(query) {
     try {
-      const allGames = await Movie.find({ isActive: true })
+      const allGames = await Game.find({ isActive: true })
         .limit(5)
         .select("title genre");
 
