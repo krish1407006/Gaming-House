@@ -8,7 +8,7 @@ import {
   UserButton,
 } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-react";
-import MovieDetailPage from "./pages/movieDetails";
+import GameDetailPage from "./pages/GameDetails";
 import TestPage from "./pages/TestPage";
 // import apiService from "./services/api"; // Temporarily disabled
 
@@ -32,8 +32,8 @@ function GetToken() {
   return <button onClick={handleClick}>Log Token</button>;
 }
 
-// fetchMovies from backend API
-async function fetchMovies() {
+// fetchGames from backend API
+async function fetchGames() {
   try {
     console.log("� Fetching games from backend API...");
     const response = await apiService.getMovies();
@@ -50,7 +50,7 @@ async function fetchMovies() {
 }
 
 function App() {
-  const [allMovies, setAllMovies] = useState([]);
+  const [allGames, setallGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,7 +79,7 @@ function App() {
     }
 
     // Search movies by name/title
-    const filtered = allMovies.filter(movie =>
+    const filtered = allGames.filter(movie =>
       movie.title?.toLowerCase().includes(value.toLowerCase()) ||
       movie.name?.toLowerCase().includes(value.toLowerCase())
     );
@@ -104,8 +104,8 @@ function App() {
   const loadMovies = async () => {
     setLoading(true);
     try {
-      const data = await fetchMovies();
-      setAllMovies(data);
+      const data = await fetchGames();
+      setallGames(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -143,7 +143,7 @@ function App() {
                       key={movie._id || movie.id}
                       className="flex items-center gap-3 p-3 hover:bg-[var(--bg-tertiary)] cursor-pointer border-b border-[var(--border-color)] last:border-b-0"
                       onClick={() => {
-                        window.location.href = `/movie/${movie._id || movie.id}`;
+                        window.location.href = `/game/${movie._id || movie.id}`;
                         setShowResults(false);
                         setSearchQuery("");
                       }}
@@ -195,19 +195,19 @@ function App() {
           <Route
             path="/"
             element={
-              <HomePage allMovies={allMovies} loading={loading} error={error} />
+              <HomePage allGames={allGames} loading={loading} error={error} />
             }
           />
-          <Route path="/trending" element={<TrendingPage key={allMovies.length} allMovies={allMovies} loading={loading} error={error} />} />
-          <Route path="/top" element={<TopRatedPage key={allMovies.length} allMovies={allMovies} loading={loading} error={error} />} />
-          <Route path="/categories" element={<CategoriesPage allMovies={allMovies} loading={loading} error={error} />} />
+          <Route path="/trending" element={<TrendingPage key={allGames.length} allGames={allGames} loading={loading} error={error} />} />
+          <Route path="/top" element={<TopRatedPage key={allGames.length} allGames={allGames} loading={loading} error={error} />} />
+          <Route path="/categories" element={<CategoriesPage allGames={allGames} loading={loading} error={error} />} />
           <Route path="/watchlist" element={<WatchlistPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/admin" element={<AdminDashboard onMovieChange={() => loadMovies()} />} />
+          <Route path="/admin" element={<AdminDashboard onGameChange={() => loadMovies()} />} />
           <Route path="/test" element={<TestPage />} />
           <Route
-            path="/movie/:id"
-            element={<MovieDetailPage allMovies={allMovies} />}
+            path="/game/:id"
+            element={<GameDetailPage allGames={allGames} />}
           />
         </Routes>
       </main>
