@@ -137,6 +137,8 @@ export default function CategoriesPage({ allMovies, loading, error }) {
         </div>
       </div>
 
+
+
       {/* Results */}
       <div className="flex items-center justify-between mb-4 lg:mb-6">
         <h3 className="text-lg lg:text-2xl font-bold theme-text-primary tracking-wide">
