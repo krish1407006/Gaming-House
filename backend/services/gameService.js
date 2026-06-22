@@ -38,7 +38,7 @@ export const getGames = async (options = {}) => {
     const sort = {};
     sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
-    const [movies, totalCount] = await Promise.all([
+    const [games, totalCount] = await Promise.all([
       Game.find(query).sort(sort).skip(skip).limit(parseInt(limit)).lean(),
       Game.countDocuments(query),
     ]);
@@ -46,12 +46,12 @@ export const getGames = async (options = {}) => {
     return {
       success: true,
       data: {
-        movies,
+        games,
         pagination: {
           currentPage: parseInt(page),
           totalPages: Math.ceil(totalCount / limit),
           totalCount,
-          hasNextPage: skip + movies.length < totalCount,
+          hasNextPage: skip + games.length < totalCount,
           hasPrevPage: page > 1,
         },
       },
