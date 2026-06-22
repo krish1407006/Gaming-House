@@ -42,7 +42,7 @@ async function fetchGames() {
     // Backend returns { games: [...], pagination: {...} }
     const games = Array.isArray(response) ? response : (response?.games || response?.data || []);
     console.log("✅ Backend games loaded:", games.length, "games");
-    return movies;
+    return games;
   } catch (error) {
     console.error("❌ Backend fetch failed:", error);
     throw new Error("Failed to fetch games from backend");
@@ -138,7 +138,7 @@ function App() {
               {/* Search Results */}
               {showResults && searchResults.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
-                  {searchResults.map((movie) => (
+                  {searchResults.map((game) => (
                     <div
                       key={game._id || game.id}
                       className="flex items-center gap-3 p-3 hover:bg-[var(--bg-tertiary)] cursor-pointer border-b border-[var(--border-color)] last:border-b-0"
