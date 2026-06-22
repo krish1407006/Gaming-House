@@ -45,8 +45,13 @@ function GameCard({ game }) {
           </span>
         </h4>
 
-        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 line-clamp-2 flex-1 leading-relaxed">
-          {game.desc || game.description}
+        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 flex-1 leading-relaxed">
+          {(game.desc || game.description)?.length > 80
+            ? (game.desc || game.description).slice(0, 80) + "..."
+            : game.desc || game.description}
+          {(game.desc || game.description)?.length > 80 && (
+            <span className="text-[var(--accent-color)] font-medium ml-1">read more</span>
+          )}
         </p>
         <span className="text-[10px] sm:text-xs text-[var(--accent-color)]/60 mb-1.5 sm:mb-2 font-medium">Click for full details →</span>
 
