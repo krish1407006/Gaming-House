@@ -1,26 +1,15 @@
 /* Navigation Animations */
 @keyframes navItemClick {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
 }
 
 @keyframes navItemHover {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.05);
-  }
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); }
 }
 
-/* Ripple Effect */
 .nav-link {
   position: relative;
   overflow: hidden;
@@ -45,17 +34,10 @@
 }
 
 @keyframes ripple {
-  0% {
-    transform: scale(0, 0);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(100, 100);
-    opacity: 0;
-  }
+  0% { transform: scale(0, 0); opacity: 0.3; }
+  100% { transform: scale(100, 100); opacity: 0; }
 }
 
-/* Glow Effect */
 .nav-link.active {
   animation: glow 2s ease-in-out infinite alternate;
 }
@@ -73,182 +55,120 @@
   }
 }
 
-/* Discovery Section Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.2; }
+}
+
+.animate-fade-in { animation: fadeIn 1s ease-out; }
+.animate-fade-in-up { animation: fadeInUp 1s ease-out; animation-fill-mode: both; animation-delay: 0.2s; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-pulse-slow { animation: pulse 4s ease-in-out infinite; }
+
+/* ========================================
+   GAMING CARD HOVER - Power Core
+   ======================================== */
+
+@keyframes corePulse {
+  0% { transform: scale(0.3); opacity: 0; }
+  20% { opacity: 0.7; }
+  80% { opacity: 0.5; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes coreRing {
+  0% { transform: scale(0.8); opacity: 0.8; border-width: 3px; }
+  100% { transform: scale(2.2); opacity: 0; border-width: 1px; }
+}
+
+@keyframes coreGlow {
   0%, 100% {
-    opacity: 0.1;
+    box-shadow:
+      0 0 10px rgba(0, 255, 255, 0.3),
+      0 0 30px rgba(124, 58, 237, 0.15);
   }
   50% {
-    opacity: 0.2;
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 1s ease-out;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 1s ease-out;
-  animation-fill-mode: both;
-  animation-delay: 0.2s;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-slow {
-  animation: pulse 4s ease-in-out infinite;
-}
-
-/* Gaming Card Effects - Arcade Neon */
-@keyframes arcadeGlow {
-  0% {
     box-shadow:
-      0 0 5px #00ffff,
-      0 0 10px #00ffff,
-      0 0 20px #ff00ff,
-      0 0 40px rgba(255,0,255,0.3),
-      inset 0 0 5px rgba(0,255,255,0.1);
-  }
-  33% {
-    box-shadow:
-      0 0 5px #ff00ff,
-      0 0 10px #ff00ff,
-      0 0 20px #00ffff,
-      0 0 40px rgba(0,255,255,0.3),
-      inset 0 0 5px rgba(255,0,255,0.1);
-  }
-  66% {
-    box-shadow:
-      0 0 5px #ff00ff,
-      0 0 15px #ffff00,
-      0 0 25px #ff00ff,
-      0 0 45px rgba(124,58,237,0.3),
-      inset 0 0 5px rgba(255,255,0,0.1);
-  }
-  100% {
-    box-shadow:
-      0 0 5px #00ffff,
-      0 0 10px #00ffff,
-      0 0 20px #ff00ff,
-      0 0 40px rgba(255,0,255,0.3),
-      inset 0 0 5px rgba(0,255,255,0.1);
+      0 0 20px rgba(0, 255, 255, 0.5),
+      0 0 50px rgba(124, 58, 237, 0.25);
   }
 }
 
-@keyframes dataStream {
-  0% {
-    background-position: 0% 0%;
-    opacity: 0;
+@keyframes rimLight {
+  0%, 100% {
+    box-shadow:
+      inset 0 4px 12px rgba(0, 255, 255, 0.15),
+      inset 0 -4px 12px rgba(124, 58, 237, 0.15);
   }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    background-position: 0% 200%;
-    opacity: 0;
+  50% {
+    box-shadow:
+      inset 0 6px 20px rgba(0, 255, 255, 0.25),
+      inset 0 -6px 20px rgba(124, 58, 237, 0.25);
   }
 }
 
-@keyframes sheenSweep {
-  0% {
-    transform: translateX(-100%) skewX(-20deg);
-  }
-  100% {
-    transform: translateX(300%) skewX(-20deg);
-  }
+@keyframes imageBreath {
+  0%, 100% { filter: brightness(1) contrast(1); }
+  50% { filter: brightness(1.08) contrast(1.05) saturate(1.1); }
 }
 
-@keyframes energyPulse {
-  0% {
-    transform: scale(0);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(4);
-    opacity: 0;
-  }
+.game-card-hover {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .game-card-hover:hover {
-  animation: arcadeGlow 2s ease-in-out infinite;
-}
-
-.game-card-hover:hover .game-card-image-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 3px,
-    rgba(0, 255, 255, 0.03) 3px,
-    rgba(255, 0, 255, 0.03) 6px
-  );
-  background-size: 200% 100%;
-  animation: dataStream 2s linear forwards;
-  pointer-events: none;
-  z-index: 3;
-  mix-blend-mode: overlay;
-}
-
-.game-card-hover:hover .sheen-effect {
-  animation: sheenSweep 0.6s ease-in-out forwards;
-}
-
-.game-card-hover:hover .energy-ripple {
-  animation: energyPulse 0.5s ease-out forwards;
+  transform: perspective(800px) rotateX(2deg) rotateY(-2deg) scale(1.03);
+  animation: coreGlow 1.5s ease-in-out infinite;
+  border-color: var(--accent-color);
 }
 
 .game-card-hover:hover .game-card-image {
-  filter: brightness(1.1) contrast(1.1) saturate(1.2);
-  transform: scale(1.03);
+  animation: imageBreath 1.5s ease-in-out infinite;
+}
+
+.game-card-hover:hover .power-core {
+  animation: corePulse 1s ease-out forwards;
+}
+
+.game-card-hover:hover .power-core-ring {
+  animation: coreRing 0.8s ease-out 0.2s forwards;
+}
+
+.game-card-hover:hover .power-core-ring-2 {
+  animation: coreRing 1s ease-out 0.5s forwards;
+}
+
+.game-card-hover:hover .game-card-content {
+  animation: rimLight 1.5s ease-in-out infinite;
 }
 
 .game-card-hover:hover .game-card-title {
   text-shadow:
-    0 0 7px #00ffff,
-    0 0 14px #ff00ff,
-    0 0 21px rgba(124,58,237,0.5);
+    0 0 10px rgba(0, 255, 255, 0.6),
+    0 0 20px rgba(124, 58, 237, 0.4);
 }
 
 .game-card-hover:hover .game-card-year {
-  box-shadow: 0 0 12px #00ffff, 0 0 24px rgba(255,0,255,0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 }
 
-.game-card-hover:hover .game-card-rating {
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+.game-card-hover:hover .game-card-arrow {
+  opacity: 1;
+  transform: translateX(4px);
 }
