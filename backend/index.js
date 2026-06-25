@@ -24,13 +24,16 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 checkSuperAdmin();
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
 app.use(clerkMiddleware());
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
-    message: "CriticScore API",
+    message: "Gaming House API",
     version: "1.0.0",
     endpoints: {
       health: "/health",

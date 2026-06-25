@@ -55,8 +55,10 @@ export default function Chatbot() {
       // Simulate thinking time (1.5 - 2.5 seconds) for realistic response
       const thinkingTime = 1500 + Math.random() * 1000;
       
+      const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "https://criticscore.onrender.com/"}/api/chat`,
+        `${API_BASE_URL}/api/chat`,
         {
           method: "POST",
           headers: {
