@@ -1,13 +1,13 @@
-/* Theme Variables */
+/* Theme Variables - Default Light Theme */
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
   --accent-color: #00d4ff;
   --accent-color-rgb: 0, 212, 255;
   --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
-  --border-color: #222222;
+  --border-color: #e5e7eb;
   --success-color: #10b981;
   --error-color: #ef4444;
   --warning-color: #f59e0b;
