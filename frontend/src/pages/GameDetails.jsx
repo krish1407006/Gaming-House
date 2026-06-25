@@ -267,6 +267,27 @@ export default function GameDetailPage({ allGames }) {
   };
 
   // Handle review updates from ReviewSection
+  const heroImageRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroImageRef.current) {
+        const scrollY = window.scrollY;
+        heroImageRef.current.style.transform = `translateY(${scrollY * 0.15}px)`;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const relatedGames = allGames?.filter(g => {
+    const currentGenre = game.genre?.[0] || game.category;
+    const gGenre = g.genre?.[0] || g.category;
+    const gId = g._id || g.id || g.gameId;
+    const currentId = game._id || game.id || game.gameId;
+    return gGenre === currentGenre && gId !== currentId;
+  }).slice(0, 4) || [];
+
   const handleReviewUpdate = (updatedRating) => {
     if (updatedRating) {
       showNotification(
