@@ -203,48 +203,8 @@
   }
 }
 
-.game-card-hover {
-  position: relative;
-  isolation: isolate;
-}
-
-.game-card-hover::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: inherit;
-  background: conic-gradient(
-    from 0deg,
-    transparent,
-    #00ffff 20%,
-    #ff00ff 40%,
-    transparent 50%,
-    #ffff00 70%,
-    #00ffff 90%,
-    transparent
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  animation: rotateBorder 3s linear infinite;
-}
-
-@keyframes rotateBorder {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.game-card-hover:hover::before {
-  opacity: 1;
-}
-
 .game-card-hover:hover {
   animation: arcadeGlow 2s ease-in-out infinite;
-  border-color: transparent !important;
 }
 
 .game-card-hover:hover .game-card-image-wrapper::after {
