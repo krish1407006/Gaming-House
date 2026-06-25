@@ -24,12 +24,12 @@ function GameCard({ game }) {
 
   return (
     <div className="card-glow card-fade-in bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[var(--accent-color)]/20 overflow-hidden hover:border-[var(--accent-color)] border-2 border-transparent transition-all duration-300 hover:-translate-y-1 relative group h-[340px] sm:h-[400px] lg:h-[460px] w-full flex flex-col">
-      <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden">
+      <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)]">
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-secondary)] via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         <img
           src={getImageSrc() || fallbackImage}
           alt={game.name || game.title || 'Gaming poster'}
-          className="w-full h-28 sm:h-32 lg:h-36 object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-28 sm:h-32 lg:h-36 object-cover transition-transform duration-300 group-hover:scale-105 bg-[var(--bg-secondary)]"
           onError={(e) => {
             if (e.target.src !== fallbackImage) {
               e.target.src = fallbackImage;
