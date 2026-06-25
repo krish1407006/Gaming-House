@@ -21,8 +21,8 @@ function GameCard({ game }) {
     <div className="game-card-hover card-fade-in bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[340px] sm:h-[400px] lg:h-[460px] w-full flex flex-col">
       <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)]">
         <div className="power-core absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 blur-xl opacity-0 pointer-events-none z-10"></div>
-        <div className="power-core-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-cyan-400 pointer-events-none z-10"></div>
-        <div className="power-core-ring-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-purple-500 pointer-events-none z-10"></div>
+        <div className="power-core-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-cyan-400 pointer-events-none z-10"></div>
+        <div className="power-core-ring-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-purple-500 pointer-events-none z-10"></div>
         <img
           src={getImageSrc() || fallbackImage}
           alt={game.name || game.title || 'Gaming poster'}
