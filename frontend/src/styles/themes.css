@@ -754,74 +754,13 @@ body,
   display: none !important;
 }
 
-/* ===== 3D PERSPECTIVE GRID BACKGROUND ===== */
+/* Particle canvas background glow animations */
+@keyframes floatGlow {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(60px, -40px) scale(1.2); }
+}
 
-/* Layer 1: Deep dark base */
 body {
   background-color: var(--bg-primary);
-}
-
-/* Layer 2: Ambient light glow (soft white + cyan pools) */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 900px 700px at 20% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 700px 900px at 80% 30%, rgba(0, 212, 255, 0.1) 0%, transparent 60%),
-    radial-gradient(ellipse 600px 800px at 50% 85%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-  animation: ambientPulse 15s ease-in-out infinite alternate;
-}
-
-@keyframes ambientPulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.9; }
-  100% { opacity: 0.6; }
-}
-
-/* Layer 3: 3D perspective grid floor - scrolls upward infinitely */
-body::after {
-  content: '';
-  position: fixed;
-  left: -100%;
-  right: -100%;
-  bottom: -50%;
-  height: 200vh;
-  z-index: -1;
-  pointer-events: none;
-  transform-origin: center bottom;
-  transform: perspective(500px) rotateX(65deg) scale(2.5);
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 60px),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 60px);
-  animation: gridScroll 25s linear infinite;
-  mask-image: linear-gradient(to top, black 30%, transparent 80%);
-  -webkit-mask-image: linear-gradient(to top, black 30%, transparent 80%);
-}
-
-@keyframes gridScroll {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 60px; }
-}
-
-/* Light theme overrides */
-.light-theme {
-  --grid-line: rgba(0, 0, 0, 0.06);
-}
-
-.light-theme body::before,
-body.light-theme::before {
-  background:
-    radial-gradient(ellipse 900px 700px at 20% 15%, rgba(0, 153, 204, 0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 700px 900px at 80% 30%, rgba(0, 0, 0, 0.03) 0%, transparent 60%);
-}
-
-.light-theme body::after,
-body.light-theme::after {
-  background-image:
-    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.06) 0px, rgba(0, 0, 0, 0.06) 1px, transparent 1px, transparent 60px),
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 60px);
 }
 

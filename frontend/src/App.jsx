@@ -13,6 +13,7 @@ import TestPage from "./pages/TestPage";
 // import apiService from "./services/api"; // Temporarily disabled
 
 import Navbar from "./components/Navbar";
+import Background from "./components/Background";
 import Chatbot from "./components/Chatbot";
 import HomePage from "./pages/HomePage";
 import TrendingPage from "./pages/TrendingPage";
@@ -119,6 +120,7 @@ function App() {
 
   return (
     <div className="min-h-screen theme-bg-primary theme-text-primary font-sans theme-transition">
+      <Background />
       <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       
       <main className="flex-1 flex flex-col theme-bg-primary pt-16 transition-all duration-300">
