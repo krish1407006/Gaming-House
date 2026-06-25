@@ -207,8 +207,8 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       )}
 
       {/* User Rating Section */}
-      <div className="theme-bg-secondary rounded-xl p-6">
-        <h3 className="text-xl font-bold theme-accent mb-4">Your Review</h3>
+      <div className="theme-bg-secondary rounded-xl p-4 lg:p-6">
+        <h3 className="text-lg lg:text-xl font-bold theme-accent mb-3 lg:mb-4">Your Review</h3>
 
         {isSignedIn ? (
           <div>
