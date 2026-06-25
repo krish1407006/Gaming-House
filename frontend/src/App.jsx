@@ -119,7 +119,7 @@ function App() {
 
   return (
     <div className="min-h-screen theme-bg-primary theme-text-primary font-sans theme-transition">
-      <Navbar />
+      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       
       <main className="flex-1 flex flex-col theme-bg-primary pt-16 transition-all duration-300">
         <header className="flex items-center justify-between px-4 lg:px-8 py-4 theme-bg-primary border-b theme-border">
