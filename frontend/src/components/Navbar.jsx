@@ -86,6 +86,7 @@ export default function Navbar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
             <NavLink
               key={link.path}
               to={link.path}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) => `
                 flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium
                 transition-all duration-300 ease-in-out transform
