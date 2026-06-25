@@ -280,13 +280,13 @@ export default function GameDetailPage({ allGames }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const relatedGames = allGames?.filter(g => {
+  const relatedGames = allGames && game ? allGames.filter(g => {
     const currentGenre = game.genre?.[0] || game.category;
     const gGenre = g.genre?.[0] || g.category;
     const gId = g._id || g.id || g.gameId;
     const currentId = game._id || game.id || game.gameId;
     return gGenre === currentGenre && gId !== currentId;
-  }).slice(0, 4) || [];
+  }).slice(0, 4) : [];
 
   const handleReviewUpdate = (updatedRating) => {
     if (updatedRating) {
