@@ -281,7 +281,7 @@ export default function GameDetailPage({ allGames }) {
 
   if (loading) {
     return (
-      <section className="px-8 py-6 theme-bg-primary">
+      <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary">
         <div className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 theme-border-accent"></div>
         </div>
