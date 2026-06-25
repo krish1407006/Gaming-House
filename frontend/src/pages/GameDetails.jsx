@@ -636,6 +636,21 @@ export default function GameDetailPage({ allGames }) {
             </div>
           </div>
         </div>
+
+        {/* You Might Also Like */}
+        {relatedGames.length > 0 && (
+          <div className="mt-8 lg:mt-12">
+            <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
+              <span className="w-1 theme-bg-accent h-6 lg:h-8 inline-block rounded-full"></span>
+              <h2 className="text-xl lg:text-2xl font-bold theme-text-primary">You Might Also Like</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              {relatedGames.map((g, idx) => (
+                <GameCard key={g._id || g.id || g.gameId || idx} game={g} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
