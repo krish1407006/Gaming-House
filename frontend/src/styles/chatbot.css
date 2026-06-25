@@ -337,10 +337,10 @@
 
   .chatbot-button {
     bottom: 16px;
-    right: 16px;
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
+    right: 10px;
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
   }
 
   .message-content {
