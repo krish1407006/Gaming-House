@@ -130,45 +130,165 @@
   animation: pulse 4s ease-in-out infinite;
 }
 
-/* Gaming Card Effects */
-@keyframes borderGlow {
-  0%, 100% {
-    box-shadow: 0 0 8px var(--accent-color),
-                0 0 20px rgba(124,58,237,0.4),
-                inset 0 0 8px rgba(255,255,255,0.05);
+/* Gaming Card Effects - Arcade Neon */
+@keyframes arcadeGlow {
+  0% {
+    box-shadow:
+      0 0 5px #00ffff,
+      0 0 10px #00ffff,
+      0 0 20px #ff00ff,
+      0 0 40px rgba(255,0,255,0.3),
+      inset 0 0 5px rgba(0,255,255,0.1);
   }
-  50% {
-    box-shadow: 0 0 16px var(--accent-color),
-                0 0 40px rgba(124,58,237,0.5),
-                inset 0 0 16px rgba(255,255,255,0.1);
+  33% {
+    box-shadow:
+      0 0 5px #ff00ff,
+      0 0 10px #ff00ff,
+      0 0 20px #00ffff,
+      0 0 40px rgba(0,255,255,0.3),
+      inset 0 0 5px rgba(255,0,255,0.1);
+  }
+  66% {
+    box-shadow:
+      0 0 5px #ff00ff,
+      0 0 15px #ffff00,
+      0 0 25px #ff00ff,
+      0 0 45px rgba(124,58,237,0.3),
+      inset 0 0 5px rgba(255,255,0,0.1);
+  }
+  100% {
+    box-shadow:
+      0 0 5px #00ffff,
+      0 0 10px #00ffff,
+      0 0 20px #ff00ff,
+      0 0 40px rgba(255,0,255,0.3),
+      inset 0 0 5px rgba(0,255,255,0.1);
   }
 }
 
-@keyframes sheen {
+@keyframes dataStream {
   0% {
-    transform: translateX(-100%) skewX(-15deg);
+    background-position: 0% 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
   }
   100% {
-    transform: translateX(250%) skewX(-15deg);
+    background-position: 0% 200%;
+    opacity: 0;
   }
+}
+
+@keyframes sheenSweep {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(300%) skewX(-20deg);
+  }
+}
+
+@keyframes energyPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.game-card-hover {
+  position: relative;
+  isolation: isolate;
+}
+
+.game-card-hover::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    #00ffff 20%,
+    #ff00ff 40%,
+    transparent 50%,
+    #ffff00 70%,
+    #00ffff 90%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: rotateBorder 3s linear infinite;
+}
+
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.game-card-hover:hover::before {
+  opacity: 1;
 }
 
 .game-card-hover:hover {
-  animation: borderGlow 1.5s ease-in-out infinite;
+  animation: arcadeGlow 2s ease-in-out infinite;
+  border-color: transparent !important;
+}
+
+.game-card-hover:hover .game-card-image-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 255, 255, 0.03) 3px,
+    rgba(255, 0, 255, 0.03) 6px
+  );
+  background-size: 200% 100%;
+  animation: dataStream 2s linear forwards;
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: overlay;
 }
 
 .game-card-hover:hover .sheen-effect {
-  animation: sheen 0.7s ease-in-out forwards;
+  animation: sheenSweep 0.6s ease-in-out forwards;
+}
+
+.game-card-hover:hover .energy-ripple {
+  animation: energyPulse 0.5s ease-out forwards;
 }
 
 .game-card-hover:hover .game-card-image {
-  filter: brightness(1.05) contrast(1.05);
+  filter: brightness(1.1) contrast(1.1) saturate(1.2);
+  transform: scale(1.03);
 }
 
 .game-card-hover:hover .game-card-title {
-  text-shadow: 0 0 10px var(--accent-color), 0 0 20px rgba(124,58,237,0.5);
+  text-shadow:
+    0 0 7px #00ffff,
+    0 0 14px #ff00ff,
+    0 0 21px rgba(124,58,237,0.5);
 }
 
 .game-card-hover:hover .game-card-year {
-  box-shadow: 0 0 12px var(--accent-color);
+  box-shadow: 0 0 12px #00ffff, 0 0 24px rgba(255,0,255,0.3);
+}
+
+.game-card-hover:hover .game-card-rating {
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
 }
