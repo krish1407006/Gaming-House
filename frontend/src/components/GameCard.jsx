@@ -42,7 +42,7 @@ function GameCard({ game }) {
         <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 flex-1 leading-relaxed line-clamp-4">
           {game.desc || game.description}
           {(game.desc || game.description)?.length > 120 && (
-            <span className="text-[var(--accent-color)] font-medium ml-1">read more</span>
+            <Link to={`/game/${gameId}`} className="text-[var(--accent-color)] font-medium ml-1 hover:opacity-80">read more</Link>
           )}
         </p>
 
