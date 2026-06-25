@@ -315,19 +315,29 @@
   cursor: not-allowed;
 }
 
-/* Mobile Responsive */
-@media (max-width: 640px) {
+/* Tablet */
+@media (max-width: 768px) {
   .chatbot-container {
-    width: calc(100vw - 40px);
-    height: 70vh;
-    bottom: 90px;
-    right: 20px;
-    left: 20px;
+    width: 360px;
+    height: 480px;
+    bottom: 80px;
+    right: 16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .chatbot-container {
+    bottom: 80px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    height: calc(100vh - 120px);
   }
 
   .chatbot-button {
-    bottom: 20px;
-    right: 20px;
+    bottom: 16px;
+    right: 16px;
     width: 56px;
     height: 56px;
     font-size: 24px;
@@ -338,7 +348,38 @@
   }
 
   .game-poster {
-    max-width: 150px;
-    max-height: 200px;
+    max-width: 120px;
+    max-height: 160px;
+  }
+
+  .chatbot-header {
+    padding: 12px;
+  }
+
+  .chatbot-header h3 {
+    font-size: 14px;
+  }
+
+  .chatbot-messages {
+    padding: 12px;
+  }
+
+  .chatbot-input-form {
+    padding: 8px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .chatbot-container {
+    bottom: 72px;
+    right: 6px;
+    left: 6px;
+    height: calc(100vh - 100px);
+  }
+
+  .message-content {
+    max-width: 95%;
+    padding: 8px 10px;
   }
 }
