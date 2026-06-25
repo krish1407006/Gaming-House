@@ -166,7 +166,7 @@
 }
 
 .game-card-hover:hover .game-card-title {
-  text-shadow: 0 0 10px var(--accent-color), 0 0 20px color-mix(in srgb, var(--accent-color) 50%, transparent);
+  text-shadow: 0 0 10px var(--accent-color), 0 0 20px rgba(124,58,237,0.5);
 }
 
 .game-card-hover:hover .game-card-year {
