@@ -80,7 +80,7 @@ export default function Navbar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
       </div>
 
       {/* Mobile Menu (hidden by default) */}
-      <div className="md:hidden">
+      <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
         <div className="px-2 pt-2 pb-3 space-y-1">
           {navLinks.map((link) => (
             <NavLink
