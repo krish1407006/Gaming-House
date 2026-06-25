@@ -18,12 +18,12 @@ function GameCard({ game }) {
   };
 
   return (
-    <div className="game-card-hover card-fade-in card-glow bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[340px] sm:h-[400px] lg:h-[460px] w-full flex flex-col">
+    <div className="game-card-hover card-fade-in card-glow bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[280px] sm:h-[320px] lg:h-[380px] w-full flex flex-col">
       <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)]">
         <img
           src={getImageSrc() || fallbackImage}
           alt={game.name || game.title || 'Gaming poster'}
-          className="game-card-image w-full h-28 sm:h-32 lg:h-36 object-cover bg-[var(--bg-secondary)]"
+          className="game-card-image w-full h-36 sm:h-40 lg:h-48 object-cover bg-[var(--bg-secondary)]"
           onError={(e) => {
             if (e.target.src !== fallbackImage) {
               e.target.src = fallbackImage;
@@ -39,13 +39,8 @@ function GameCard({ game }) {
           </span>
         </h4>
 
-        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 flex-1 leading-relaxed">
-          {(game.desc || game.description)?.length > 80
-            ? (game.desc || game.description).slice(0, 80) + "..."
-            : game.desc || game.description}
-          {(game.desc || game.description)?.length > 80 && (
-            <span className="text-[var(--accent-color)] font-medium ml-1">read more</span>
-          )}
+        <p className="text-[var(--text-secondary)] text-xs sm:text-sm flex-1 leading-relaxed line-clamp-3">
+          {game.desc || game.description}
         </p>
         <span className="text-[10px] sm:text-xs mb-1.5 sm:mb-2 font-medium opacity-60 flex items-center gap-1" style={{ color: 'var(--accent-color)' }}>
           <span>Click for full details →</span>
