@@ -97,9 +97,6 @@ export default function Navbar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
                 }
                 active:scale-95 active:shadow-inner
               `}
-              style={{
-                boxShadow: isActive => isActive ? '0 0 20px rgba(124, 58, 237, 0.2)' : 'none'
-              }}
             >
               <span className="text-lg">{link.icon}</span>
               <span>{link.name}</span>
