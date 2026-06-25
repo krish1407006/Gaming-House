@@ -1,5 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   FaArrowLeft,
   FaBookmark,
@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import ReviewSection from "../components/ReviewSection";
+import GameCard from "../components/GameCard";
 import apiService from "../services/api";
 
 export default function GameDetailPage({ allGames }) {
