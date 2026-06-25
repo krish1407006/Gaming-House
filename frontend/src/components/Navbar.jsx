@@ -11,7 +11,7 @@ import {
 import { NavLink } from "react-router-dom";
 import { isUserAdmin } from "../adminDetails";
 
-export default function Navbar() {
+export default function Navbar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
   const { user } = useUser();
   const isAdmin = isUserAdmin(user);
 
