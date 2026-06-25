@@ -7,8 +7,8 @@ function GameCard({ game }) {
 
   const fallbackImage = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
     <svg width="240" height="160" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#232323"/>
-  <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="16" fill="#7c3aed" text-anchor="middle" dy=".3em">No Image</text>
+      <rect width="100%" height="100%" fill="#141414"/>
+      <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="16" fill="#00d4ff" text-anchor="middle" dy=".3em">No Image</text>
     </svg>
   `);
 
