@@ -18,7 +18,7 @@ function GameCard({ game }) {
   };
 
   return (
-    <div className="game-card-hover card-fade-in card-glow bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[280px] sm:h-[320px] lg:h-[380px] w-full flex flex-col">
+    <div className="game-card-hover card-fade-in card-glow bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[320px] sm:h-[360px] lg:h-[420px] w-full flex flex-col">
       <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)]">
         <img
           src={getImageSrc() || fallbackImage}
