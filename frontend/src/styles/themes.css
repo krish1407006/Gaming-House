@@ -754,12 +754,6 @@ body,
   display: none !important;
 }
 
-/* Particle canvas background glow animations */
-@keyframes floatGlow {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(60px, -40px) scale(1.2); }
-}
-
 body {
   background-color: var(--bg-primary);
 }
