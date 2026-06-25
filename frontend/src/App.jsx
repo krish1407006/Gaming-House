@@ -122,26 +122,26 @@ function App() {
       <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       
       <main className="flex-1 flex flex-col theme-bg-primary pt-16 transition-all duration-300">
-        <header className="flex items-center justify-between px-4 lg:px-8 py-4 theme-bg-primary border-b theme-border">
-          <div className="flex items-center gap-2 lg:gap-4 justify-between w-full">
+        <header className="flex items-center justify-between px-2 sm:px-4 lg:px-8 py-2 sm:py-4 theme-bg-primary border-b theme-border gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 justify-between w-full">
             
-            <div className="relative search-container flex-1 max-w-md lg:max-w-none">
+            <div className="relative search-container flex-1 max-w-sm sm:max-w-md lg:max-w-none">
               <input
                 type="search"
                 placeholder="Search gaming..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="settings-input px-4 py-2 rounded-lg w-full lg:w-[30rem] focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] placeholder-[var(--text-secondary)] text-sm lg:text-base"
+                className="settings-input px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg w-full lg:w-[30rem] focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] placeholder-[var(--text-secondary)] text-xs sm:text-sm lg:text-base"
                 disabled={currentPath === "/settings"}
               />
               
               {/* Search Results */}
               {showResults && searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 sm:mt-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg max-h-72 sm:max-h-96 overflow-y-auto z-50">
                   {searchResults.map((game) => (
                     <div
                       key={game._id || game.id}
-                      className="flex items-center gap-3 p-3 hover:bg-[var(--bg-tertiary)] cursor-pointer border-b border-[var(--border-color)] last:border-b-0"
+                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-[var(--bg-tertiary)] cursor-pointer border-b border-[var(--border-color)] last:border-b-0"
                       onClick={() => {
                         window.location.href = `/game/${game._id || game.id}`;
                         setShowResults(false);
@@ -151,13 +151,13 @@ function App() {
                       <img
                         src={game.poster || game.image}
                         alt={game.title || game.name}
-                        className="w-12 h-16 object-cover rounded"
+                        className="w-8 h-10 sm:w-12 sm:h-16 object-cover rounded"
                       />
                       <div>
-                        <h4 className="font-semibold text-[var(--text-primary)]">
+                        <h4 className="font-semibold text-xs sm:text-base text-[var(--text-primary)]">
                           {game.title || game.name}
                         </h4>
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-[10px] sm:text-sm text-[var(--text-secondary)]">
                           {game.year || new Date(game.releaseDate).getFullYear()}
                         </p>
                       </div>
@@ -168,24 +168,22 @@ function App() {
               
               {/* No Results */}
                 {showResults && searchResults.length === 0 && searchQuery.length >= 2 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg p-4 z-50">
-                  <p className="text-[var(--text-secondary)] text-center">
+                <div className="absolute top-full left-0 right-0 mt-1 sm:mt-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg p-2 sm:p-4 z-50">
+                  <p className="text-xs sm:text-base text-[var(--text-secondary)] text-center">
                     No gaming found for "{searchQuery}"
                   </p>
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2 sm:gap-4">
               <SignedOut>
-                <SignInButton className="bg-[var(--accent-color)] text-[var(--bg-primary)] px-4 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-all" />
-                <SignUpButton className="border-2 border-[var(--accent-color)] text-[var(--accent-color)] px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--accent-color)] hover:text-[var(--bg-primary)] transition-colors" />
+                <SignInButton className="bg-[var(--accent-color)] text-[var(--bg-primary)] px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg cursor-pointer hover:opacity-90 transition-all text-xs sm:text-sm touch-target" />
+                <SignUpButton className="hidden sm:inline-flex border-2 border-[var(--accent-color)] text-[var(--accent-color)] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg cursor-pointer hover:bg-[var(--accent-color)] hover:text-[var(--bg-primary)] transition-colors text-xs sm:text-sm touch-target" />
               </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
             </div>
-          </div>
-          <div>
-            <SignedIn>
-              <UserButton  />
-            </SignedIn>
           </div>
         </header>
 
