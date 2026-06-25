@@ -322,103 +322,103 @@ export default function GameDetailPage({ allGames }) {
   }
 
   return (
-    <section className="px-8 py-6 theme-bg-primary theme-text-primary">
+    <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary theme-text-primary">
       {/* Notification Toast */}
       {notification && (
-        <div className="fixed top-4 right-4 theme-bg-accent theme-text-accent-contrast px-6 py-3 rounded-lg shadow-lg z-50 font-semibold">
+        <div className="fixed top-4 right-4 theme-bg-accent theme-text-accent-contrast px-4 lg:px-6 py-2 lg:py-3 rounded-lg shadow-lg z-50 font-semibold text-sm lg:text-base">
           {notification}
         </div>
       )}
 
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-4 lg:mb-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 theme-accent hover:theme-accent-hover transition-colors"
+            className="inline-flex items-center gap-2 theme-accent hover:theme-accent-hover transition-colors text-sm lg:text-base"
           >
             <FaArrowLeft /> Back to Games List
           </Link>
         </div>
 
         {/* Hero Section */}
-        <div className="relative mb-8 rounded-2xl shadow-2xl">
+        <div className="relative mb-6 lg:mb-8 rounded-xl lg:rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
             src={game.backdrop || game.poster}
             alt={game.title}
-            className="w-full h-96 object-cover"
+            className="w-full h-48 sm:h-64 lg:h-96 object-cover"
             onError={(e) => {
               if (e.target.src !== game.poster) {
                 e.target.src = game.poster;
               }
             }}
           />
-          <div className="absolute inset-0 z-20 flex items-center px-12">
-            <div className="flex gap-8 items-center max-w-4xl">
+          <div className="absolute inset-0 z-20 flex items-center px-4 sm:px-8 lg:px-12">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 items-center max-w-4xl w-full">
               <img
                 src={game.poster}
                 alt={game.title}
-                className="w-48 h-72 object-cover rounded-xl shadow-2xl border-2 theme-border-accent"
+                className="w-20 h-28 sm:w-32 sm:h-48 lg:w-48 lg:h-72 object-cover rounded-lg lg:rounded-xl shadow-2xl border-2 theme-border-accent shrink-0"
               />
-              <div className="flex-1">
-                <h1 className="text-5xl font-bold theme-accent mb-4 drop-shadow-lg">
+              <div className="flex-1 text-center sm:text-left">
+                <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold theme-accent mb-2 lg:mb-4 drop-shadow-lg">
                   {game.title}
                 </h1>
                 
 
                 {/* game Info */}
-                <div className="flex items-center gap-6 mb-6">
-                  <span className="text-lg font-bold theme-bg-accent theme-text-accent-contrast px-3 py-1 rounded">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 lg:gap-6 mb-4 lg:mb-6">
+                  <span className="text-sm lg:text-lg font-bold theme-bg-accent theme-text-accent-contrast px-2 lg:px-3 py-0.5 lg:py-1 rounded">
                     {new Date(game.releaseDate).getFullYear()}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <FaStar className="theme-accent" />
-                    <span className="theme-text-primary text-lg font-semibold">
+                  <div className="flex items-center gap-1 lg:gap-2">
+                    <FaStar className="theme-accent text-sm lg:text-lg" />
+                    <span className="theme-text-primary text-sm lg:text-lg font-semibold">
                       {game.averageRating
                         ? game.averageRating.toFixed(1)
                         : "N/A"}
                       /10
                     </span>
-                    <span className="theme-text-secondary text-sm">
+                    <span className="theme-text-secondary text-xs lg:text-sm">
                       ({game.totalRatings || 0}{" "}
                       {game.totalRatings === 1 ? "rating" : "ratings"})
                     </span>
                   </div>
-                  <span className="theme-bg-secondary theme-accent px-3 py-1 rounded border theme-border-accent">
+                  <span className="theme-bg-secondary theme-accent px-2 lg:px-3 py-0.5 lg:py-1 rounded border theme-border-accent text-xs lg:text-base">
                     {game.genre?.[0] || "Adventure"}
                   </span>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center sm:justify-start gap-2 lg:gap-4">
                   <button
                     onClick={handleWatchlistToggle}
-                    className={`px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
+                    className={`px-3 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold transition-colors flex items-center gap-1 lg:gap-2 text-xs lg:text-base ${
                       isWatchlisted
                         ? "theme-bg-accent theme-text-accent-contrast"
                         : "theme-bg-secondary theme-accent border theme-border-accent hover:theme-bg-accent hover:theme-text-accent-contrast"
                     }`}
                   >
-                    <FaBookmark />{" "}
+                    <FaBookmark className="text-xs lg:text-base" />{" "}
                     {isWatchlisted ? "In Watchlist" : "Add to Watchlist"}
                   </button>
                   <button
                     onClick={handleLikeToggle}
-                    className={`p-3 rounded-lg transition-colors ${
+                    className={`p-2 lg:p-3 rounded-lg transition-colors ${
                       isLiked
                         ? "bg-red-600 text-white"
                         : "theme-bg-secondary theme-text-secondary hover:text-red-500"
                     }`}
                   >
-                    <FaHeart />
+                    <FaHeart className="text-sm lg:text-base" />
                   </button>
                   <button
                     onClick={handleShare}
-                    className="p-3 theme-bg-secondary theme-text-secondary rounded-lg hover:theme-accent transition-colors"
+                    className="p-2 lg:p-3 theme-bg-secondary theme-text-secondary rounded-lg hover:theme-accent transition-colors"
                     title="Share this gaming"
                   >
-                    <FaShare />
+                    <FaShare className="text-sm lg:text-base" />
                   </button>
                 </div>
               </div>
@@ -427,10 +427,10 @@ export default function GameDetailPage({ allGames }) {
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="lg:col-span-2 space-y-6 lg:space-y-8">
             {/* game Overview */}
-            <div className="theme-bg-secondary rounded-xl p-8">
+            <div className="theme-bg-secondary rounded-xl p-4 lg:p-8">
               <div className="flex items-center gap-4 mb-8">
                 <span className="w-1.5 theme-bg-accent h-8 inline-block rounded-full"></span>
                 <h2 className="text-2xl font-bold theme-text-primary">Overview</h2>
