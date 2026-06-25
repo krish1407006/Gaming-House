@@ -39,12 +39,14 @@ function GameCard({ game }) {
           </span>
         </h4>
 
-        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 flex-1 leading-relaxed line-clamp-4">
-          {game.desc || game.description}
+        <div className="flex-1 min-h-0">
+          <p className="text-[var(--text-secondary)] text-xs sm:text-sm leading-relaxed line-clamp-4">
+            {game.desc || game.description}
+          </p>
           {(game.desc || game.description)?.length > 120 && (
-            <Link to={`/game/${gameId}`} className="text-[var(--accent-color)] font-medium ml-1 hover:opacity-80">read more</Link>
+            <Link to={`/game/${gameId}`} className="text-[var(--accent-color)] text-xs sm:text-sm font-medium hover:opacity-80 mt-1 inline-block">read more</Link>
           )}
-        </p>
+        </div>
 
         <div className="flex-shrink-0">
           <div className="flex items-center justify-between mb-1 sm:mb-2">
