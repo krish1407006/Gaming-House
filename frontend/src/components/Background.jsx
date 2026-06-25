@@ -7,7 +7,7 @@ export default function Background() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let w, h, crystals = [];
+    let w, h, particles = [];
     let animId;
 
     const resize = () => {
@@ -17,123 +17,54 @@ export default function Background() {
     resize();
     window.addEventListener("resize", resize);
 
-    function generateCrystalShape(baseRadius) {
-      const points = [];
-      const count = Math.floor(Math.random() * 5) + 7;
-      for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2;
-        const r = baseRadius * (0.5 + Math.random() * 0.6);
-        points.push({
-          x: Math.cos(angle) * r,
-          y: Math.sin(angle) * r * (0.6 + Math.random() * 0.4)
-        });
-      }
-      return points;
-    }
-
-    function getFacetShade() {
-      const g = Math.floor(Math.random() * 60 + 20);
-      return `rgb(${g}, ${g}, ${g})`;
-    }
-
-    class Crystal {
+    class Particle {
       constructor() {
         this.reset();
       }
       reset() {
         this.x = Math.random() * w;
         this.y = Math.random() * h;
-        this.size = Math.random() * 60 + 25;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.005;
-        this.speedX = (Math.random() - 0.5) * 0.15;
-        this.speedY = (Math.random() - 0.5) * 0.15;
-        this.shape = generateCrystalShape(this.size);
-        this.facetColor = getFacetShade();
-        this.outlineColor = `rgb(10, 10, 10)`;
-        this.opacity = Math.random() * 0.5 + 0.3;
-        this.pulse = Math.random() * Math.PI * 2;
-        this.pulseSpeed = 0.005 + Math.random() * 0.01;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.3 + 0.1;
       }
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
-        this.rotation += this.rotationSpeed;
-        this.pulse += this.pulseSpeed;
-
-        if (this.x < -100) this.x = w + 100;
-        if (this.x > w + 100) this.x = -100;
-        if (this.y < -100) this.y = h + 100;
-        if (this.y > h + 100) this.y = -100;
+        if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
       }
       draw() {
-        const scale = 1 + Math.sin(this.pulse) * 0.05;
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.scale(scale, scale);
-        ctx.globalAlpha = this.opacity;
-
-        const pts = this.shape;
-
-        // Draw main crystal body with gradient
         ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) {
-          ctx.lineTo(pts[i].x, pts[i].y);
-        }
-        ctx.closePath();
-        ctx.fillStyle = this.facetColor;
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 0, 0, ${this.opacity})`;
         ctx.fill();
-
-        // Draw outline
-        ctx.strokeStyle = this.outlineColor;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Draw internal facet lines (from center-ish to edges)
-        const cx = 0, cy = 0;
-        for (let i = 0; i < pts.length; i++) {
-          const next = (i + 1) % pts.length;
-          const midX = (pts[i].x + pts[next].x) / 2;
-          const midY = (pts[i].y + pts[next].y) / 2;
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.lineTo(midX, midY);
-          ctx.strokeStyle = `rgba(0, 0, 0, 0.25)`;
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
-        }
-
-        // Draw some cross facets for crystal look
-        for (let i = 0; i < pts.length; i += 2) {
-          const next = (i + 3) % pts.length;
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[next].x, pts[next].y);
-          ctx.strokeStyle = `rgba(0, 0, 0, 0.12)`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-
-        // Small shine highlight
-        const shineX = this.size * 0.15;
-        const shineY = -this.size * 0.2;
-        ctx.beginPath();
-        ctx.arc(shineX, shineY, this.size * 0.08, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, 0.25)`;
-        ctx.fill();
-
-        ctx.restore();
       }
     }
 
-    const count = Math.min(Math.floor((w * h) / 150000), 20);
-    for (let i = 0; i < count; i++) crystals.push(new Crystal());
+    const count = Math.min(Math.floor((w * h) / 12000), 120);
+    for (let i = 0; i < count; i++) particles.push(new Particle());
 
     const animate = () => {
       ctx.clearRect(0, 0, w, h);
-      crystals.forEach(c => { c.update(); c.draw(); });
+      particles.forEach(p => { p.update(); p.draw(); });
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0, 0, 0, ${0.06 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
       animId = requestAnimationFrame(animate);
     };
     animate();
@@ -145,6 +76,27 @@ export default function Background() {
   }, []);
 
   return (
-    <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />
+    <>
+      <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />
+      <div className="fixed rounded-full pointer-events-none z-0" style={{
+        width: "500px", height: "500px",
+        background: "radial-gradient(circle, rgba(0,0,0,0.03), transparent)",
+        top: "-10%", left: "-5%",
+        animation: "floatGlow 12s ease-in-out infinite alternate"
+      }} />
+      <div className="fixed rounded-full pointer-events-none z-0" style={{
+        width: "400px", height: "400px",
+        background: "radial-gradient(circle, rgba(0,0,0,0.02), transparent)",
+        bottom: "-5%", right: "-5%",
+        animation: "floatGlow 15s ease-in-out infinite alternate-reverse"
+      }} />
+      <div className="fixed rounded-full pointer-events-none z-0" style={{
+        width: "300px", height: "300px",
+        background: "radial-gradient(circle, rgba(0,0,0,0.015), transparent)",
+        top: "50%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        animation: "floatGlow 18s ease-in-out infinite alternate"
+      }} />
+    </>
   );
 }
