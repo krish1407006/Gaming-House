@@ -291,7 +291,7 @@ export default function GameDetailPage({ allGames }) {
 
   if (error || !game) {
     return (
-      <section className="px-8 py-6 theme-bg-primary min-h-screen flex items-center justify-center">
+      <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary min-h-screen flex items-center justify-center">
         <div className="text-center p-8 theme-bg-secondary rounded-xl shadow-lg max-w-md mx-auto">
           <div className="mb-4">
             <svg className="w-16 h-16 mx-auto" style={{ color: 'var(--accent-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
