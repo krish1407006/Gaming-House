@@ -359,7 +359,7 @@ export default function GameDetailPage({ allGames }) {
               <img
                 src={game.poster}
                 alt={game.title}
-                className="w-20 h-28 sm:w-32 sm:h-48 lg:w-48 lg:h-72 object-cover rounded-lg lg:rounded-xl shadow-2xl border-2 theme-border-accent shrink-0"
+                className="w-20 sm:w-32 lg:w-48 h-auto rounded-lg lg:rounded-xl shadow-2xl border-2 theme-border-accent shrink-0"
               />
               <div className="flex-1 text-center sm:text-left">
                 <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold theme-accent mb-2 lg:mb-4 drop-shadow-lg">
