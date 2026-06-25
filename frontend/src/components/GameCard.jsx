@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function GameCard({ game }) {
   const gameId = game.gameId || game._id || `temp_${Date.now()}`;
-  
+
   const fallbackImage = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
     <svg width="240" height="160" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#232323"/>
@@ -18,9 +18,10 @@ function GameCard({ game }) {
   };
 
   return (
-    <div className="game-card-hover card-fade-in bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent hover:border-[var(--accent-color)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-400 ease-out relative group h-[340px] sm:h-[400px] lg:h-[460px] w-full flex flex-col">
-      <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)]">
+    <div className="game-card-hover card-fade-in bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-400 ease-out relative group h-[340px] sm:h-[400px] lg:h-[460px] w-full flex flex-col">
+      <Link to={`/game/${gameId}`} className="flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)] game-card-image-wrapper">
         <div className="sheen-effect"></div>
+        <div className="energy-ripple absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-[#00ffff] opacity-0 pointer-events-none z-10"></div>
         <img
           src={getImageSrc() || fallbackImage}
           alt={game.name || game.title || 'Gaming poster'}
@@ -60,7 +61,7 @@ function GameCard({ game }) {
                   ? new Date(game.releaseDate).getFullYear()
                   : "N/A")}
             </span>
-            <div className="flex-shrink-0 scale-75 sm:scale-90 lg:scale-100 transition-transform duration-400 ease-out group-hover:scale-[0.85] sm:group-hover:scale-100 lg:group-hover:scale-110">
+            <div className="game-card-rating flex-shrink-0 scale-75 sm:scale-90 lg:scale-100 transition-all duration-400 ease-out">
               <StarRating rating={game.rating || game.averageRating || 0} />
             </div>
           </div>
