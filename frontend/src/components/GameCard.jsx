@@ -39,12 +39,12 @@ function GameCard({ game }) {
           </span>
         </h4>
 
-        <p className="text-[var(--text-secondary)] text-xs sm:text-sm flex-1 leading-relaxed line-clamp-3">
+        <p className="text-[var(--text-secondary)] text-xs sm:text-sm mb-1 flex-1 leading-relaxed line-clamp-4">
           {game.desc || game.description}
+          {(game.desc || game.description)?.length > 120 && (
+            <span className="text-[var(--accent-color)] font-medium ml-1">read more</span>
+          )}
         </p>
-        <span className="text-[10px] sm:text-xs mb-1.5 sm:mb-2 font-medium opacity-60 flex items-center gap-1" style={{ color: 'var(--accent-color)' }}>
-          <span>Click for full details →</span>
-        </span>
 
         <div className="flex-shrink-0">
           <div className="flex items-center justify-between mb-1 sm:mb-2">
