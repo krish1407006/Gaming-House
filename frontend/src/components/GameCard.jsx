@@ -20,7 +20,7 @@ function GameCard({ game }) {
   return (
     <div className="game-card-hover card-fade-in card-glow bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[320px] sm:h-[360px] lg:h-[420px] w-full flex flex-col">
       <Link to={`/game/${gameId}`} className="block flex-shrink-0">
-        <div className="relative overflow-hidden bg-[var(--bg-secondary)]">
+        <div className="relative overflow-hidden bg-[var(--bg-secondary)] rounded-t-lg lg:rounded-t-xl">
           <img
             src={getImageSrc() || fallbackImage}
             alt={game.name || game.title || 'Gaming poster'}
