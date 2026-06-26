@@ -138,8 +138,13 @@
   border-color: var(--accent-color);
 }
 
+.game-card-image {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.5s ease;
+}
+
 .game-card-hover:hover .game-card-image {
-  animation: imageBreath 1.5s ease-in-out infinite;
+  transform: scale(1.12);
+  filter: brightness(0.55) saturate(1.1);
 }
 
 .game-card-hover:hover .power-core {
