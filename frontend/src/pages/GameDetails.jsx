@@ -1,5 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaBookmark,
@@ -267,18 +267,6 @@ export default function GameDetailPage({ allGames }) {
   };
 
   // Handle review updates from ReviewSection
-  const heroImageRef = useRef(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroImageRef.current) {
-        const scrollY = window.scrollY;
-        heroImageRef.current.style.transform = `translateY(${scrollY * 0.15}px)`;
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const relatedGames = allGames && game ? allGames.filter(g => {
     const currentGenre = game.genre?.[0] || game.category;
