@@ -7,8 +7,12 @@ const updates = {
   "Grand Theft Auto VI": {
     poster: "https://upload.wikimedia.org/wikipedia/en/4/46/Grand_Theft_Auto_VI.png",
     screenshots: [
-      "https://upload.wikimedia.org/wikipedia/en/4/46/Grand_Theft_Auto_VI.png",
-      "https://upload.wikimedia.org/wikipedia/en/e/e5/Grand_Theft_Auto_VI_screenshot.png",
+      "https://rockstarintel.com/wp-content/uploads/2025/05/Vice_City_01.jpg",
+      "https://rockstarintel.com/wp-content/uploads/2025/05/Lucia_Caminos_03.jpg",
+      "https://rockstarintel.com/wp-content/uploads/2025/05/Jason_Duval_01.jpg",
+      "https://rockstarintel.com/wp-content/uploads/2025/05/Grassrivers_01.jpg",
+      "https://rockstarintel.com/wp-content/uploads/2025/05/Mount_Kalaga_National_Park_01.jpg",
+      "https://rockstarintel.com/wp-content/uploads/2025/05/Ambrosia_01.jpg",
     ],
   },
   "Doom: The Dark Ages": {
