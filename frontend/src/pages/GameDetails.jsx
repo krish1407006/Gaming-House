@@ -355,7 +355,6 @@ export default function GameDetailPage({ allGames }) {
         <div className="relative mb-6 lg:mb-8 rounded-xl lg:rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
-            ref={heroImageRef}
             src={game.backdrop || game.poster}
             alt={game.title}
             className="w-full h-48 sm:h-64 lg:h-96 object-cover"
