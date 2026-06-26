@@ -1,6 +1,6 @@
 import { errorHandler } from '../utils/errorHandler.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://criticscore.onrender.com/";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gaming-house-ten.vercel.app/";
 
 class ApiService {
   constructor() {
