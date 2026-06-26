@@ -13,11 +13,16 @@ const steamAppIDs = {
   "Resident Evil Village": 1196590,
   "Resident Evil 5": 21690,
   "Resident Evil 0": 339340,
-  "Like a Dragon: Pirate Yakuza in Hawaii": 2550760,
+  "Like a Dragon: Pirate Yakuza in Hawaii": 3061810,
   "The First Berserker: Khazan": 3236820,
-  "Atomfall": 3043910,
-  "Mafia: The Old Country": 3303810,
-  "Clair Obscur: Expedition 33": 3258640,
+  "Atomfall": 801800,
+  "Mafia: The Old Country": 1941540,
+  "Clair Obscur: Expedition 33": 1903340,
+  "Doom: The Dark Ages": 3017860,
+  "Death Stranding 2: On the Beach": 3280350,
+  "Avowed": 2457220,
+  "Borderlands 4": 1285190,
+  "Elden Ring Nightreign": 2622380,
 };
 
 async function fetchSteamScreenshots(appId) {
@@ -27,9 +32,11 @@ async function fetchSteamScreenshots(appId) {
       { timeout: 15000, headers: { "User-Agent": UA } }
     );
     if (data[appId]?.success && data[appId]?.data?.screenshots) {
-      return data[appId].data.screenshots
-        .slice(0, 6)
-        .map((s) => `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appId}/${s.path_full.replace(/\\/g, "/").split("/").pop()}`);
+      return data[appId].data.screenshots.slice(0, 6).map((s) =>
+        s.path_full.startsWith("https://")
+          ? s.path_full
+          : `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appId}/${s.path_full}`
+      );
     }
     return [];
   } catch {
@@ -56,6 +63,14 @@ const wikipediaCandidates = {
   "South of Midnight": [
     "File:South of Midnight cover art.jpeg",
     "File:South of Midnight gameplay screenshot.jpg",
+  ],
+  "Metroid Prime 4: Beyond": [
+    "File:Metroid Prime 4 Beyond cover art.png",
+    "File:Prime4Gameplay.png",
+  ],
+  "Gears of War: E-Day": [
+    "File:Gears of War E-Day cover art.png",
+    "File:Gears of War E-Day gameplay.jpg",
   ],
 };
 
@@ -95,6 +110,9 @@ async function main() {
   for (const [title, appId] of Object.entries(steamAppIDs)) {
     const game = await Game.findOne({ title });
     if (!game) { console.log(`NOT FOUND: ${title}`); continue; }
+
+    const existingCount = game.screenshots?.length || 0;
+    if (existingCount >= 5) { console.log(`  ${title}: already has ${existingCount}, skipping`); continue; }
 
     console.log(`Fetching Steam screenshots for: ${title} (app ${appId})...`);
     const urls = await fetchSteamScreenshots(appId);
