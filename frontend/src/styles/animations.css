@@ -143,8 +143,7 @@
 }
 
 .game-card-hover:hover .game-card-image {
-  transform: scale(1.12);
-  filter: brightness(0.8) saturate(1.1);
+  filter: brightness(0.9) saturate(1.1);
 }
 
 .game-card-hover:hover .power-core {
