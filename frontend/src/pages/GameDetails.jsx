@@ -6,6 +6,9 @@ import {
   FaHeart,
   FaShare,
   FaStar,
+  FaTimes,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import ReviewSection from "../components/ReviewSection";
@@ -265,6 +268,42 @@ export default function GameDetailPage({ allGames }) {
       }
     }
   };
+
+  // Image gallery lightbox state
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+
+  const handleImageClick = (index) => {
+    setSelectedImageIndex(index);
+  };
+
+  const handleCloseLightbox = () => {
+    setSelectedImageIndex(null);
+  };
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? game.screenshots.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prev) =>
+      prev === game.screenshots.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedImageIndex === null) return;
+      if (e.key === 'Escape') handleCloseLightbox();
+      if (e.key === 'ArrowLeft') handlePrevImage(e);
+      if (e.key === 'ArrowRight') handleNextImage(e);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImageIndex]);
 
   // Handle review updates from ReviewSection
 
@@ -543,19 +582,23 @@ export default function GameDetailPage({ allGames }) {
               </div>
             </div>
 
-            {/* Screenshots / Gallery */}
+            {/* Game Images Gallery */}
             {game.screenshots && game.screenshots.length > 0 && (
               <div className="theme-bg-secondary rounded-xl p-4 lg:p-8 mb-6 lg:mb-8">
                 <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
                   <span className="w-1 theme-bg-accent h-5 lg:h-6 inline-block rounded-full"></span>
-                  <h2 className="text-xl lg:text-2xl font-bold theme-text-primary">Screenshots</h2>
+                  <h2 className="text-xl lg:text-2xl font-bold theme-text-primary">Game Images</h2>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 lg:gap-4">
                   {game.screenshots.map((screenshot, index) => (
-                    <div key={index} className="rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+                    <div
+                      key={index}
+                      className="rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
+                      onClick={() => handleImageClick(index)}
+                    >
                       <img
                         src={screenshot}
-                        alt={`${game.title} screenshot ${index + 1}`}
+                        alt={`${game.title} game image ${index + 1}`}
                         className="w-full h-24 sm:h-32 lg:h-40 object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -563,6 +606,46 @@ export default function GameDetailPage({ allGames }) {
                       />
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Image Lightbox */}
+            {selectedImageIndex !== null && game.screenshots && (
+              <div
+                className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+                onClick={handleCloseLightbox}
+              >
+                <button
+                  onClick={handleCloseLightbox}
+                  className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl z-10"
+                >
+                  <FaTimes />
+                </button>
+
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-4 text-white/80 hover:text-white text-3xl z-10"
+                >
+                  <FaChevronLeft />
+                </button>
+
+                <img
+                  src={game.screenshots[selectedImageIndex]}
+                  alt={`${game.title} game image ${selectedImageIndex + 1}`}
+                  className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-4 text-white/80 hover:text-white text-3xl z-10"
+                >
+                  <FaChevronRight />
+                </button>
+
+                <div className="absolute bottom-4 text-white/60 text-sm">
+                  {selectedImageIndex + 1} / {game.screenshots.length}
                 </div>
               </div>
             )}
