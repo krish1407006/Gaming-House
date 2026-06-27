@@ -310,28 +310,33 @@ export const autoSetTrending = async () => {
       const ageDays = ageMs / (1000 * 60 * 60 * 24);
       const recencyWeight = Math.max(0, 30 - ageDays) / 30 * 3;
 
-      const trendingScore = ratingWeight + ratingsWeight + recencyWeight;
+      const trendingScore = Math.round((ratingWeight + ratingsWeight + recencyWeight) * 10) / 10;
       return { _id: game._id, trendingScore };
     });
 
     scores.sort((a, b) => b.trendingScore - a.trendingScore);
     const topLimit = Math.min(20, scores.length);
-    const topIds = scores.slice(0, topLimit).map((s) => s._id);
+    const topIds = new Set(scores.slice(0, topLimit).map((s) => s._id.toString()));
 
-    await Game.updateMany(
-      { _id: { $in: topIds } },
-      { $set: { trending: true, trendingScore: scores.find(s => topIds.includes(s._id))?.trendingScore || 0 } }
-    );
+    const updates = scores.map((s) => ({
+      updateOne: {
+        filter: { _id: s._id },
+        update: {
+          $set: {
+            trending: topIds.has(s._id.toString()),
+            trendingScore: s.trendingScore,
+          },
+        },
+      },
+    }));
 
-    scores.slice(topLimit).forEach(s => {
-      Game.findByIdAndUpdate(s._id, { trending: false, trendingScore: s.trendingScore }).exec();
-    });
+    await Game.bulkWrite(updates);
 
     return {
       success: true,
       data: {
-        trendingCount: topIds.length,
-        message: `${topIds.length} games set as trending automatically`,
+        trendingCount: topLimit,
+        message: `${topLimit} games set as trending automatically`,
       },
     };
   } catch (error) {
