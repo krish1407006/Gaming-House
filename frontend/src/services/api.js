@@ -276,12 +276,33 @@ class ApiService {
 
   async toggleGameTrending(gameId, trending) {
     try {
-      return await this.request(`/api/admin/games/${gameId}/trending`, {
+      return await this.request(`/api/admin/games/trending/${gameId}`, {
         method: "PUT",
         body: JSON.stringify({ trending }),
       });
     } catch (error) {
       console.error("Error toggling trending status:", error);
+      throw error;
+    }
+  }
+
+  async getAdminTrending() {
+    try {
+      return await this.request("/api/admin/games/trending-list");
+    } catch (error) {
+      console.error("Error fetching admin trending:", error);
+      throw error;
+    }
+  }
+
+  async reorderTrending(orderedIds) {
+    try {
+      return await this.request("/api/admin/games/reorder-trending", {
+        method: "PUT",
+        body: JSON.stringify({ orderedIds }),
+      });
+    } catch (error) {
+      console.error("Error reordering trending:", error);
       throw error;
     }
   }
