@@ -26,7 +26,7 @@ export default function WatchlistPage() {
 
         if (Array.isArray(watchlistItems)) {
           // Extract game IDs from watchlist items and ensure they're strings
-          const gameIds = watchlistItems.map((item) => String(item.movieId || item.gameId));
+          const gameIds = watchlistItems.map((item) => String(item.gameId));
           console.log("game IDs from watchlist:", gameIds);
           console.log("gameIds after string conversion:", gameIds.map(id => `'${id}' (${typeof id})`));
           

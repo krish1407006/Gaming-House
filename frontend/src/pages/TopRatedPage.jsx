@@ -35,7 +35,7 @@ export default function TopRatedPage({ allGames, loading, error }) {
           avgRating, 
           reviewCount,
           // Ensure we have the correct ID field
-          id: game._id || game.movieId || game.id
+          id: game._id || game.id
         };
       })
       .filter(Boolean) // Remove null entries
@@ -117,7 +117,7 @@ export default function TopRatedPage({ allGames, loading, error }) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {topRatedMovies.map((game, idx) => (
-              <div key={game.id || game._id || game.movieId || idx} className="relative">
+              <div key={game.id || game._id || idx} className="relative">
                 <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
                   #{idx + 1}
                 </div>
