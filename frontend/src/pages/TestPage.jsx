@@ -22,7 +22,7 @@ export default function TestPage() {
 
     try {
       // Test 1: Fetch games
-      const gamesData = await apiService.getgames();
+      const gamesData = await apiService.getGames();
       setgames(gamesData.games || []);
       setTestResult(
         (prev) =>

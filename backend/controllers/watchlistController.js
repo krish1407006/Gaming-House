@@ -4,29 +4,30 @@ import * as watchlistService from "../services/watchlistService.js";
 export const addToWatchlist = async (req, res) => {
   try {
     const { userId } = getAuth(req);
-    const { movieId } = req.body;
+    const { movieId, gameId } = req.body;
+    const id = movieId || gameId;
 
-    console.log("Add to watchlist - userId:", userId, "movieId:", movieId);
+    console.log("Add to watchlist - userId:", userId, "gameId:", id);
 
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
     }
 
-    if (!movieId) {
-      return res.status(400).json({ error: "Movie ID is required" });
+    if (!id) {
+      return res.status(400).json({ error: "Game ID is required" });
     }
 
-    const result = await watchlistService.addToWatchlist(userId, movieId);
+    const result = await watchlistService.addToWatchlist(userId, id);
 
     if (!result.success) {
-      if (result.error === "Movie already in watchlist") {
+      if (result.error === "game already in watchlist") {
         return res.status(409).json({ error: result.error });
       }
       return res.status(500).json({ error: result.error });
     }
 
     res.status(201).json({
-      message: "Movie added to watchlist",
+      message: "Game added to watchlist",
       data: result.data,
     });
   } catch (error) {
