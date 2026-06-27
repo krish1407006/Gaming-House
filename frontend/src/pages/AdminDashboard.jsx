@@ -59,6 +59,9 @@ export default function AdminDashboard({ ongameChange }) {
   
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showTrendingModal, setShowTrendingModal] = useState(false);
+  const [trendingData, setTrendingData] = useState({ trending: [], notTrending: [] });
+  const [trendingOrder, setTrendingOrder] = useState([]);
 
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
