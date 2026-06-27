@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAuth } from "@clerk/express";
+import { requireAuth } from "../middleware/auth.js";
 import { checkAdmin } from "../middleware/admin.js";
 import * as userController from "../controllers/userController.js";
 

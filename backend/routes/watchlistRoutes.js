@@ -1,11 +1,10 @@
 import express from "express";
-import { clerkMiddleware, requireAuth } from "@clerk/express";
+import { requireAuth } from "../middleware/auth.js";
 import * as watchlistController from "../controllers/watchlistController.js";
 
 const router = express.Router();
 
-// Apply Clerk authentication middleware
-router.use(clerkMiddleware());
+// Apply authentication middleware
 router.use(requireAuth());
 
 // Add game to watchlist
@@ -25,7 +24,7 @@ router.get("/check/:movieId", watchlistController.checkWatchlistStatus);
 
 // Test endpoint to debug
 router.get("/debug", (req, res) => {
-  const { userId } = require("@clerk/express").getAuth(req);
+  const { userId } = req.userId ? { userId: req.userId } : { userId: null };
   res.json({
     message: "Watchlist debug endpoint",
     userId,
