@@ -423,16 +423,22 @@ export default function GameDetailPage({ allGames }) {
                   </span>
                   <div className="flex items-center gap-1 lg:gap-2">
                     <FaStar className="theme-accent text-sm lg:text-lg" />
-                    <span className="theme-text-primary text-sm lg:text-lg font-semibold">
-                      {game.averageRating
-                        ? game.averageRating.toFixed(1)
-                        : "N/A"}
-                      /10
-                    </span>
-                    <span className="theme-text-secondary text-xs lg:text-sm">
-                      ({game.totalRatings || 0}{" "}
-                      {game.totalRatings === 1 ? "rating" : "ratings"})
-                    </span>
+                    {game.totalRatings > 0 ? (
+                      <>
+                        <span className="theme-text-primary text-sm lg:text-lg font-semibold">
+                          {game.averageRating.toFixed(1)}
+                          /10
+                        </span>
+                        <span className="theme-text-secondary text-xs lg:text-sm">
+                          ({game.totalRatings}{" "}
+                          {game.totalRatings === 1 ? "rating" : "ratings"})
+                        </span>
+                      </>
+                    ) : (
+                      <span className="theme-text-secondary text-sm lg:text-lg">
+                        No ratings yet
+                      </span>
+                    )}
                   </div>
                   <span className="theme-bg-secondary theme-accent px-2 lg:px-3 py-0.5 lg:py-1 rounded border theme-border-accent text-xs lg:text-base">
                     {game.genre?.[0] || "Adventure"}
