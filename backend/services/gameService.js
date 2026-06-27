@@ -254,7 +254,7 @@ export const getTrendingGames = async () => {
       isActive: true,
       trending: true,
     })
-      .sort({ trendingScore: -1, averageRating: -1 })
+      .sort({ trendingPosition: 1, trendingScore: -1 })
       .limit(50)
       .lean();
 
@@ -271,13 +271,43 @@ export const getTrendingGames = async () => {
   }
 };
 
+export const getAdminTrendingGames = async () => {
+  try {
+    const allGames = await Game.find({ isActive: true })
+      .select("title poster director year releaseDate averageRating totalRatings trending trendingPosition trendingScore featured")
+      .sort({ trendingPosition: 1, title: 1 })
+      .lean();
+
+    const trending = allGames.filter(g => g.trending);
+    const notTrending = allGames.filter(g => !g.trending);
+
+    return {
+      success: true,
+      data: { trending, notTrending },
+    };
+  } catch (error) {
+    console.error("Error fetching admin trending data:", error);
+    return {
+      success: false,
+      error: "Failed to fetch trending data",
+    };
+  }
+};
+
 export const toggleGameTrending = async (movieId, trending) => {
   try {
-    const game = await Game.findByIdAndUpdate(
-      movieId,
-      { trending },
-      { new: true }
-    );
+    let update = { trending };
+    if (trending) {
+      const maxPos = await Game.findOne({ trending: true })
+        .sort({ trendingPosition: -1 })
+        .select("trendingPosition")
+        .lean();
+      update.trendingPosition = (maxPos?.trendingPosition || 0) + 1;
+    } else {
+      update.trendingPosition = 0;
+    }
+
+    const game = await Game.findByIdAndUpdate(movieId, update, { new: true });
 
     if (!game) {
       return {
