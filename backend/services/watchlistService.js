@@ -31,7 +31,10 @@ export const removeFromWatchlist = async (userId, gameId) => {
   try {
     const result = await Watchlist.findOneAndDelete({
       userId,
-      gameId,
+      $or: [
+        { gameId },
+        { movieId: gameId },
+      ],
     });
 
     if (!result) {
@@ -69,7 +72,13 @@ export const clearUserWatchlist = async (userId) => {
 
 export const isInWatchlist = async (userId, gameId) => {
   try {
-    const watchlistItem = await Watchlist.findOne({ userId, gameId });
+    const watchlistItem = await Watchlist.findOne({
+      userId,
+      $or: [
+        { gameId },
+        { movieId: gameId },
+      ],
+    });
     return { success: true, data: { isInWatchlist: !!watchlistItem } };
   } catch (error) {
     console.error("Error checking watchlist:", error);

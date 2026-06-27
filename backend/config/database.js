@@ -19,7 +19,22 @@ const connectDB = async () => {
       }
     } catch (e) {
       if (e.codeName !== "IndexNotFound") {
-        console.warn("Index cleanup:", e.message);
+        console.warn("Ratings index cleanup:", e.message);
+      }
+    }
+
+    // Drop stale index from watchlists collection
+    try {
+      const watchlistsCollection = conn.connection.db.collection("watchlists");
+      const indexes = await watchlistsCollection.indexes();
+      const staleWatchlistIndex = indexes.find((i) => i.name === "movieId_1_userId_1");
+      if (staleWatchlistIndex) {
+        await watchlistsCollection.dropIndex("movieId_1_userId_1");
+        console.log('Dropped stale index "movieId_1_userId_1" from watchlists collection');
+      }
+    } catch (e) {
+      if (e.codeName !== "IndexNotFound") {
+        console.warn("Watchlist index cleanup:", e.message);
       }
     }
   } catch (error) {

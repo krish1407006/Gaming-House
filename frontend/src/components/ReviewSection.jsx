@@ -27,7 +27,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
     }
   }, [getToken]);
 
-  const loadMovieData = React.useCallback(async () => {
+  const loadGameData = React.useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -116,7 +116,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       setEditingReview(null);
 
       // Reload reviews to show updated data
-      await loadMovieData();
+      await loadGameData();
 
       // Notify parent component about the update
       if (onReviewUpdate) {
@@ -141,7 +141,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       setUserRating(null);
       setReviewForm({ rating: 0, review: "", isPublic: true });
       setShowReviewForm(false);
-      await loadMovieData();
+      await loadGameData();
 
       if (onReviewUpdate) {
         onReviewUpdate(null);
@@ -165,7 +165,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       }
 
       // Reload reviews to show updated helpful counts
-      await loadMovieData();
+      await loadGameData();
     } catch (err) {
       console.error("Failed to update helpful status:", err);
     }
