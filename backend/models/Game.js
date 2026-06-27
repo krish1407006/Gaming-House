@@ -142,6 +142,11 @@ const gameSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    trendingPosition: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,
@@ -159,5 +164,6 @@ gameSchema.index({ isActive: 1 });
 gameSchema.index({ featured: -1 });
 gameSchema.index({ trending: -1 });
 gameSchema.index({ trendingScore: -1 });
+gameSchema.index({ trendingPosition: 1 });
 
 export default mongoose.model("Game", gameSchema);
