@@ -230,17 +230,12 @@ export default function AdminDashboard({ ongameChange }) {
     }
   };
 
-  const moveTrendingUp = (index) => {
-    if (index <= 0) return;
-    const newOrder = [...trendingOrder];
-    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
-    setTrendingOrder(newOrder);
-  };
-
-  const moveTrendingDown = (index) => {
-    if (index >= trendingOrder.length - 1) return;
-    const newOrder = [...trendingOrder];
-    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+  const moveTrendingToPosition = (id, newPos) => {
+    const newPosNum = Math.max(1, Math.min(newPos, trendingOrder.length));
+    const currentIndex = trendingOrder.indexOf(id);
+    if (currentIndex === -1 || currentIndex + 1 === newPosNum) return;
+    const newOrder = trendingOrder.filter(gid => gid !== id);
+    newOrder.splice(newPosNum - 1, 0, id);
     setTrendingOrder(newOrder);
   };
 
@@ -1077,19 +1072,26 @@ export default function AdminDashboard({ ongameChange }) {
                     if (!game) return null;
                     return (
                       <div key={id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg border border-green-700">
-                        <span className="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shrink-0" style={{ backgroundColor: 'var(--accent-color)', color: 'white' }}>
-                          {index + 1}
-                        </span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={trendingOrder.length}
+                          value={index + 1}
+                          onChange={(e) => moveTrendingToPosition(id, parseInt(e.target.value) || 1)}
+                          className="w-8 h-6 text-center rounded text-xs font-bold shrink-0"
+                          style={{ backgroundColor: 'var(--accent-color)', color: 'white', border: 'none' }}
+                          title="Position number"
+                        />
                         <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold truncate">{game.title}</p>
                           <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
                         </div>
                         <div className="flex gap-1 shrink-0">
-                          <button onClick={() => moveTrendingUp(index)} disabled={index === 0} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move up">
+                          <button onClick={() => moveTrendingToPosition(id, index)} disabled={index === 0} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move up">
                             <Icon name="chevronUp" size={16} />
                           </button>
-                          <button onClick={() => moveTrendingDown(index)} disabled={index >= trendingOrder.length - 1} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move down">
+                          <button onClick={() => moveTrendingToPosition(id, index + 2)} disabled={index >= trendingOrder.length - 1} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move down">
                             <Icon name="chevronDown" size={16} />
                           </button>
                           <button onClick={() => removeFromTrending(id)} className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors" title="Remove from trending">
