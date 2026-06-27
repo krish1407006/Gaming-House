@@ -12,34 +12,21 @@ export const createOrUpdateRating = async (userId, gameId, ratingData) => {
       };
     }
 
-    const existingRating = await Rating.findOne({ userId, gameId });
+    const existing = await Rating.findOne({ userId, gameId }).select("_id");
+    const isUpdate = !!existing;
 
-    let rating;
-    let isUpdate = false;
-
-    if (existingRating) {
-      rating = await Rating.findByIdAndUpdate(
-        existingRating._id,
-        {
+    const rating = await Rating.findOneAndUpdate(
+      { userId, gameId },
+      {
+        $set: {
           rating: ratingData.rating,
           review: ratingData.review || "",
           isPublic:
             ratingData.isPublic !== undefined ? ratingData.isPublic : true,
         },
-        { new: true, runValidators: true }
-      );
-      isUpdate = true;
-    } else {
-      rating = new Rating({
-        userId,
-        gameId,
-        rating: ratingData.rating,
-        review: ratingData.review || "",
-        isPublic:
-          ratingData.isPublic !== undefined ? ratingData.isPublic : true,
-      });
-      await rating.save();
-    }
+      },
+      { upsert: true, new: true, runValidators: true }
+    );
 
     await updateGameRatingStats(gameId);
 
