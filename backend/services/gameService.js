@@ -6,7 +6,7 @@ export const getGames = async (options = {}) => {
   try {
     const {
       page = 1,
-      limit = 100,
+      limit = 30,
       genre,
       search,
       sortBy = "createdAt",
@@ -38,8 +38,12 @@ export const getGames = async (options = {}) => {
     const sort = {};
     sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
+    const listQuery = Game.find(query)
+      .select("title poster description releaseDate averageRating totalRatings genre isActive featured trending createdAt")
+      .sort(sort).skip(skip).limit(parseInt(limit)).lean();
+
     const [games, totalCount] = await Promise.all([
-      Game.find(query).sort(sort).skip(skip).limit(parseInt(limit)).lean(),
+      listQuery,
       Game.countDocuments(query),
     ]);
 
