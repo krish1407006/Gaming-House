@@ -76,7 +76,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
     }
   }, [gameId]);
 
-  // Load user rating and movie reviews
+  // Load user rating and game reviews
   useEffect(() => {
     loadGameData();
   }, [loadGameData, isSignedIn]);
