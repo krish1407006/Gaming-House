@@ -1059,7 +1059,7 @@ export default function AdminDashboard({ ongameChange }) {
                   Manage Trending Games
                 </h3>
                 <button onClick={() => setShowTrendingModal(false)} className="p-2 hover:theme-bg-hover rounded-lg transition-colors">
-                  <Icon name="close" size={20} />
+                  <Icon name="x" size={20} />
                 </button>
               </div>
 
@@ -1091,12 +1091,12 @@ export default function AdminDashboard({ ongameChange }) {
                                 <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
                               </div>
                               <button onClick={() => moveTrendingUp(index)} disabled={index === 0} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move up">
-                                <Icon name="chevron-up" size={16} />
+                                <Icon name="chevronUp" size={16} />
                               </button>
                               <button onClick={() => moveTrendingDown(index)} disabled={index >= trendingOrder.length - 1} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move down">
-                                <Icon name="chevron-down" size={16} />
+                                <Icon name="chevronDown" size={16} />
                               </button>
-                              <button onClick={() => removeFromTrending(id)} className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors" title="Remove from trending">
+                              <button onClick={() => removeFromTrending(id)} className="p-1.5 hover:bg-red-500 hover:text-white rounded transition-colors" title="Remove from trending">
                                 <Icon name="x" size={16} />
                               </button>
                             </div>
