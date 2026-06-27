@@ -279,6 +279,48 @@ export const getDashboardStats = async (req, res) => {
   }
 };
 
+export const toggleGameTrending = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { trending } = req.body;
+
+    if (typeof trending !== "boolean") {
+      return res.status(400).json({
+        error: "trending must be a boolean value",
+      });
+    }
+
+    const result = await gameService.toggleGameTrending(id, trending);
+
+    if (!result.success) {
+      return res.status(404).json({ error: result.error });
+    }
+
+    res.json({
+      message: `game ${trending ? "set as trending" : "removed from trending"} successfully`,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error("Error in admin toggleGameTrending:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const autoSetTrending = async (req, res) => {
+  try {
+    const result = await gameService.autoSetTrending();
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error });
+    }
+
+    res.json(result.data);
+  } catch (error) {
+    console.error("Error in admin autoSetTrending:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export const getGameRatingsAdmin = async (req, res) => {
   try {
     const { id } = req.params;
