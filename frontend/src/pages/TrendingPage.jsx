@@ -27,7 +27,12 @@ export default function TrendingPage({ allGames, loading, error }) {
           id: game._id || game.gameId || game.id
         };
       })
-      .sort((a, b) => b.avgRating - a.avgRating); // Sort by rating
+      .sort((a, b) => {
+        const posA = a.trendingPosition ?? 999;
+        const posB = b.trendingPosition ?? 999;
+        if (posA !== posB) return posA - posB;
+        return b.avgRating - a.avgRating;
+      });
   }, [allGames]); // Re-compute when allGames changes
 
   const bannerImg = trendinggames[0]?.poster || trendinggames[0]?.image || null;

@@ -8,6 +8,8 @@ const router = express.Router();
 router.use(requireAuth());
 router.use(requireAdmin());
 
+router.get("/test", (req, res) => res.json({ ok: true, message: "Admin routes loaded" }));
+
 router.get("/users", adminController.getUsers);
 router.put("/users/:id/ban", adminController.banUser);
 router.delete("/users/:id", adminController.deleteUser);

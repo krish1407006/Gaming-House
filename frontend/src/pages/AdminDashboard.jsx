@@ -220,11 +220,13 @@ export default function AdminDashboard({ ongameChange }) {
     setShowTrendingModal(true);
     try {
       const data = await ApiService.getAdminTrending();
-      setTrendingData(data);
-      setTrendingOrder(data.trending.map(g => g._id));
+      const trending = Array.isArray(data.trending) ? data.trending : [];
+      const notTrending = Array.isArray(data.notTrending) ? data.notTrending : [];
+      setTrendingData({ trending, notTrending });
+      setTrendingOrder(trending.map(g => g._id));
     } catch (error) {
       console.error("Error loading trending data:", error);
-      alert("Failed to load trending data");
+      alert("Failed to load trending data. Make sure the backend is running the latest code (restart required). Error: " + error.message);
     }
   };
 

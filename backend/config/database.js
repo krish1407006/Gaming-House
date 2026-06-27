@@ -18,7 +18,9 @@ const connectDB = async () => {
         console.log('Dropped stale index "movieId_1_userId_1" from ratings collection');
       }
     } catch (e) {
-      console.log("Index cleanup check complete");
+      if (e.codeName !== "IndexNotFound") {
+        console.warn("Index cleanup:", e.message);
+      }
     }
   } catch (error) {
     console.error("Error connecting to MongoDB:", error.message);

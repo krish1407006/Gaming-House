@@ -15,18 +15,30 @@ export const createOrUpdateRating = async (userId, gameId, ratingData) => {
     const existing = await Rating.findOne({ userId, gameId }).select("_id");
     const isUpdate = !!existing;
 
-    const rating = await Rating.findOneAndUpdate(
-      { userId, gameId },
-      {
-        $set: {
-          rating: ratingData.rating,
-          review: ratingData.review || "",
-          isPublic:
-            ratingData.isPublic !== undefined ? ratingData.isPublic : true,
-        },
-      },
-      { upsert: true, new: true, runValidators: true }
-    );
+    const setData = {
+      rating: ratingData.rating,
+      review: ratingData.review || "",
+      isPublic:
+        ratingData.isPublic !== undefined ? ratingData.isPublic : true,
+    };
+
+    let rating;
+    try {
+      rating = await Rating.findOneAndUpdate(
+        { userId, gameId },
+        { $set: setData },
+        { upsert: true, new: true, runValidators: true }
+      );
+    } catch (err) {
+      if (err.code !== 11000) throw err;
+      const fallback = await Rating.findOneAndUpdate(
+        { userId, gameId },
+        { $set: setData },
+        { new: true, runValidators: true }
+      );
+      if (!fallback) throw err;
+      rating = fallback;
+    }
 
     await updateGameRatingStats(gameId);
 
