@@ -674,10 +674,9 @@ export default function GameDetailPage({ allGames }) {
                 <div className="flex justify-between items-center">
                   <span className="theme-text-secondary text-sm lg:text-base">Gaming House Rating</span>
                   <span className="theme-text-primary font-semibold text-sm lg:text-base">
-                    {game.averageRating
-                      ? game.averageRating.toFixed(1)
+                    {game.totalRatings > 0
+                      ? `${game.averageRating.toFixed(1)}/10`
                       : "N/A"}
-                    /10
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
