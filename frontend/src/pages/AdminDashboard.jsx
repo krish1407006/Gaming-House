@@ -5,7 +5,7 @@ import ApiService from "../services/api";
 
 import { isUserAdmin } from "../adminDetails";
 
-export default function AdminDashboard({ ongameChange }) {
+export default function AdminDashboard({ onGameChange }) {
   const { user } = useUser();
   const [games, setgames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -179,8 +179,8 @@ export default function AdminDashboard({ ongameChange }) {
       loadgames();
       
       // Update global games state in other pages
-      if (ongameChange) {
-        ongameChange();
+      if (onGameChange) {
+        onGameChange();
       }
     } catch (error) {
   console.error("❌ Error saving game:", error);
@@ -299,8 +299,8 @@ export default function AdminDashboard({ ongameChange }) {
         loadgames();
         
         // Update global games state in other pages
-        if (ongameChange) {
-          ongameChange();
+        if (onGameChange) {
+          onGameChange();
         }
       } catch (error) {
         console.error("Error deleting game:", error);
