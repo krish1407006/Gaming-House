@@ -133,6 +133,15 @@ const gameSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    trending: {
+      type: Boolean,
+      default: false,
+    },
+    trendingScore: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,
@@ -148,5 +157,7 @@ gameSchema.index({ releaseDate: -1 });
 gameSchema.index({ averageRating: -1 });
 gameSchema.index({ isActive: 1 });
 gameSchema.index({ featured: -1 });
+gameSchema.index({ trending: -1 });
+gameSchema.index({ trendingScore: -1 });
 
 export default mongoose.model("Game", gameSchema);

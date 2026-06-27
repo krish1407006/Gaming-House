@@ -29,6 +29,21 @@ export const getGames = async (req, res) => {
   }
 };
 
+export const getTrendingGames = async (req, res) => {
+  try {
+    const result = await gameService.getTrendingGames();
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error });
+    }
+
+    res.json({ games: result.data });
+  } catch (error) {
+    console.error("Error in getTrendingGames:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export const getGameById = async (req, res) => {
   try {
     const { id } = req.params;

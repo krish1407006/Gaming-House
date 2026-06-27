@@ -248,6 +248,101 @@ export const toggleGameFeatured = async (movieId, featured) => {
   }
 };
 
+export const getTrendingGames = async () => {
+  try {
+    const games = await Game.find({
+      isActive: true,
+      trending: true,
+    })
+      .sort({ trendingScore: -1, averageRating: -1 })
+      .limit(50)
+      .lean();
+
+    return {
+      success: true,
+      data: games,
+    };
+  } catch (error) {
+    console.error("Error fetching trending games:", error);
+    return {
+      success: false,
+      error: "Failed to fetch trending games",
+    };
+  }
+};
+
+export const toggleGameTrending = async (movieId, trending) => {
+  try {
+    const game = await Game.findByIdAndUpdate(
+      movieId,
+      { trending },
+      { new: true }
+    );
+
+    if (!game) {
+      return {
+        success: false,
+        error: "Game not found",
+      };
+    }
+
+    return {
+      success: true,
+      data: game,
+    };
+  } catch (error) {
+    console.error("Error toggling game trending status:", error);
+    return {
+      success: false,
+      error: "Failed to update game trending status",
+    };
+  }
+};
+
+export const autoSetTrending = async () => {
+  try {
+    const games = await Game.find({ isActive: true }).lean();
+
+    const scores = games.map((game) => {
+      const ratingWeight = (game.averageRating || 0) * 5;
+      const ratingsWeight = Math.min(game.totalRatings || 0, 100);
+      const ageMs = Date.now() - new Date(game.createdAt || game._id.getTimestamp()).getTime();
+      const ageDays = ageMs / (1000 * 60 * 60 * 24);
+      const recencyWeight = Math.max(0, 30 - ageDays) / 30 * 3;
+
+      const trendingScore = ratingWeight + ratingsWeight + recencyWeight;
+      return { _id: game._id, trendingScore };
+    });
+
+    scores.sort((a, b) => b.trendingScore - a.trendingScore);
+    const topLimit = Math.min(20, scores.length);
+    const topIds = scores.slice(0, topLimit).map((s) => s._id);
+
+    await Game.updateMany(
+      { _id: { $in: topIds } },
+      { $set: { trending: true, trendingScore: scores.find(s => topIds.includes(s._id))?.trendingScore || 0 } }
+    );
+
+    scores.slice(topLimit).forEach(s => {
+      Game.findByIdAndUpdate(s._id, { trending: false, trendingScore: s.trendingScore }).exec();
+    });
+
+    return {
+      success: true,
+      data: {
+        trendingCount: topIds.length,
+        message: `${topIds.length} games set as trending automatically`,
+      },
+    };
+  } catch (error) {
+    console.error("Error auto-setting trending games:", error);
+    return {
+      success: false,
+      error: "Failed to auto-set trending games",
+    };
+  }
+};
+
 export const getGameStats = async () => {
   try {
     const [
