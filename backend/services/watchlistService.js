@@ -1,17 +1,17 @@
 import Watchlist from "../models/Watchlist.js";
 
-export const addToWatchlist = async (userId, movieId) => {
+export const addToWatchlist = async (userId, gameId) => {
   try {
     console.log(
       "Creating watchlist item - userId:",
       userId,
-      "movieId:",
-      movieId
+      "gameId:",
+      gameId
     );
 
     const watchlistItem = new Watchlist({
       userId,
-      movieId,
+      gameId,
     });
 
     const savedItem = await watchlistItem.save();
@@ -27,11 +27,11 @@ export const addToWatchlist = async (userId, movieId) => {
   }
 };
 
-export const removeFromWatchlist = async (userId, movieId) => {
+export const removeFromWatchlist = async (userId, gameId) => {
   try {
     const result = await Watchlist.findOneAndDelete({
       userId,
-      movieId,
+      gameId,
     });
 
     if (!result) {
@@ -67,9 +67,9 @@ export const clearUserWatchlist = async (userId) => {
   }
 };
 
-export const isInWatchlist = async (userId, movieId) => {
+export const isInWatchlist = async (userId, gameId) => {
   try {
-    const watchlistItem = await Watchlist.findOne({ userId, movieId });
+    const watchlistItem = await Watchlist.findOne({ userId, gameId });
     return { success: true, data: { isInWatchlist: !!watchlistItem } };
   } catch (error) {
     console.error("Error checking watchlist:", error);

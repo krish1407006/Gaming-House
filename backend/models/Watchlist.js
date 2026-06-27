@@ -7,7 +7,7 @@ const watchlistSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    movieId: {
+    gameId: {
       type: String,
       required: true,
     },
@@ -22,6 +22,6 @@ const watchlistSchema = new mongoose.Schema(
 );
 
 // Compound index to ensure unique user-game combinations
-watchlistSchema.index({ userId: 1, movieId: 1 }, { unique: true });
+watchlistSchema.index({ userId: 1, gameId: 1 }, { unique: true });
 
 export default mongoose.model("Watchlist", watchlistSchema);

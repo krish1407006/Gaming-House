@@ -69,9 +69,9 @@ export const getGames = async (options = {}) => {
   }
 };
 
-export const getGameById = async (movieId, includeReviews = true) => {
+export const getGameById = async (gameId, includeReviews = true) => {
   try {
-    const game = await Game.findById(movieId).lean();
+    const game = await Game.findById(gameId).lean();
 
     if (!game) {
       return {
@@ -83,7 +83,7 @@ export const getGameById = async (movieId, includeReviews = true) => {
     let reviews = [];
     if (includeReviews) {
       reviews = await Rating.find({
-        gameId: movieId,
+        gameId: gameId,
         isPublic: true,
         review: { $exists: true, $ne: "" },
       })
@@ -135,12 +135,12 @@ export const createGame = async (movieData, adminUserId) => {
   }
 };
 
-export const updateGame = async (movieId, updateData) => {
+export const updateGame = async (gameId, updateData) => {
   try {
     const { averageRating, totalRatings, addedBy, ...validUpdateData } =
       updateData;
 
-    const game = await Game.findByIdAndUpdate(movieId, validUpdateData, {
+    const game = await Game.findByIdAndUpdate(gameId, validUpdateData, {
       new: true,
       runValidators: true,
     });
@@ -170,9 +170,9 @@ export const updateGame = async (movieId, updateData) => {
   }
 };
 
-export const deleteGame = async (movieId) => {
+export const deleteGame = async (gameId) => {
   try {
-    const game = await Game.findByIdAndDelete(movieId);
+    const game = await Game.findByIdAndDelete(gameId);
 
     if (!game) {
       return {
@@ -181,7 +181,7 @@ export const deleteGame = async (movieId) => {
       };
     }
 
-    await Rating.deleteMany({ gameId: movieId });
+    await Rating.deleteMany({ gameId: gameId });
 
     return {
       success: true,
@@ -196,10 +196,10 @@ export const deleteGame = async (movieId) => {
   }
 };
 
-export const toggleGameStatus = async (movieId, isActive) => {
+export const toggleGameStatus = async (gameId, isActive) => {
   try {
     const game = await Game.findByIdAndUpdate(
-      movieId,
+      gameId,
       { isActive },
       { new: true }
     );
@@ -224,10 +224,10 @@ export const toggleGameStatus = async (movieId, isActive) => {
   }
 };
 
-export const toggleGameFeatured = async (movieId, featured) => {
+export const toggleGameFeatured = async (gameId, featured) => {
   try {
     const game = await Game.findByIdAndUpdate(
-      movieId,
+      gameId,
       { featured },
       { new: true }
     );
@@ -298,7 +298,7 @@ export const getAdminTrendingGames = async () => {
   }
 };
 
-export const toggleGameTrending = async (movieId, trending) => {
+export const toggleGameTrending = async (gameId, trending) => {
   try {
     let update = { trending };
     if (trending) {
@@ -311,7 +311,7 @@ export const toggleGameTrending = async (movieId, trending) => {
       update.trendingPosition = 0;
     }
 
-    const game = await Game.findByIdAndUpdate(movieId, update, { new: true });
+    const game = await Game.findByIdAndUpdate(gameId, update, { new: true });
 
     if (!game) {
       return {
@@ -456,10 +456,10 @@ export const getGameStats = async () => {
   }
 };
 
-export const updateGameRatingStats = async (movieId) => {
+export const updateGameRatingStats = async (gameId) => {
   try {
     const stats = await Rating.aggregate([
-      { $match: { gameId: new mongoose.Types.ObjectId(movieId) } },
+      { $match: { gameId: new mongoose.Types.ObjectId(gameId) } },
       {
         $group: {
           _id: null,
@@ -472,7 +472,7 @@ export const updateGameRatingStats = async (movieId) => {
     const { averageRating = 0, totalRatings = 0 } = stats[0] || {};
 
     const game = await Game.findByIdAndUpdate(
-      movieId,
+      gameId,
       {
         averageRating: Math.round(averageRating * 10) / 10,
         totalRatings,

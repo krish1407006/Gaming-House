@@ -11,7 +11,7 @@ router.use(requireAuth());
 router.post("/add", watchlistController.addToWatchlist);
 
 // Remove game from watchlist
-router.delete("/:movieId", watchlistController.removeFromWatchlist);
+router.delete("/:gameId", watchlistController.removeFromWatchlist);
 
 // Get user's watchlist
 router.get("/", watchlistController.getUserWatchlist);
@@ -20,7 +20,7 @@ router.get("/", watchlistController.getUserWatchlist);
 router.delete("/", watchlistController.clearWatchlist);
 
 // Check if game is in watchlist
-router.get("/check/:movieId", watchlistController.checkWatchlistStatus);
+router.get("/check/:gameId", watchlistController.checkWatchlistStatus);
 
 // Test endpoint to debug
 router.get("/debug", (req, res) => {

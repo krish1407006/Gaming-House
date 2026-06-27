@@ -114,7 +114,7 @@ export const getGameRatings = async (req, res) => {
 
 export const rateGame = async (req, res) => {
   try {
-    const { id: movieId } = req.params;
+    const { id: gameId } = req.params;
     const { userId } = getAuth(req);
     const { rating, review, isPublic } = req.body;
 
@@ -124,7 +124,7 @@ export const rateGame = async (req, res) => {
       });
     }
 
-    const movieResult = await gameService.getGameById(movieId, false);
+    const movieResult = await gameService.getGameById(gameId, false);
     if (!movieResult.success) {
       return res.status(404).json({ error: "game not found" });
     }
@@ -133,7 +133,7 @@ export const rateGame = async (req, res) => {
       return res.status(400).json({ error: "Cannot rate inactive game" });
     }
 
-    const result = await ratingService.createOrUpdateRating(userId, movieId, {
+    const result = await ratingService.createOrUpdateRating(userId, gameId, {
       rating: parseInt(rating),
       review: review?.trim(),
       isPublic,
@@ -157,10 +157,10 @@ export const rateGame = async (req, res) => {
 
 export const deleteGameRating = async (req, res) => {
   try {
-    const { id: movieId } = req.params;
+    const { id: gameId } = req.params;
     const { userId } = getAuth(req);
 
-    const result = await ratingService.deleteRating(userId, movieId);
+    const result = await ratingService.deleteRating(userId, gameId);
 
     if (!result.success) {
       return res.status(404).json({ error: result.error });

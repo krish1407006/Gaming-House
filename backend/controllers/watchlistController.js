@@ -4,20 +4,19 @@ import * as watchlistService from "../services/watchlistService.js";
 export const addToWatchlist = async (req, res) => {
   try {
     const { userId } = getAuth(req);
-    const { movieId, gameId } = req.body;
-    const id = movieId || gameId;
+    const { gameId } = req.body;
 
-    console.log("Add to watchlist - userId:", userId, "gameId:", id);
+    console.log("Add to watchlist - userId:", userId, "gameId:", gameId);
 
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
     }
 
-    if (!id) {
+    if (!gameId) {
       return res.status(400).json({ error: "Game ID is required" });
     }
 
-    const result = await watchlistService.addToWatchlist(userId, id);
+    const result = await watchlistService.addToWatchlist(userId, gameId);
 
     if (!result.success) {
       if (result.error === "game already in watchlist") {
@@ -39,19 +38,19 @@ export const addToWatchlist = async (req, res) => {
 export const removeFromWatchlist = async (req, res) => {
   try {
     const { userId } = getAuth(req);
-    const { movieId } = req.params;
+    const { gameId } = req.params;
 
-    const result = await watchlistService.removeFromWatchlist(userId, movieId);
+    const result = await watchlistService.removeFromWatchlist(userId, gameId);
 
     if (!result.success) {
-      if (result.error === "Movie not found in watchlist") {
+      if (result.error === "Game not found in watchlist") {
         return res.status(404).json({ error: result.error });
       }
       return res.status(500).json({ error: result.error });
     }
 
     res.json({
-      message: "Movie removed from watchlist",
+      message: "Game removed from watchlist",
       data: result.data,
     });
   } catch (error) {
@@ -105,9 +104,9 @@ export const clearWatchlist = async (req, res) => {
 export const checkWatchlistStatus = async (req, res) => {
   try {
     const { userId } = getAuth(req);
-    const { movieId } = req.params;
+    const { gameId } = req.params;
 
-    const result = await watchlistService.isInWatchlist(userId, movieId);
+    const result = await watchlistService.isInWatchlist(userId, gameId);
 
     if (!result.success) {
       return res.status(500).json({ error: result.error });
