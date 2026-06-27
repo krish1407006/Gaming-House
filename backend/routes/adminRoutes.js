@@ -14,15 +14,15 @@ router.delete("/users/:id", adminController.deleteUser);
 router.put("/users/:id/admin", adminController.setUserAdminStatus);
 
 router.get("/games", adminController.getAllGames);
+router.get("/games/trending-list", adminController.getAdminTrending);
+router.post("/games/auto-trending", adminController.autoSetTrending);
+router.put("/games/reorder-trending", adminController.reorderTrending);
+router.put("/games/trending/:id", adminController.toggleGameTrending);
 router.post("/games", adminController.createGame);
 router.put("/games/:id", adminController.updateGame);
-router.delete("/games/:id", adminController.deleteGame);
 router.put("/games/:id/status", adminController.toggleGameStatus);
 router.put("/games/:id/featured", adminController.toggleGameFeatured);
-router.get("/games/trending-list", adminController.getAdminTrending);
-router.put("/games/trending/:id", adminController.toggleGameTrending);
-router.put("/games/reorder-trending", adminController.reorderTrending);
-router.post("/games/auto-trending", adminController.autoSetTrending);
+router.delete("/games/:id", adminController.deleteGame);
 router.get("/games/:id/ratings", adminController.getGameRatingsAdmin);
 
 router.get("/stats", adminController.getDashboardStats);
