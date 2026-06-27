@@ -464,13 +464,12 @@ export default function AdminDashboard({ ongameChange }) {
           
           <div className="flex gap-2 w-full lg:w-auto">
             <button
-              onClick={handleAutoTrending}
+              onClick={openTrendingModal}
               className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold transition-all text-sm lg:text-base w-1/2 lg:w-auto"
               style={{ backgroundColor: '#065f46', color: 'white' }}
-              title="Auto-detect trending games based on ratings, popularity, and recency"
             >
               <Icon name="trending" size={18} />
-              <span className="truncate">Auto Trending</span>
+              <span className="truncate">Manage Trending</span>
             </button>
             <button
               onClick={() => setShowCreateForm(true)}
