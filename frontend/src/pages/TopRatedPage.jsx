@@ -27,6 +27,9 @@ export default function TopRatedPage({ allGames, loading, error }) {
           reviewCount = game.totalRatings || 0;
         }
 
+        // Skip games with no actual user ratings
+        if (reviewCount === 0) return null;
+
         // Apply rating filter based on selected threshold
         if (avgRating < minRatings) return null;
 
