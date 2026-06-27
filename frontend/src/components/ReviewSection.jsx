@@ -38,7 +38,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
         return;
       }
 
-      // Load movie details including user rating
+      // Load game details including user rating
       const movieData = await apiService.getGameById(gameId);
 
       if (movieData.userRating) {
@@ -60,7 +60,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
         });
       }
 
-      // Load movie reviews
+      // Load game reviews
       const ratingsData = await apiService.getGameRatings(gameId, {
         limit: 10,
         sortBy: "helpfulVotes",
@@ -78,8 +78,8 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
 
   // Load user rating and movie reviews
   useEffect(() => {
-    loadMovieData();
-  }, [loadMovieData, isSignedIn]);
+    loadGameData();
+  }, [loadGameData, isSignedIn]);
 
   const handleRatingChange = (newRating) => {
     setReviewForm((prev) => ({

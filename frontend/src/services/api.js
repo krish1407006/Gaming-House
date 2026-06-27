@@ -264,7 +264,7 @@ class ApiService {
 
   async toggleGameFeatured(gameId) {
     try {
-      console.log("⭐ Toggling featured status for movie:", gameId);
+      console.log("⭐ Toggling featured status for game:", gameId);
       return await this.request(`/api/admin/games/${gameId}/featured`, {
         method: "PATCH",
       });
