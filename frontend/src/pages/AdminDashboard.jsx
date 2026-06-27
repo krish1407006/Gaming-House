@@ -53,6 +53,7 @@ export default function AdminDashboard({ ongameChange }) {
     boxOffice: "",
     awards: "",
     featured: false,
+    trending: false,
     isActive: true,
   });
   
@@ -153,6 +154,7 @@ export default function AdminDashboard({ ongameChange }) {
         budget: formData.budget ? parseInt(formData.budget) : undefined,
         boxOffice: formData.boxOffice ? parseInt(formData.boxOffice) : undefined,
         featured: formData.featured,
+        trending: formData.trending,
         isActive: formData.isActive,
         // Cast can be added later, for now empty array
         cast: []
@@ -204,10 +206,28 @@ export default function AdminDashboard({ ongameChange }) {
       boxOffice: game.boxOffice || "",
       awards: game.awards || "",
       featured: game.featured || false,
+      trending: game.trending || false,
       isActive: game.isActive !== false,
     });
     setFormErrors({});
     setShowCreateForm(true);
+  };
+
+  const handleAutoTrending = async () => {
+    if (!window.confirm("Auto-detect trending games? This will overwrite manual trending selections based on ratings, popularity, and recency.")) {
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      const result = await ApiService.autoSetTrending();
+      alert(result.message || `${result.trendingCount} games set as trending`);
+      loadgames();
+    } catch (error) {
+      console.error("Error auto-setting trending:", error);
+      alert("Failed to auto-detect trending: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async (gameId) => {
@@ -244,8 +264,9 @@ export default function AdminDashboard({ ongameChange }) {
       budget: "",
       boxOffice: "",
       awards: "",
-      featured: false,
-      isActive: true,
+    featured: false,
+    trending: false,
+    isActive: true,
     });
     setFormErrors({});
     setEditinggame(null);
@@ -376,13 +397,24 @@ export default function AdminDashboard({ ongameChange }) {
             <p className="theme-text-secondary mt-1 lg:mt-2 text-sm lg:text-base">Manage games and content</p>
           </div>
           
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="flex items-center justify-center gap-2 theme-button-primary px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold hover:opacity-90 transition-all text-sm lg:text-base w-full lg:w-auto"
-          >
-            <Icon name="plus" size={18} />
-            <span className="lg:inline">Add New Games</span>
-          </button>
+          <div className="flex gap-2 w-full lg:w-auto">
+            <button
+              onClick={handleAutoTrending}
+              className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold transition-all text-sm lg:text-base w-1/2 lg:w-auto"
+              style={{ backgroundColor: '#065f46', color: 'white' }}
+              title="Auto-detect trending games based on ratings, popularity, and recency"
+            >
+              <Icon name="trending" size={18} />
+              <span className="truncate">Auto Trending</span>
+            </button>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center justify-center gap-2 theme-button-primary px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold hover:opacity-90 transition-all text-sm lg:text-base w-1/2 lg:w-auto"
+            >
+              <Icon name="plus" size={18} />
+              <span className="lg:inline">Add New Games</span>
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -414,9 +446,9 @@ export default function AdminDashboard({ ongameChange }) {
               <Icon name="trending" size={32} className="text-green-400 lg:w-10 lg:h-10" />
               <div>
                 <h3 className="text-xl lg:text-2xl font-bold">
-                  {games.filter(m => m.averageRating > 8).length}
+                  {games.filter(m => m.trending).length}
                 </h3>
-                <p className="theme-text-secondary text-sm lg:text-base">High Rated (8+)</p>
+                <p className="theme-text-secondary text-sm lg:text-base">Trending Games</p>
               </div>
             </div>
           </div>
@@ -483,11 +515,18 @@ export default function AdminDashboard({ ongameChange }) {
                         </div>
                       </td>
                       <td className="p-2 lg:p-4 hidden lg:table-cell">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          game.featured ? "bg-red-600 text-white" : "theme-bg-secondary"
-                        }`}>
-                          {game.featured ? "Featured" : "Regular"}
-                        </span>
+                        <div className="flex gap-1">
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            game.featured ? "bg-red-600 text-white" : "theme-bg-secondary"
+                          }`}>
+                            {game.featured ? "Featured" : "Regular"}
+                          </span>
+                          {game.trending && (
+                            <span className="px-2 py-1 rounded-full text-xs bg-green-600 text-white">
+                              Trending
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-2 lg:p-4">
                         <div className="flex items-center gap-1 lg:gap-2">
@@ -874,6 +913,21 @@ export default function AdminDashboard({ ongameChange }) {
                               <div>
                                 <span className="text-sm font-semibold">Featured Gaming</span>
                                 <p className="text-xs theme-text-secondary">Show on homepage as featured content</p>
+                              </div>
+                            </label>
+
+                            <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:theme-bg-hover transition-colors">
+                              <input
+                                type="checkbox"
+                                name="trending"
+                                checked={formData.trending}
+                                onChange={handleInputChange}
+                                className="w-4 h-4 rounded border-2 theme-border focus:ring-2 focus:ring-[var(--accent-color)] focus:ring-opacity-50"
+                                disabled={isSubmitting}
+                              />
+                              <div>
+                                <span className="text-sm font-semibold">Trending Gaming</span>
+                                <p className="text-xs theme-text-secondary">Show on trending page</p>
                               </div>
                             </label>
                             

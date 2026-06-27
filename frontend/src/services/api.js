@@ -274,6 +274,29 @@ class ApiService {
     }
   }
 
+  async toggleGameTrending(gameId, trending) {
+    try {
+      return await this.request(`/api/admin/games/${gameId}/trending`, {
+        method: "PUT",
+        body: JSON.stringify({ trending }),
+      });
+    } catch (error) {
+      console.error("Error toggling trending status:", error);
+      throw error;
+    }
+  }
+
+  async autoSetTrending() {
+    try {
+      return await this.request("/api/admin/games/auto-trending", {
+        method: "POST",
+      });
+    } catch (error) {
+      console.error("Error auto-setting trending:", error);
+      throw error;
+    }
+  }
+
   async bulkUpdateGames(gameIds, updateData) {
     try {
       console.log("🔄 Bulk updating games:", gameIds.length);
