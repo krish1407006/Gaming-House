@@ -91,7 +91,7 @@ export default function TrendingPage() {
                   <div className="mt-2 text-center">
                     <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>
                       <span className="flex items-center gap-1">
-                        <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{avgRating.toFixed(1)}
+                        <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{reviewCount > 0 ? avgRating.toFixed(1) : 'N/A'}
                       </span>
                       <span>•</span>
                       <span className="truncate">
