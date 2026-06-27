@@ -216,18 +216,80 @@ export default function AdminDashboard({ ongameChange }) {
     setShowCreateForm(true);
   };
 
-  const handleAutoTrending = async () => {
-    if (!window.confirm("Auto-detect trending games? This will overwrite manual trending selections based on ratings, popularity, and recency.")) {
-      return;
+  const openTrendingModal = async () => {
+    setShowTrendingModal(true);
+    try {
+      const data = await ApiService.getAdminTrending();
+      setTrendingData(data);
+      setTrendingOrder(data.trending.map(g => g._id));
+    } catch (error) {
+      console.error("Error loading trending data:", error);
+      alert("Failed to load trending data");
     }
+  };
+
+  const moveTrendingUp = (index) => {
+    if (index <= 0) return;
+    const newOrder = [...trendingOrder];
+    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+    setTrendingOrder(newOrder);
+  };
+
+  const moveTrendingDown = (index) => {
+    if (index >= trendingOrder.length - 1) return;
+    const newOrder = [...trendingOrder];
+    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+    setTrendingOrder(newOrder);
+  };
+
+  const removeFromTrending = (id) => {
+    setTrendingOrder(prev => prev.filter(gid => gid !== id));
+    setTrendingData(prev => {
+      const removed = prev.trending.find(g => g._id === id);
+      return {
+        trending: prev.trending.filter(g => g._id !== id),
+        notTrending: removed ? [...prev.notTrending, removed] : prev.notTrending,
+      };
+    });
+  };
+
+  const addToTrending = (id) => {
+    setTrendingOrder(prev => [...prev, id]);
+    setTrendingData(prev => {
+      const added = prev.notTrending.find(g => g._id === id);
+      return {
+        trending: added ? [...prev.trending, added] : prev.trending,
+        notTrending: prev.notTrending.filter(g => g._id !== id),
+      };
+    });
+  };
+
+  const saveTrendingOrder = async () => {
+    try {
+      setIsSubmitting(true);
+      const result = await ApiService.reorderTrending(trendingOrder);
+      alert(result.message || "Trending order saved!");
+      setShowTrendingModal(false);
+      loadgames();
+    } catch (error) {
+      console.error("Error saving trending order:", error);
+      alert("Failed to save: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const autoSelectTrending = async () => {
     try {
       setIsSubmitting(true);
       const result = await ApiService.autoSetTrending();
-      alert(result.message || `${result.trendingCount} games set as trending`);
-      loadgames();
+      alert(result.message || "Trending auto-selected!");
+      const data = await ApiService.getAdminTrending();
+      setTrendingData(data);
+      setTrendingOrder(data.trending.map(g => g._id));
     } catch (error) {
-      console.error("Error auto-setting trending:", error);
-      alert("Failed to auto-detect trending: " + error.message);
+      console.error("Error auto-selecting trending:", error);
+      alert("Failed: " + error.message);
     } finally {
       setIsSubmitting(false);
     }
