@@ -1,39 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
+import apiService from "../services/api";
 
-export default function TrendingPage({ allGames, loading, error }) {
-  // Filter and process only trending games - use useMemo to force re-computation when allGames changes
-  const trendinggames = React.useMemo(() => {
-    if (!allGames || !Array.isArray(allGames)) {
-      return [];
+export default function TrendingPage() {
+  const [trendinggames, setTrendinggames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchTrending = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const games = await apiService.getTrending();
+      setTrendinggames(games);
+    } catch (err) {
+      console.error("Error fetching trending games:", err);
+      setError("Failed to load trending games");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return allGames
-      .filter((game) => {
-        // Check both local data (trending) and backend data (featured) fields
-        return game.trending === true || game.featured === true;
-      })
-      .map((game) => {
-        // Handle data structure
-        const avgRating = game.averageRating || game.rating || 0;
-        const reviewCount = game.totalRatings || 0;
-
-        return { 
-          ...game, 
-          avgRating, 
-          reviewCount,
-          // Ensure we have the correct ID field
-          id: game._id || game.gameId || game.id
-        };
-      })
-      .sort((a, b) => {
-        const posA = a.trendingPosition ?? 999;
-        const posB = b.trendingPosition ?? 999;
-        if (posA !== posB) return posA - posB;
-        return b.avgRating - a.avgRating;
-      });
-  }, [allGames]); // Re-compute when allGames changes
+  useEffect(() => {
+    fetchTrending();
+  }, []);
 
   const bannerImg = trendinggames[0]?.poster || trendinggames[0]?.image || null;
 
@@ -49,7 +40,7 @@ export default function TrendingPage({ allGames, loading, error }) {
         )}
         <div className="relative z-10 text-center px-4">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg">
-            🔥 What's Hot Right Now
+            What's Hot Right Now
           </h2>
           <p className="text-gray-200 text-sm sm:text-base lg:text-lg drop-shadow">
             Discover the most popular and highest-rated gaming right now
@@ -63,7 +54,6 @@ export default function TrendingPage({ allGames, loading, error }) {
         </h3>
       </div>
 
-      {/* Trending games Content Area */}
       <div className="min-h-[300px] lg:min-h-[400px] relative">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-64 lg:h-96 text-[var(--accent-color)]">
@@ -89,26 +79,30 @@ export default function TrendingPage({ allGames, loading, error }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {trendinggames.map((game, idx) => (
-              <div key={game.id || game._id || game.gameId || idx} className="relative">
-                <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
-                  #{idx + 1}
-                </div>
-                <GameCard game={game} />
-                <div className="mt-2 text-center">
-                  <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    <span className="flex items-center gap-1">
-                      <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{game.avgRating?.toFixed(1)}
-                    </span>
-                    <span>•</span>
-                    <span className="truncate">
-                      {game.reviewCount > 0 ? `${game.reviewCount} reviews` : 'Trending'}
-                      {game.trending && ' 🔥'}
-                    </span>
+            {trendinggames.map((game, idx) => {
+              const avgRating = game.averageRating || game.rating || 0;
+              const reviewCount = game.totalRatings || 0;
+              return (
+                <div key={game._id || game.gameId || game.id || idx} className="relative">
+                  <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
+                    #{idx + 1}
+                  </div>
+                  <GameCard game={game} />
+                  <div className="mt-2 text-center">
+                    <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="flex items-center gap-1">
+                        <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{avgRating.toFixed(1)}
+                      </span>
+                      <span>•</span>
+                      <span className="truncate">
+                        {reviewCount > 0 ? `${reviewCount} reviews` : 'Trending'}
+                        {game.trending && ' 🔥'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

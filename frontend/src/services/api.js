@@ -274,6 +274,16 @@ class ApiService {
     }
   }
 
+  async getTrending() {
+    try {
+      const data = await this.request("/api/games/trending");
+      return Array.isArray(data) ? data : (data?.games || data?.data || []);
+    } catch (error) {
+      console.error("Error fetching trending games:", error);
+      throw error;
+    }
+  }
+
   async toggleGameTrending(gameId, trending) {
     try {
       return await this.request(`/api/admin/games/trending/${gameId}`, {

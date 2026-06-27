@@ -198,7 +198,7 @@ function App() {
               <HomePage allGames={allGames} loading={loading} error={error} />
             }
           />
-          <Route path="/trending" element={<TrendingPage key={allGames.length} allGames={allGames} loading={loading} error={error} />} />
+          <Route path="/trending" element={<TrendingPage />} />
           <Route path="/top" element={<TopRatedPage key={allGames.length} allGames={allGames} loading={loading} error={error} />} />
           <Route path="/categories" element={<CategoriesPage allGames={allGames} loading={loading} error={error} />} />
           <Route path="/watchlist" element={<WatchlistPage />} />
