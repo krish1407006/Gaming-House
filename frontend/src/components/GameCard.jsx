@@ -60,13 +60,17 @@ function GameCard({ game }) {
                   : "N/A")}
             </span>
             <div className="flex-shrink-0 scale-75 sm:scale-90 lg:scale-100">
-              <StarRating rating={game.rating || game.averageRating || 0} />
+              {game.totalRatings > 0 ? (
+                <StarRating rating={game.averageRating || 0} />
+              ) : (
+                <span className="text-xs text-[var(--text-muted)]">No ratings</span>
+              )}
             </div>
           </div>
 
-          {game.ratings && game.ratings.length > 0 && (
+          {game.totalRatings > 0 && (
             <div className="text-xs text-[var(--text-secondary)] text-center hidden sm:block">
-              {game.ratings.length} rating{game.ratings.length !== 1 ? "s" : ""}
+              {game.totalRatings} rating{game.totalRatings !== 1 ? "s" : ""}
             </div>
           )}
         </div>
