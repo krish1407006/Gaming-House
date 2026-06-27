@@ -6,7 +6,7 @@ export const getGames = async (options = {}) => {
   try {
     const {
       page = 1,
-      limit = 30,
+      limit = 200,
       genre,
       search,
       sortBy = "createdAt",
