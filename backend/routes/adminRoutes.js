@@ -19,7 +19,9 @@ router.put("/games/:id", adminController.updateGame);
 router.delete("/games/:id", adminController.deleteGame);
 router.put("/games/:id/status", adminController.toggleGameStatus);
 router.put("/games/:id/featured", adminController.toggleGameFeatured);
-router.put("/games/:id/trending", adminController.toggleGameTrending);
+router.get("/games/trending-list", adminController.getAdminTrending);
+router.put("/games/trending/:id", adminController.toggleGameTrending);
+router.put("/games/reorder-trending", adminController.reorderTrending);
 router.post("/games/auto-trending", adminController.autoSetTrending);
 router.get("/games/:id/ratings", adminController.getGameRatingsAdmin);
 
