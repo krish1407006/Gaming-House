@@ -333,7 +333,7 @@ export const autoSetTrending = async () => {
   try {
     const games = await Game.find({ isActive: true }).lean();
 
-    const scores = games.map((game) => {
+    const scored = games.map((game) => {
       const ratingWeight = (game.averageRating || 0) * 5;
       const ratingsWeight = Math.min(game.totalRatings || 0, 100);
       const ageMs = Date.now() - new Date(game.createdAt || game._id.getTimestamp()).getTime();
@@ -344,16 +344,16 @@ export const autoSetTrending = async () => {
       return { _id: game._id, trendingScore };
     });
 
-    scores.sort((a, b) => b.trendingScore - a.trendingScore);
-    const topLimit = Math.min(20, scores.length);
-    const topIds = new Set(scores.slice(0, topLimit).map((s) => s._id.toString()));
+    scored.sort((a, b) => b.trendingScore - a.trendingScore);
+    const topLimit = Math.min(20, scored.length);
 
-    const updates = scores.map((s) => ({
+    const updates = scored.map((s, i) => ({
       updateOne: {
         filter: { _id: s._id },
         update: {
           $set: {
-            trending: topIds.has(s._id.toString()),
+            trending: i < topLimit,
+            trendingPosition: i < topLimit ? i + 1 : 0,
             trendingScore: s.trendingScore,
           },
         },
@@ -374,6 +374,43 @@ export const autoSetTrending = async () => {
     return {
       success: false,
       error: "Failed to auto-set trending games",
+    };
+  }
+};
+
+export const reorderTrending = async (orderedIds) => {
+  try {
+    const updates = orderedIds.map((id, i) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: {
+          $set: {
+            trending: true,
+            trendingPosition: i + 1,
+          },
+        },
+      },
+    }));
+
+    await Game.bulkWrite(updates);
+
+    await Game.updateMany(
+      { _id: { $nin: orderedIds } },
+      { $set: { trending: false, trendingPosition: 0 } }
+    );
+
+    return {
+      success: true,
+      data: {
+        message: "Trending order updated successfully",
+        count: orderedIds.length,
+      },
+    };
+  } catch (error) {
+    console.error("Error reordering trending games:", error);
+    return {
+      success: false,
+      error: "Failed to reorder trending games",
     };
   }
 };
