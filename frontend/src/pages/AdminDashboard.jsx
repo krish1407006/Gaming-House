@@ -1052,8 +1052,8 @@ export default function AdminDashboard({ ongameChange }) {
         {/* Manage Trending Modal */}
         {showTrendingModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 lg:p-4">
-            <div className="theme-bg-secondary rounded-xl max-w-5xl w-full max-h-[95vh] lg:max-h-[90vh] overflow-y-auto modal-scrollbar shadow-2xl">
-              <div className="p-4 lg:p-6 border-b theme-border flex items-center justify-between">
+            <div className="theme-bg-secondary rounded-xl max-w-3xl w-full max-h-[95vh] lg:max-h-[90vh] overflow-y-auto modal-scrollbar shadow-2xl">
+              <div className="p-4 lg:p-6 border-b theme-border flex items-center justify-between sticky top-0 theme-bg-secondary z-10">
                 <h3 className="text-lg lg:text-xl font-semibold flex items-center gap-2">
                   <Icon name="trending" size={20} />
                   Manage Trending Games
@@ -1064,79 +1064,56 @@ export default function AdminDashboard({ ongameChange }) {
               </div>
 
               <div className="p-4 lg:p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Trending Games Column */}
-                  <div>
-                    <h4 className="text-md font-semibold mb-3 flex items-center gap-2">
-                      <Icon name="trending" size={16} className="text-green-400" />
-                      Trending Games ({trendingOrder.length})
-                    </h4>
-                    {trendingOrder.length === 0 ? (
-                      <p className="theme-text-secondary text-sm p-4 theme-bg-primary rounded-lg">
-                        No trending games. Click "Auto Select" or add from available games.
-                      </p>
-                    ) : (
-                      <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-                        {trendingOrder.map((id, index) => {
-                          const game = trendingData.trending.find(g => g._id === id) || trendingData.notTrending.find(g => g._id === id);
-                          if (!game) return null;
-                          return (
-                            <div key={id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg">
-                              <span className="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold" style={{ backgroundColor: 'var(--accent-color)', color: 'white' }}>
-                                {index + 1}
-                              </span>
-                              <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded" />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold truncate">{game.title}</p>
-                                <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
-                              </div>
-                              <button onClick={() => moveTrendingUp(index)} disabled={index === 0} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move up">
-                                <Icon name="chevronUp" size={16} />
-                              </button>
-                              <button onClick={() => moveTrendingDown(index)} disabled={index >= trendingOrder.length - 1} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move down">
-                                <Icon name="chevronDown" size={16} />
-                              </button>
-                              <button onClick={() => removeFromTrending(id)} className="p-1.5 hover:bg-red-500 hover:text-white rounded transition-colors" title="Remove from trending">
-                                <Icon name="x" size={16} />
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                <p className="text-sm theme-text-secondary mb-4">
+                  Add games to trending, reorder them with ↑↓ buttons, or use Auto Select.
+                </p>
 
-                  {/* Available Games Column */}
-                  <div>
-                    <h4 className="text-md font-semibold mb-3 flex items-center gap-2">
-                      <Icon name="list" size={16} />
-                      Available Games ({trendingData.notTrending.length})
-                    </h4>
-                    {trendingData.notTrending.length === 0 ? (
-                      <p className="theme-text-secondary text-sm p-4 theme-bg-primary rounded-lg">
-                        No available games to add.
-                      </p>
-                    ) : (
-                      <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-                        {trendingData.notTrending.map((game) => (
-                          <div key={game._id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg">
-                            <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold truncate">{game.title}</p>
-                              <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
-                            </div>
-                            <button onClick={() => addToTrending(game._id)} className="p-1.5 hover:bg-green-600 hover:text-white rounded transition-colors" title="Add to trending">
-                              <Icon name="plus" size={16} />
-                            </button>
-                          </div>
-                        ))}
+                {/* All games list */}
+                <div className="space-y-1 max-h-96 overflow-y-auto pr-1 mb-4">
+                  {trendingOrder.map((id, index) => {
+                    const game = [...trendingData.trending, ...trendingData.notTrending].find(g => g._id === id);
+                    if (!game) return null;
+                    return (
+                      <div key={id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg border border-green-700">
+                        <span className="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shrink-0" style={{ backgroundColor: 'var(--accent-color)', color: 'white' }}>
+                          {index + 1}
+                        </span>
+                        <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate">{game.title}</p>
+                          <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <button onClick={() => moveTrendingUp(index)} disabled={index === 0} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move up">
+                            <Icon name="chevronUp" size={16} />
+                          </button>
+                          <button onClick={() => moveTrendingDown(index)} disabled={index >= trendingOrder.length - 1} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move down">
+                            <Icon name="chevronDown" size={16} />
+                          </button>
+                          <button onClick={() => removeFromTrending(id)} className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors" title="Remove from trending">
+                            <Icon name="x" size={16} />
+                          </button>
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    );
+                  })}
+                  {trendingData.notTrending.map((game) => (
+                    <div key={game._id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg opacity-80 hover:opacity-100 transition-opacity">
+                      <span className="w-6 h-6 flex items-center justify-center text-xs theme-text-secondary shrink-0">-</span>
+                      <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{game.title}</p>
+                        <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
+                      </div>
+                      <button onClick={() => addToTrending(game._id)} className="p-1.5 hover:bg-green-600 hover:text-white rounded transition-colors shrink-0" title="Add to trending">
+                        <Icon name="plus" size={16} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Modal Actions */}
-                <div className="flex justify-between items-center pt-6 mt-6 border-t theme-border">
+                <div className="flex justify-between items-center pt-4 border-t theme-border">
                   <button
                     onClick={autoSelectTrending}
                     disabled={isSubmitting}
