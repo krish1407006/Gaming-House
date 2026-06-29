@@ -39,7 +39,7 @@ export default function TrendingPage() {
           />
         )}
         <div className="relative z-10 text-center px-4">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg font-heading">
             What's Hot Right Now
           </h2>
           <p className="text-gray-200 text-sm sm:text-base lg:text-lg drop-shadow">
@@ -49,7 +49,7 @@ export default function TrendingPage() {
       </div>
 
       <div className="flex items-center justify-between mb-4 lg:mb-6">
-        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide">
+        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">
           Trending Now ({trendinggames.length} gaming)
         </h3>
       </div>

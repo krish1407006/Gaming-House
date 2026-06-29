@@ -60,7 +60,7 @@ export default function CategoriesPage() {
     <section className="px-4 lg:px-8 py-4 lg:py-6">
       <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border-2 border-[var(--accent-color)] relative h-40 sm:h-48 lg:h-56 bg-gradient-to-r from-[var(--bg-secondary)] to-[var(--bg-primary)] flex items-center justify-center mb-6 lg:mb-8">
         <div className="relative z-10 text-center px-4">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg font-heading">
             <Icon name="grid" size={20} className="lg:w-6 lg:h-6 mr-2" />Categories
           </h2>
           <p className="text-sm sm:text-base lg:text-lg drop-shadow" style={{ color: 'var(--text-primary)' }}>
