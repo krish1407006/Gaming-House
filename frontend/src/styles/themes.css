@@ -1,68 +1,68 @@
 /* Theme Variables */
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
+  --bg-primary: #0b0b16;
+  --bg-secondary: #16162a;
   --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --accent-color: #00d4ff;
-  --accent-color-rgb: 0, 212, 255;
-  --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
-  --border-color: #222222;
-  --success-color: #10b981;
+  --text-secondary: #9ca3cf;
+  --accent-color: #00e5ff;
+  --accent-color-rgb: 0, 229, 255;
+  --accent-gradient: linear-gradient(135deg, #00e5ff 0%, #ff2d95 100%);
+  --border-color: #2a2a4a;
+  --success-color: #00ff88;
   --error-color: #ef4444;
   --warning-color: #f59e0b;
 }
 
 /* Dark Theme */
 .dark-theme {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --bg-tertiary: #1a1a1a;
+  --bg-primary: #0b0b16;
+  --bg-secondary: #16162a;
+  --bg-tertiary: #1c1c3a;
   --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-  --accent-color: #00d4ff;
-  --accent-color-rgb: 0, 212, 255;
-  --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
-  --accent-hover: #00b8e6;
-  --border-color: #222222;
+  --text-secondary: #9ca3cf;
+  --text-muted: #6b6b9a;
+  --accent-color: #00e5ff;
+  --accent-color-rgb: 0, 229, 255;
+  --accent-gradient: linear-gradient(135deg, #00e5ff 0%, #ff2d95 100%);
+  --accent-hover: #00ccdd;
+  --border-color: #2a2a4a;
   --border-hover: var(--accent-color);
-  --card-bg: #141414;
-  --card-shadow: rgba(0, 212, 255, 0.08);
-  --input-bg: #141414;
-  --input-border: #222222;
-  --button-primary: #00d4ff;
-  --button-primary-hover: #00b8e6;
-  --button-secondary: #222222;
-  --button-secondary-hover: #2a2a2a;
-  --success-color: #10b981;
+  --card-bg: #16162a;
+  --card-shadow: rgba(0, 229, 255, 0.08);
+  --input-bg: #16162a;
+  --input-border: #2a2a4a;
+  --button-primary: #00e5ff;
+  --button-primary-hover: #00ccdd;
+  --button-secondary: #2a2a4a;
+  --button-secondary-hover: #3a3a5a;
+  --success-color: #00ff88;
   --error-color: #ef4444;
   --warning-color: #f59e0b;
 }
 
 /* Light Theme */
 .light-theme {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f1f3f4;
-  --bg-tertiary: #e8eaed;
-  --text-primary: #1a1a1a;
-  --text-secondary: #5f6368;
-  --text-muted: #80868b;
-  --accent-color: #0099cc;
-  --accent-color-rgb: 0, 153, 204;
-  --accent-gradient: linear-gradient(135deg, #0099cc 0%, #00cc66 100%);
-  --accent-hover: #007799;
-  --border-color: #dadce0;
+  --bg-primary: #f0f0ff;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e8f0;
+  --text-primary: #1a1a2e;
+  --text-secondary: #5a5a7a;
+  --text-muted: #8a8aaa;
+  --accent-color: #0066cc;
+  --accent-color-rgb: 0, 102, 204;
+  --accent-gradient: linear-gradient(135deg, #0066cc 0%, #cc0066 100%);
+  --accent-hover: #0055aa;
+  --border-color: #d0d0e0;
   --border-hover: var(--accent-color);
   --card-bg: #ffffff;
-  --card-shadow: rgba(0, 153, 204, 0.1);
+  --card-shadow: rgba(0, 102, 204, 0.1);
   --input-bg: #ffffff;
-  --input-border: #dadce0;
+  --input-border: #d0d0e0;
   --button-primary: var(--accent-color);
   --button-primary-hover: var(--accent-hover);
   --button-secondary: #f1f3f4;
   --button-secondary-hover: #e8eaed;
-  --success-color: #0d7377;
+  --success-color: #008866;
   --error-color: #d93025;
   --warning-color: #f9ab00;
 }
@@ -132,11 +132,11 @@
 }
 
 .theme-gradient-overlay {
-  background: linear-gradient(to right, var(--bg-primary), rgba(10, 10, 10, 0.7), transparent);
+  background: linear-gradient(to right, var(--bg-primary), rgba(11, 11, 22, 0.6), transparent);
 }
 
 .light-theme .theme-gradient-overlay {
-  background: linear-gradient(to right, var(--bg-primary), rgba(255, 255, 255, 0.7), transparent);
+  background: linear-gradient(to right, var(--bg-primary), rgba(240, 240, 255, 0.6), transparent);
 }
 
 .theme-error-bg {
@@ -766,9 +766,9 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 900px 700px at 20% 15%, rgba(255,255,255,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 700px 900px at 80% 30%, rgba(0,212,255,0.1) 0%, transparent 60%),
-    radial-gradient(ellipse 600px 800px at 50% 85%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    radial-gradient(ellipse 900px 700px at 20% 15%, rgba(0,229,255,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 900px at 80% 30%, rgba(255,45,149,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 800px at 50% 85%, rgba(0,229,255,0.05) 0%, transparent 50%);
   animation: ambientPulse 15s ease-in-out infinite alternate;
 }
 
