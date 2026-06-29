@@ -164,12 +164,12 @@
 
 .game-card-hover:hover .game-card-title {
   text-shadow:
-    0 0 10px rgba(0, 255, 255, 0.6),
-    0 0 20px rgba(124, 58, 237, 0.4);
+    0 0 10px rgba(0, 229, 255, 0.6),
+    0 0 20px rgba(255, 45, 149, 0.4);
 }
 
 .game-card-hover:hover .game-card-year {
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
 }
 
 .game-card-hover:hover .game-card-arrow {
