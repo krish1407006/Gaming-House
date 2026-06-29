@@ -791,8 +791,8 @@ body::after {
   transform-origin: center bottom;
   transform: perspective(500px) rotateX(65deg) scale(2.5);
   background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 60px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 60px);
+    repeating-linear-gradient(90deg, rgba(0,229,255,0.06) 0px, rgba(0,229,255,0.06) 1px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(0deg, rgba(255,45,149,0.04) 0px, rgba(255,45,149,0.04) 1px, transparent 1px, transparent 60px);
   animation: gridScroll 25s linear infinite;
   mask-image: linear-gradient(to top, black 30%, transparent 80%);
   -webkit-mask-image: linear-gradient(to top, black 30%, transparent 80%);
@@ -811,8 +811,8 @@ body::after {
 .light-theme body::before,
 body.light-theme::before {
   background:
-    radial-gradient(ellipse 900px 700px at 20% 15%, rgba(0,153,204,0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 700px 900px at 80% 30%, rgba(0,0,0,0.03) 0%, transparent 60%);
+    radial-gradient(ellipse 900px 700px at 20% 15%, rgba(0,102,204,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 900px at 80% 30%, rgba(204,0,102,0.03) 0%, transparent 60%);
 }
 
 .light-theme body::after,
