@@ -35,7 +35,7 @@ export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
       <div className="flex items-center justify-between mb-6 lg:mb-10">
         <NavLink 
           to="/" 
-          className="text-2xl lg:text-3xl font-extrabold tracking-wide theme-accent drop-shadow"
+          className="text-2xl lg:text-3xl font-extrabold tracking-wide theme-accent drop-shadow font-heading"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           Gaming House

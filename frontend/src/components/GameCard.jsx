@@ -36,7 +36,7 @@ function GameCard({ game }) {
       </Link>
 
       <div className="p-2 sm:p-3 lg:p-4 flex flex-col flex-grow min-h-0">
-        <h4 className="text-sm sm:text-base lg:text-lg font-extrabold mb-1 sm:mb-2 drop-shadow line-clamp-2 min-h-[2em] flex items-start" style={{ color: 'var(--accent-color)' }}>
+        <h4 className="text-sm sm:text-base lg:text-lg font-extrabold mb-1 sm:mb-2 drop-shadow line-clamp-2 min-h-[2em] flex items-start font-heading" style={{ color: 'var(--accent-color)' }}>
           <span className="overflow-hidden">
             {game.name || game.title}
           </span>

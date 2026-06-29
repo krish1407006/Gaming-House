@@ -32,7 +32,7 @@ export default function Navbar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
           {/* Logo */}
           <NavLink 
             to="/" 
-            className="text-2xl font-extrabold tracking-wide"
+            className="text-2xl font-extrabold tracking-wide font-heading"
             style={{ color: 'var(--accent-color)' }}
           >
             Gaming House

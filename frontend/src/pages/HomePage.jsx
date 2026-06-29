@@ -71,8 +71,8 @@ export default function HomePage() {
         ))}
 
         <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold mb-3 lg:mb-4 tracking-wide animate-fade-in">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-color)] to-purple-300">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold mb-3 lg:mb-4 tracking-wide animate-fade-in font-heading">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-color)] to-[#ff2d95]">
               Discover Amazing Games
             </span>
           </h2>
@@ -88,7 +88,7 @@ export default function HomePage() {
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide">Home</h3>
+        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">Home</h3>
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
