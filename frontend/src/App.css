@@ -58,12 +58,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-color, #7c3aed);
+  background: var(--accent-color, #00e5ff);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-hover, #5b21b6);
+  background: var(--accent-hover, #00ccdd);
 }
 
 /* Fade-in animation for cards */

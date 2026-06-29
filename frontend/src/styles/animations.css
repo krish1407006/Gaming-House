@@ -44,14 +44,14 @@
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 5px rgba(124, 58, 237, 0.2),
-                0 0 10px rgba(124, 58, 237, 0.2),
-                0 0 15px rgba(124, 58, 237, 0.2);
+    box-shadow: 0 0 5px rgba(0, 229, 255, 0.2),
+                0 0 10px rgba(255, 45, 149, 0.15),
+                0 0 15px rgba(0, 229, 255, 0.1);
   }
   to {
-    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3),
-                0 0 20px rgba(124, 58, 237, 0.3),
-                0 0 30px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3),
+                0 0 20px rgba(255, 45, 149, 0.25),
+                0 0 30px rgba(0, 229, 255, 0.2);
   }
 }
 
