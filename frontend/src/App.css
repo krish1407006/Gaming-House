@@ -2,8 +2,8 @@
 
 /* Animated gradient accent bar */
 .global-accent-bar {
-  height: 3px;
-  background: linear-gradient(90deg, #00e5ff, #ff2d95, #00e5ff);
+  height: 2px;
+  background: linear-gradient(90deg, #ffffff, #737373, #ffffff);
   background-size: 200% 100%;
   animation: accentBarShimmer 3s ease-in-out infinite;
   position: fixed;
@@ -58,12 +58,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-color, #00e5ff);
+  background: var(--accent-color, #ffffff);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-hover, #00ccdd);
+  background: var(--accent-hover, #e5e5e5);
 }
 
 /* Fade-in animation for cards */

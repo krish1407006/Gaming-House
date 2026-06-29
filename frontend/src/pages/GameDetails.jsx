@@ -11,6 +11,7 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
+import GameCard from "../components/GameCard";
 import ReviewSection from "../components/ReviewSection";
 import apiService from "../services/api";
 
@@ -26,6 +27,7 @@ export default function GameDetailPage() {
 
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [relatedGames, setRelatedGames] = useState([]);
 
   useEffect(() => {
     if (getToken) {
@@ -54,6 +56,15 @@ export default function GameDetailPage() {
 
         setIsWatchlisted(watchlist.includes(id));
         setIsLiked(liked.includes(id));
+
+        try {
+            const related = await apiService.getGames({ limit: 50, sortBy: 'createdAt', sortOrder: 'desc' });
+          if (related?.games) {
+            const shuffled = [...related.games].sort(() => Math.random() - 0.5);
+            setRelatedGames(shuffled.filter(g => (g._id || g.id) !== movieData._id).slice(0, 3));
+          }
+        } catch {}
+
         setLoading(false);
         return;
       }
@@ -306,34 +317,34 @@ export default function GameDetailPage() {
                 className="w-20 sm:w-32 lg:w-48 h-auto rounded-lg lg:rounded-xl shadow-2xl border-2 theme-border-accent shrink-0"
               />
               <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold theme-accent mb-2 lg:mb-4 drop-shadow-lg">
+                <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold theme-accent mb-2 lg:mb-4 drop-shadow-lg font-heading">
                   {game.title}
                 </h1>
 
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 lg:gap-6 mb-4 lg:mb-6">
-                  <span className="text-sm lg:text-lg font-bold theme-bg-accent theme-text-accent-contrast px-2 lg:px-3 py-0.5 lg:py-1 rounded">
+                  <span className="text-sm lg:text-lg font-bold bg-white/10 text-white px-2 lg:px-3 py-0.5 lg:py-1 rounded">
                     {new Date(game.releaseDate).getFullYear()}
                   </span>
                   <div className="flex items-center gap-1 lg:gap-2">
-                    <FaStar className="theme-accent text-sm lg:text-lg" />
+                    <FaStar className="text-amber-400 text-sm lg:text-lg drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]" />
                     {game.totalRatings > 0 ? (
                       <>
-                        <span className="theme-text-primary text-sm lg:text-lg font-semibold">
+                        <span className="text-white text-sm lg:text-lg font-semibold">
                           {game.averageRating.toFixed(1)}
                           /10
                         </span>
-                        <span className="theme-text-secondary text-xs lg:text-sm">
+                        <span className="text-white/50 text-xs lg:text-sm">
                           ({game.totalRatings}{" "}
                           {game.totalRatings === 1 ? "rating" : "ratings"})
                         </span>
                       </>
                     ) : (
-                      <span className="theme-text-secondary text-sm lg:text-lg">
+                      <span className="text-white/50 text-sm lg:text-lg">
                         No ratings yet
                       </span>
                     )}
                   </div>
-                  <span className="theme-bg-secondary theme-accent px-2 lg:px-3 py-0.5 lg:py-1 rounded border theme-border-accent text-xs lg:text-base">
+                  <span className="bg-white/10 text-white px-2 lg:px-3 py-0.5 lg:py-1 rounded border border-white/20 text-xs lg:text-base">
                     {game.genre?.[0] || "Adventure"}
                   </span>
                 </div>
@@ -341,10 +352,10 @@ export default function GameDetailPage() {
                 <div className="flex items-center justify-center sm:justify-start gap-2 lg:gap-4">
                   <button
                     onClick={handleWatchlistToggle}
-                    className={`px-3 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold transition-colors flex items-center gap-1 lg:gap-2 text-xs lg:text-base ${
+                    className={`px-3 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-1 lg:gap-2 text-xs lg:text-base hover:scale-105 active:scale-95 ${
                       isWatchlisted
-                        ? "theme-bg-accent theme-text-accent-contrast"
-                        : "theme-bg-secondary theme-accent border theme-border-accent hover:theme-bg-accent hover:theme-text-accent-contrast"
+                        ? "bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                        : "bg-white/10 text-white border border-white/20 hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]"
                     }`}
                   >
                     <FaBookmark className="text-xs lg:text-base" />{" "}
@@ -352,17 +363,17 @@ export default function GameDetailPage() {
                   </button>
                   <button
                     onClick={handleLikeToggle}
-                    className={`p-2 lg:p-3 rounded-lg transition-colors ${
+                    className={`p-2 lg:p-3 rounded-lg transition-all duration-300 hover:scale-110 active:scale-90 ${
                       isLiked
-                        ? "bg-red-600 text-white"
-                        : "theme-bg-secondary theme-text-secondary hover:text-red-500"
+                        ? "bg-red-600 text-white shadow-[0_0_12px_rgba(220,38,38,0.4)]"
+                        : "bg-white/10 text-white/70 hover:text-red-500 hover:bg-red-600/10 hover:shadow-[0_0_12px_rgba(220,38,38,0.2)]"
                     }`}
                   >
                     <FaHeart className="text-sm lg:text-base" />
                   </button>
                   <button
                     onClick={handleShare}
-                    className="p-2 lg:p-3 theme-bg-secondary theme-text-secondary rounded-lg hover:theme-accent transition-colors"
+                    className="p-2 lg:p-3 bg-white/10 text-white/70 rounded-lg transition-all duration-300 hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-90"
                     title="Share this game"
                   >
                     <FaShare className="text-sm lg:text-base" />
@@ -375,103 +386,68 @@ export default function GameDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-            <div className="theme-bg-secondary rounded-xl p-4 lg:p-8">
-              <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8">
-                <span className="w-1 lg:w-1.5 theme-bg-accent h-6 lg:h-8 inline-block rounded-full"></span>
-                <h2 className="text-xl lg:text-2xl font-bold theme-text-primary">Overview</h2>
+            <div className="theme-bg-secondary rounded-xl overflow-hidden">
+              <div className="px-4 lg:px-8 pt-4 lg:pt-8 pb-2 lg:pb-4 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-5 lg:h-6 rounded-full" style={{ background: 'linear-gradient(to bottom, var(--accent-color), transparent)' }}></div>
+                  <h2 className="text-xl lg:text-2xl font-heading font-bold tracking-tight">Overview</h2>
+                </div>
               </div>
-              <div className="space-y-6 lg:space-y-8">
-                <div>
-                  <h3 className="text-lg lg:text-xl font-semibold theme-text-primary mb-3 lg:mb-4 flex items-center gap-2">
-                    <svg className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: 'var(--accent-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    Synopsis
-                  </h3>
-                  <div className="theme-text-secondary leading-relaxed space-y-3 lg:space-y-4 text-sm lg:text-base">
-                    {game.description?.split(/(?<=[.!?])\s+/).map((sentence, i) => (
-                      <p key={i}>{sentence}</p>
-                    ))}
-                  </div>
+              <div className="p-4 lg:p-8 space-y-8 lg:space-y-10">
+                <div className="leading-[1.8] lg:leading-[1.9] text-sm lg:text-base opacity-80 tracking-wide">
+                  {game.description?.split(/(?<=[.!?])\s+/).map((sentence, i) => (
+                    <p key={i} className="mb-3 last:mb-0">{sentence}</p>
+                  ))}
                 </div>
 
                 {game.highlights && game.highlights.length > 0 && (
                   <div>
-                    <h3 className="text-lg lg:text-xl font-semibold theme-text-primary mb-3 lg:mb-4 flex items-center gap-2">
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: 'var(--accent-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
-                      Key Highlights
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <h3 className="text-sm font-heading font-semibold tracking-wider mb-4 uppercase text-amber-400/90">Key Features</h3>
+                    <ul className="space-y-2.5">
                       {game.highlights.map((item, i) => (
-                        <div key={i} className="flex items-start gap-3 theme-bg-primary rounded-lg p-3 lg:p-4 border theme-border">
-                          <span className="w-5 h-5 lg:w-6 lg:h-6 rounded-full theme-bg-accent text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                            {i + 1}
-                          </span>
-                          <span className="theme-text-secondary text-xs lg:text-sm leading-relaxed">{item}</span>
+                        <li key={i} className="flex items-start gap-3 text-sm lg:text-base">
+                          <span className="w-1.5 h-1.5 rounded-full mt-[7px] shrink-0 bg-amber-400/70"></span>
+                          <span className="opacity-70 leading-relaxed">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
+                  <div>
+                    <h3 className="text-sm font-heading font-semibold tracking-wider mb-4 uppercase text-sky-400/90">Details</h3>
+                    <div className="space-y-2">
+                      {[
+                        ['Publisher', game.publisher],
+                        ['Released', game.releaseDate ? new Date(game.releaseDate).getFullYear() : null],
+                        ['Genre', game.genre?.join(', ')],
+                        ['Duration', game.duration ? `${game.duration} min` : null],
+                        ['Language', game.language],
+                        ['Country', game.country],
+                      ].filter(([_, v]) => v).map(([label, value]) => (
+                        <div key={label} className="flex items-center justify-between py-1.5 border-b border-white/5">
+                          <span className="text-xs lg:text-sm opacity-50">{label}</span>
+                          <span className="text-xs lg:text-sm font-medium text-right">{value}</span>
                         </div>
                       ))}
                     </div>
                   </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-                  <div>
-                    <h4 className="text-base lg:text-lg font-semibold theme-accent mb-3 lg:mb-4 flex items-center gap-2">
-                      <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      Details
-                    </h4>
-                    <div className="space-y-2 lg:space-y-3 theme-text-secondary text-sm lg:text-base">
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Publisher</span>
-                        <span>{game.publisher || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Release Year</span>
-                        <span>{new Date(game.releaseDate).getFullYear()}</span>
-                      </div>
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Genre</span>
-                        <span className="text-right">{game.genre?.join(", ") || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Duration</span>
-                        <span>{game.duration ? `${game.duration} min` : "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Language</span>
-                        <span>{game.language || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between py-1.5 lg:py-2">
-                        <span className="theme-text-primary font-medium">Country</span>
-                        <span>{game.country || "N/A"}</span>
-                      </div>
-                    </div>
-                  </div>
 
                   <div>
-                    <h4 className="text-base lg:text-lg font-semibold theme-accent mb-3 lg:mb-4 flex items-center gap-2">
-                      <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                      Cast & Crew
-                    </h4>
-                    <div className="space-y-2 lg:space-y-3 theme-text-secondary text-sm lg:text-base">
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Director</span>
-                        <span className="text-right">{game.director || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                        <span className="theme-text-primary font-medium">Studio</span>
-                        <span className="text-right">{game.cast?.join(", ") || "N/A"}</span>
-                      </div>
-                      {game.budget && (
-                        <div className="flex justify-between py-1.5 lg:py-2 border-b theme-border">
-                          <span className="theme-text-primary font-medium">Budget</span>
-                          <span>${(game.budget / 1000000).toFixed(1)}M</span>
+                    <h3 className="text-sm font-heading font-semibold tracking-wider mb-4 uppercase text-emerald-400/90">Cast & Crew</h3>
+                    <div className="space-y-2">
+                      {[
+                        ['Director', game.director],
+                        ['Studio', game.cast?.join(', ')],
+                        ['Budget', game.budget ? `$${(game.budget / 1000000).toFixed(1)}M` : null],
+                        ['Box Office', game.boxOffice ? `$${(game.boxOffice / 1000000).toFixed(1)}M` : null],
+                      ].filter(([_, v]) => v).map(([label, value]) => (
+                        <div key={label} className="flex items-center justify-between py-1.5 border-b border-white/5">
+                          <span className="text-xs lg:text-sm opacity-50">{label}</span>
+                          <span className="text-xs lg:text-sm font-medium text-right">{value}</span>
                         </div>
-                      )}
-                      {game.boxOffice && (
-                        <div className="flex justify-between py-1.5 lg:py-2">
-                          <span className="theme-text-primary font-medium">Box Office</span>
-                          <span>${(game.boxOffice / 1000000).toFixed(1)}M</span>
-                        </div>
-                      )}
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -544,50 +520,57 @@ export default function GameDetailPage() {
               gameId={game._id || game.gameId || id}
               onReviewUpdate={handleReviewUpdate}
             />
+
+            {relatedGames.length > 0 && (
+              <div className="theme-bg-secondary rounded-xl overflow-hidden">
+                <div className="px-4 lg:px-8 pt-4 lg:pt-8 pb-2 lg:pb-4 border-b border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-1 h-5 lg:h-6 rounded-full" style={{ background: 'linear-gradient(to bottom, var(--accent-color), transparent)' }}></div>
+                    <h2 className="text-xl lg:text-2xl font-heading font-bold tracking-tight">More Games</h2>
+                  </div>
+                </div>
+                <div className="p-4 lg:p-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                    {relatedGames.map((g) => (
+                      <GameCard key={g._id || g.gameId} game={g} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4 lg:space-y-6">
-            <div className="theme-bg-secondary rounded-xl p-4 lg:p-6">
-              <h3 className="text-lg lg:text-xl font-bold theme-accent mb-3 lg:mb-4">
-                Quick Stats
-              </h3>
-              <div className="space-y-3 lg:space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="theme-text-secondary text-sm lg:text-base">Gaming House Rating</span>
-                  <span className="theme-text-primary font-semibold text-sm lg:text-base">
-                    {game.totalRatings > 0
-                      ? `${game.averageRating.toFixed(1)}/10`
-                      : "N/A"}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="theme-text-secondary text-sm lg:text-base">Total Ratings</span>
-                  <span className="theme-text-primary font-semibold text-sm lg:text-base">
-                    {game.totalRatings || 0}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="theme-text-secondary text-sm lg:text-base">Release Date</span>
-                  <span className="theme-text-primary font-semibold text-sm lg:text-base">
-                    {new Date(game.releaseDate).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="theme-text-secondary text-sm lg:text-base">Status</span>
-                  <span className="theme-text-primary font-semibold text-sm lg:text-base">
-                    {game.isActive ? "Available" : "Unavailable"}
-                  </span>
-                </div>
+            <div className="theme-bg-secondary rounded-xl overflow-hidden">
+              <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
+                <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Quick Stats</h3>
+              </div>
+              <div className="p-4 lg:p-6 space-y-3 lg:space-y-4">
+                {[
+                  ['Rating', game.totalRatings > 0 ? `${game.averageRating.toFixed(1)}/10` : 'N/A'],
+                  ['Reviews', game.totalRatings || 0],
+                  ['Released', game.releaseDate ? new Date(game.releaseDate).toLocaleDateString() : 'N/A'],
+                  ['Status', game.isActive ? 'Available' : 'Unavailable'],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between">
+                    <span className="text-xs lg:text-sm opacity-50">{label}</span>
+                    <span className="text-xs lg:text-sm font-semibold">{value}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="theme-bg-secondary rounded-xl p-4 lg:p-6">
-              <h3 className="text-lg lg:text-xl font-bold theme-accent mb-3 lg:mb-4">Poster</h3>
-              <img
-                src={game.poster}
-                alt={game.title}
-                className="w-full rounded-lg shadow-lg"
-              />
+            <div className="theme-bg-secondary rounded-xl overflow-hidden">
+              <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
+                <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Poster</h3>
+              </div>
+              <div className="p-4 lg:p-6">
+                <img
+                  src={game.poster}
+                  alt={game.title}
+                  className="w-full rounded-lg shadow-lg"
+                />
+              </div>
             </div>
           </div>
         </div>

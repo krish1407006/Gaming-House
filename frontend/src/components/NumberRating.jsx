@@ -53,7 +53,7 @@ export default function NumberRating({
               }
               ${
                 number <= displayRating
-                  ? "bg-[#f5c518] text-black shadow-lg"
+                  ? "bg-[var(--accent-color)] text-[var(--bg-primary)] shadow-lg"
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }
               ${interactive && hover >= number ? "transform scale-105" : ""}
@@ -67,7 +67,7 @@ export default function NumberRating({
 
       {displayRating > 0 && (
         <div className="text-center">
-          <span className="text-2xl font-bold text-[#f5c518]">
+          <span className="text-2xl font-bold" style={{ color: 'var(--accent-color)' }}>
             {displayRating}/10
           </span>
           {interactive && (

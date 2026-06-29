@@ -155,7 +155,7 @@ export default function WatchlistPage() {
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary">
-      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border-2 theme-border-accent relative h-40 sm:h-48 lg:h-56 theme-bg-secondary flex items-center justify-center mb-6 lg:mb-8">
+      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border theme-border relative h-40 sm:h-48 lg:h-56 theme-bg-secondary flex items-center justify-center mb-6 lg:mb-8">
         <div className="relative z-10 text-center px-4">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide theme-accent drop-shadow-lg font-heading">
             📚 My Watchlist
@@ -211,7 +211,7 @@ export default function WatchlistPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             {watchlist.map((game, index) => (
               <div key={game._id || game.gameId || game.id || `game-${index}`} className="relative">
                 <GameCard game={game} />

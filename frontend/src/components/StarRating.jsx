@@ -95,7 +95,7 @@ export default function StarRating({
               style={{ width: "50%" }}
             >
               <svg
-                className="w-full h-full text-[#f5c518]"
+                className="w-full h-full text-[var(--accent-color)]"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >

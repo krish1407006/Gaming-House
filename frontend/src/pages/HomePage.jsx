@@ -55,7 +55,7 @@ export default function HomePage() {
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
-      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border-2 border-[var(--accent-color)] relative h-48 sm:h-64 lg:h-72 flex items-center justify-center mb-6 lg:mb-8">
+      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-[var(--border-color)] relative h-48 sm:h-64 lg:h-72 flex items-center justify-center mb-6 lg:mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-[#000000cc] to-[#00000099] z-10"></div>
 
         {discoveryBackgrounds.map((bg, index) => (
@@ -72,7 +72,7 @@ export default function HomePage() {
 
         <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold mb-3 lg:mb-4 tracking-wide animate-fade-in font-heading">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-color)] to-[#ff2d95]">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-color)] to-[#a3a3a3]">
               Discover Amazing Games
             </span>
           </h2>
@@ -82,7 +82,7 @@ export default function HomePage() {
 
           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
             <div className="absolute top-0 left-0 w-32 h-32 bg-[var(--accent-color)] opacity-10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-300 opacity-10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(255, 255, 255, 0.04)' }}></div>
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@ export default function HomePage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               {games.map((game, idx) => (
                 <GameCard key={game._id || game.gameId || `game-${idx}`} game={game} />
               ))}

@@ -62,7 +62,7 @@ export default function TopRatedPage() {
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
-      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border-2 border-[var(--accent-color)] relative h-40 sm:h-48 lg:h-56 bg-gradient-to-r from-[var(--bg-secondary)] to-[var(--bg-primary)] flex items-center justify-center mb-6 lg:mb-8">
+      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border border-[var(--border-color)] relative h-40 sm:h-48 lg:h-56 bg-gradient-to-r from-[var(--bg-secondary)] to-[var(--bg-primary)] flex items-center justify-center mb-6 lg:mb-8">
         <div className="relative z-10 text-center px-4">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg font-heading">
             <Icon name="star" size={20} className="lg:w-6 lg:h-6 mr-2" style={{ color: 'var(--accent-color)' }} />Top Rated Games
@@ -117,7 +117,7 @@ export default function TopRatedPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               {games.map((game, idx) => {
                 const rank = (currentPage - 1) * PAGE_SIZE + idx + 1;
                 return (

@@ -6,9 +6,9 @@ function GameCard({ game }) {
   const gameId = game.gameId || game._id || `temp_${Date.now()}`;
 
   const fallbackImage = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-    <svg width="240" height="160" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#141414"/>
-      <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="16" fill="#00d4ff" text-anchor="middle" dy=".3em">No Image</text>
+    <svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="#0a0a0a"/>
+      <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" dy=".3em">No Image</text>
     </svg>
   `);
 
@@ -17,65 +17,76 @@ function GameCard({ game }) {
     return (imageUrl && imageUrl.trim() !== '' && imageUrl !== null && imageUrl !== undefined) ? imageUrl : fallbackImage;
   };
 
+  const year = game.year ||
+    (game.releaseDate
+      ? new Date(game.releaseDate).getFullYear()
+      : null);
+
+  const description = game.desc || game.description;
+
   return (
-    <div className="game-card-hover card-fade-in card-glow bg-[var(--bg-secondary)] rounded-lg lg:rounded-xl shadow-lg overflow-hidden border-2 border-transparent relative group h-[320px] sm:h-[360px] lg:h-[420px] w-full flex flex-col">
-      <Link to={`/game/${gameId}`} className="block flex-shrink-0">
-        <div className="relative overflow-hidden bg-[var(--bg-secondary)] rounded-t-lg lg:rounded-t-xl">
-          <img
-            src={getImageSrc() || fallbackImage}
-            alt={game.name || game.title || 'Gaming poster'}
-            className="game-card-image w-full h-36 sm:h-40 lg:h-48 object-cover object-center bg-[var(--bg-secondary)]"
-            onError={(e) => {
-              if (e.target.src !== fallbackImage) {
-                e.target.src = fallbackImage;
-              }
-            }}
-          />
-          <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none z-10"></div>
-        </div>
-      </Link>
+    <Link
+      to={`/game/${gameId}`}
+      className="group block relative bg-[var(--bg-secondary)] transition-all duration-500 overflow-hidden w-full scale-[0.96] hover:scale-[1.0]"
+    >
+      <div className="aspect-[16/9] relative overflow-hidden bg-[var(--bg-primary)]">
+        <img
+          src={getImageSrc() || fallbackImage}
+          alt={game.name || game.title || 'Game poster'}
+            className="w-full h-full object-cover object-center transition-all duration-700 ease-out"
+          onError={(e) => {
+            if (e.target.src !== fallbackImage) {
+              e.target.src = fallbackImage;
+            }
+          }}
+        />
 
-      <div className="p-2 sm:p-3 lg:p-4 flex flex-col flex-grow min-h-0">
-        <h4 className="text-sm sm:text-base lg:text-lg font-extrabold mb-1 sm:mb-2 drop-shadow line-clamp-2 min-h-[2em] flex items-start font-heading" style={{ color: 'var(--accent-color)' }}>
-          <span className="overflow-hidden">
-            {game.name || game.title}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent group-hover:from-black/70 group-hover:via-black/40 group-hover:to-black/5 transition-all duration-500" />
+
+        {year && (
+          <span className="absolute top-3 right-3 bg-white/25 backdrop-blur-sm text-[var(--accent-color)] text-[10px] sm:text-xs font-bold px-2.5 py-1 tracking-[0.15em] border border-white/30">
+            {year}
           </span>
-        </h4>
+        )}
 
-        <div className="flex-1 min-h-0">
-          <p className="text-[var(--text-secondary)] text-xs sm:text-sm leading-relaxed line-clamp-2">
-            {game.desc || game.description}
-          </p>
-          {(game.desc || game.description)?.length > 120 && (
-            <Link to={`/game/${gameId}`} className="text-[var(--accent-color)] text-xs sm:text-sm font-medium hover:opacity-80 mt-1 inline-block">read more</Link>
-          )}
-        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-5">
+          <h3 className="text-sm sm:text-base lg:text-lg font-heading font-bold text-[var(--accent-color)] leading-tight mb-1">
+            {game.name || game.title}
+          </h3>
 
-        <div className="flex-shrink-0">
-          <div className="flex items-center justify-between mb-1 sm:mb-2">
-            <span className="text-xs font-bold text-[var(--bg-primary)] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded shadow whitespace-nowrap" style={{ backgroundColor: 'var(--accent-color)' }}>
-              {game.year ||
-                (game.releaseDate
-                  ? new Date(game.releaseDate).getFullYear()
-                  : "N/A")}
-            </span>
-            <div className="flex-shrink-0 scale-75 sm:scale-90 lg:scale-100">
+          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="flex-shrink-0 scale-[0.65] sm:scale-75 origin-left group-hover:animate-pulse">
               {game.totalRatings > 0 ? (
                 <StarRating rating={game.averageRating || 0} />
               ) : (
-                <span className="text-xs text-[var(--text-muted)]">No ratings</span>
+                <span className="text-[10px] text-[var(--text-muted)]">No ratings</span>
               )}
             </div>
+            {game.totalRatings > 0 && (
+              <span className="text-[10px] text-[var(--text-muted)]">
+                ({game.totalRatings})
+              </span>
+            )}
           </div>
-
-          {game.totalRatings > 0 && (
-            <div className="text-xs text-[var(--text-secondary)] text-center hidden sm:block">
-              {game.totalRatings} rating{game.totalRatings !== 1 ? "s" : ""}
-            </div>
-          )}
         </div>
       </div>
-    </div>
+
+      {description && (
+        <div className="px-3 sm:px-4 lg:px-5 py-2 sm:py-3 relative">
+          <div className="absolute top-0 left-3 right-3 h-[1px] bg-[var(--accent-color)] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+          <p className="text-[11px] sm:text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+            {description}
+          </p>
+          {description.length > 100 && (
+            <span className="text-[10px] sm:text-[11px] text-[var(--accent-color)] font-medium mt-0.5 inline-block relative after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 group-hover:after:w-full after:h-[1px] after:bg-[var(--accent-color)] after:transition-all after:duration-300">
+              read more →
+            </span>
+          )}
+        </div>
+      )}
+
+    </Link>
   );
 }
+
 export default GameCard;
