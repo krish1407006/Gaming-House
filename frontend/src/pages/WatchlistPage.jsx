@@ -157,7 +157,7 @@ export default function WatchlistPage() {
     <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary">
       <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border-2 theme-border-accent relative h-40 sm:h-48 lg:h-56 theme-bg-secondary flex items-center justify-center mb-6 lg:mb-8">
         <div className="relative z-10 text-center px-4">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide theme-accent drop-shadow-lg">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide theme-accent drop-shadow-lg font-heading">
             📚 My Watchlist
           </h2>
           <p className="theme-text-secondary text-sm sm:text-base lg:text-lg drop-shadow">
@@ -167,7 +167,7 @@ export default function WatchlistPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 lg:mb-6">
-        <h3 className="text-lg lg:text-2xl font-bold theme-text-primary tracking-wide">
+        <h3 className="text-lg lg:text-2xl font-bold theme-text-primary tracking-wide font-heading">
           Your Watchlist ({watchlist.length} Game)
         </h3>
         {watchlist.length > 0 && (
