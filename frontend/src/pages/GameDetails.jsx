@@ -1,5 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   FaArrowLeft,
   FaBookmark,
@@ -12,55 +12,43 @@ import {
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import ReviewSection from "../components/ReviewSection";
-import GameCard from "../components/GameCard";
 import apiService from "../services/api";
 
-export default function GameDetailPage({ allGames }) {
+export default function GameDetailPage() {
   const { id } = useParams();
   const { getToken } = useAuth();
-  const {  isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
 
-  // Use backend data if available, fallback to prop data
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState("");
 
-  // Local state for watchlist and favorites (these could also be moved to backend)
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
-  // Set up auth token for API service
   useEffect(() => {
     if (getToken) {
       window.__clerk_token_getter = getToken;
-      //   console.log("Auth token getter set" + isSignedIn);
     }
   }, [getToken]);
 
-  const loadMovieData = React.useCallback(async () => {
+  const loadMovieData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
-    // Basic validation - only reject truly invalid IDs
-      if (!id || id.trim() === '' || id === 'undefined' || id === 'null') {
-        setError("Invalid gaming ID");
+    if (!id || id.trim() === "" || id === "undefined" || id === "null") {
+      setError("Invalid game ID");
       setLoading(false);
       return;
     }
 
-    // Determine if this is a MongoDB ObjectId or a simple string ID
-    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
-
     try {
-      // Try to get game from backend first
       const movieData = await apiService.getGameById(id);
 
       if (movieData && (movieData._id || movieData.id)) {
         setGame(movieData);
-        console.log("🎬 Loaded games from backend:", movieData.title || movieData.name);
 
-        // Load user preferences from localStorage
         const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
         const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
 
@@ -70,85 +58,31 @@ export default function GameDetailPage({ allGames }) {
         return;
       }
     } catch {
-      // Backend failed, continue to fallback
+      // Backend failed
     }
 
-    // Fallback to local data - try exact match with all possible ID fields
-    let fallbackMovie = allGames?.find((m) => 
-      m.gameId === id || m._id === id || m.id === id
-    );
-    
-    // If not found and it's an ObjectId, we can't match local data
-      if (!fallbackMovie && isObjectId) {
-        setError(`Gaming with ObjectId "${id}" not found. Backend connection may be required.`);
-      setLoading(false);
-      return;
-    }
-
-    // If not found with simple ID, show available options
-      if (!fallbackMovie) {
-        const availableIds = allGames?.map(m => 
-          m.gameId || m._id || m.id || 'no-id'
-        ).join(', ') || 'none';
-        setError(`Gaming with ID "${id}" not found. Available IDs: ${availableIds}`);
-      setLoading(false);
-      return;
-    }
-
-    // Found in local data
-    setGame({
-      _id: id,
-      title: fallbackMovie.name,
-      description: fallbackMovie.desc,
-      poster: fallbackMovie.image,
-      releaseDate: new Date(fallbackMovie.year, 0, 1),
-      averageRating: fallbackMovie.rating || 0,
-      totalRatings: 0,
-      genre: [fallbackMovie.category],
-      // Add other required fields with defaults
-      director: "Unknown",
-      cast: [],
-      duration: 120,
-      language: "English",
-      country: "USA",
-      isActive: true,
-    });
-
-    // Load user preferences from localStorage for fallback
-    const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-    const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
-
-    setIsWatchlisted(watchlist.includes(id));
-    setIsLiked(liked.includes(id));
+    setError(`Game with ID "${id}" not found.`);
     setLoading(false);
-  }, [id, allGames]);
+  }, [id]);
 
-  // Load game data (wait for allGames to be available)
   useEffect(() => {
-    // Only load if we have allGames or if it's null (meaning it failed to load)
-    if (allGames !== undefined) {
-      loadMovieData();
-    }
-  }, [loadMovieData, allGames]);
+    loadMovieData();
+  }, [loadMovieData]);
 
-  // Check watchlist status when user signs in (with error handling)
   useEffect(() => {
     const checkWatchlistStatus = async () => {
       if (isSignedIn && game) {
         const gameId = game?._id || game?.id || game?.gameId || id;
 
-        
         if (!gameId) {
-          console.error('No valid game ID found for watchlist check');
           return;
         }
-        
+
         try {
           const watchlistStatus = await apiService.checkWatchlistStatus(gameId);
           setIsWatchlisted(watchlistStatus.isInWatchlist);
         } catch {
-          // Silently fallback to localStorage without logging errors
-          const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+          const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
           setIsWatchlisted(watchlist.includes(gameId));
         }
       }
@@ -157,104 +91,82 @@ export default function GameDetailPage({ allGames }) {
     checkWatchlistStatus();
   }, [isSignedIn, game, id]);
 
-  // Show notification helper
   const showNotification = (message) => {
     setNotification(message);
     setTimeout(() => setNotification(""), 3000);
   };
 
-  // Handle watchlist toggle
   const handleWatchlistToggle = async () => {
     if (!isSignedIn) {
       showNotification("Please sign in to add to watchlist");
       return;
     }
 
-    // Get the correct game ID - try different possible properties
     const gameId = game?._id || game?.id || game?.gameId || id;
-    
+
     if (!gameId) {
-      showNotification("Error: Gaming ID not found");
+      showNotification("Error: Game ID not found");
       return;
     }
 
     try {
       if (isWatchlisted) {
-        // Remove from watchlist
         await apiService.removeFromWatchlist(gameId);
         setIsWatchlisted(false);
         showNotification("Removed from watchlist");
-        console.log('Game removed from watchlist:', gameId);
       } else {
-        // Add to watchlist
         await apiService.addToWatchlist(gameId);
         setIsWatchlisted(true);
         showNotification("Added to watchlist");
-        console.log('Game added to watchlist:', gameId);
       }
     } catch (error) {
-      console.error('Error toggling watchlist:', error);
-      
-      // Handle 409 conflict (game already in watchlist)
-      if (error.message.includes('already in watchlist')) {
+      if (error.message.includes("already in watchlist")) {
         setIsWatchlisted(true);
-        showNotification("Gaming is already in watchlist");
+        showNotification("Game is already in watchlist");
         return;
       }
-      
-      // Fallback to localStorage for offline functionality
-      const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-      let updatedWatchlist;
 
+      const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
       if (isWatchlisted) {
-        updatedWatchlist = watchlist.filter((gameId) => gameId !== game.gameId);
+        const updated = watchlist.filter((gid) => gid !== gameId);
         setIsWatchlisted(false);
+        localStorage.setItem("watchlist", JSON.stringify(updated));
         showNotification("Removed from watchlist (offline)");
       } else {
-        updatedWatchlist = [...watchlist, game.gameId];
+        const updated = [...watchlist, gameId];
         setIsWatchlisted(true);
+        localStorage.setItem("watchlist", JSON.stringify(updated));
         showNotification("Added to watchlist (offline)");
       }
-
-      localStorage.setItem("watchlist", JSON.stringify(updatedWatchlist));
     }
   };
 
-  // Handle like toggle
   const handleLikeToggle = () => {
     const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
-    let updatedLiked;
-
     if (isLiked) {
-      updatedLiked = liked.filter((gameId) => gameId !== id);
+      const updated = liked.filter((gid) => gid !== id);
       setIsLiked(false);
+      localStorage.setItem("likedGames", JSON.stringify(updated));
       showNotification("Removed from favorites");
     } else {
-      updatedLiked = [...liked, id];
+      const updated = [...liked, id];
       setIsLiked(true);
+      localStorage.setItem("likedGames", JSON.stringify(updated));
       showNotification("Added to favorites");
     }
-
-    localStorage.setItem("likedGames", JSON.stringify(updatedLiked));
   };
 
-  // Handle share functionality
   const handleShare = async () => {
     const url = window.location.href;
-  const title = `${game.title} - Gaming House`;
+    const title = `${game.title} - Gaming House`;
     const text = `${game.description}\n\nRated ${game.averageRating}/10 stars`;
 
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: title,
-          text: text,
-          url: url,
-        });
+        await navigator.share({ title, text, url });
         showNotification("Shared successfully!");
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.error("Error sharing:", error);
           showNotification("Sharing cancelled or failed");
         }
       }
@@ -262,14 +174,12 @@ export default function GameDetailPage({ allGames }) {
       try {
         await navigator.clipboard.writeText(url);
         showNotification("Link copied to clipboard!");
-      } catch (clipboardError) {
+      } catch {
         showNotification("Sharing not supported on this browser");
-        console.error("Clipboard fallback failed:", clipboardError);
       }
     }
   };
 
-  // Image gallery lightbox state
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const handleImageClick = (index) => {
@@ -297,23 +207,13 @@ export default function GameDetailPage({ allGames }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (selectedImageIndex === null) return;
-      if (e.key === 'Escape') handleCloseLightbox();
-      if (e.key === 'ArrowLeft') handlePrevImage(e);
-      if (e.key === 'ArrowRight') handleNextImage(e);
+      if (e.key === "Escape") handleCloseLightbox();
+      if (e.key === "ArrowLeft") handlePrevImage(e);
+      if (e.key === "ArrowRight") handleNextImage(e);
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedImageIndex]);
-
-  // Handle review updates from ReviewSection
-
-  const relatedGames = allGames && game ? allGames.filter(g => {
-    const currentGenre = game.genre?.[0] || game.category;
-    const gGenre = g.genre?.[0] || g.category;
-    const gId = g._id || g.id || g.gameId;
-    const currentId = game._id || game.id || game.gameId;
-    return gGenre === currentGenre && gId !== currentId;
-  }).slice(0, 4) : [];
 
   const handleReviewUpdate = (updatedRating) => {
     if (updatedRating) {
@@ -323,8 +223,6 @@ export default function GameDetailPage({ allGames }) {
     } else {
       showNotification("Review deleted successfully!");
     }
-
-    // Optionally refresh game data to get updated averages
     loadMovieData();
   };
 
@@ -347,19 +245,19 @@ export default function GameDetailPage({ allGames }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold theme-text-primary mb-2">Gaming Not Found</h2>
+          <h2 className="text-2xl font-bold theme-text-primary mb-2">Game Not Found</h2>
           <p className="theme-text-secondary mb-6">
-            {error || `Sorry, we couldn't find the gaming with ID: ${id}`}
+            {error || `Sorry, we couldn't find the game with ID: ${id}`}
           </p>
           <div className="space-y-3">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="block w-full theme-bg-accent theme-text-accent-contrast px-6 py-3 rounded-lg hover:opacity-90 transition-opacity font-semibold"
             >
               Back to Home
             </Link>
-            <button 
-              onClick={() => window.history.back()} 
+            <button
+              onClick={() => window.history.back()}
               className="block w-full theme-border theme-text-primary px-6 py-3 rounded-lg border hover:theme-bg-secondary transition-colors"
             >
               Go Back
@@ -372,7 +270,6 @@ export default function GameDetailPage({ allGames }) {
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary theme-text-primary">
-      {/* Notification Toast */}
       {notification && (
         <div className="fixed top-4 right-4 theme-bg-accent theme-text-accent-contrast px-4 lg:px-6 py-2 lg:py-3 rounded-lg shadow-lg z-50 font-semibold text-sm lg:text-base">
           {notification}
@@ -380,7 +277,6 @@ export default function GameDetailPage({ allGames }) {
       )}
 
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <div className="mb-4 lg:mb-6">
           <Link
             to="/"
@@ -390,7 +286,6 @@ export default function GameDetailPage({ allGames }) {
           </Link>
         </div>
 
-        {/* Hero Section */}
         <div className="relative mb-6 lg:mb-8 rounded-xl lg:rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
@@ -414,9 +309,7 @@ export default function GameDetailPage({ allGames }) {
                 <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold theme-accent mb-2 lg:mb-4 drop-shadow-lg">
                   {game.title}
                 </h1>
-                
 
-                {/* game Info */}
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 lg:gap-6 mb-4 lg:mb-6">
                   <span className="text-sm lg:text-lg font-bold theme-bg-accent theme-text-accent-contrast px-2 lg:px-3 py-0.5 lg:py-1 rounded">
                     {new Date(game.releaseDate).getFullYear()}
@@ -445,7 +338,6 @@ export default function GameDetailPage({ allGames }) {
                   </span>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex items-center justify-center sm:justify-start gap-2 lg:gap-4">
                   <button
                     onClick={handleWatchlistToggle}
@@ -471,7 +363,7 @@ export default function GameDetailPage({ allGames }) {
                   <button
                     onClick={handleShare}
                     className="p-2 lg:p-3 theme-bg-secondary theme-text-secondary rounded-lg hover:theme-accent transition-colors"
-                    title="Share this gaming"
+                    title="Share this game"
                   >
                     <FaShare className="text-sm lg:text-base" />
                   </button>
@@ -481,10 +373,8 @@ export default function GameDetailPage({ allGames }) {
           </div>
         </div>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-            {/* game Overview */}
             <div className="theme-bg-secondary rounded-xl p-4 lg:p-8">
               <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8">
                 <span className="w-1 lg:w-1.5 theme-bg-accent h-6 lg:h-8 inline-block rounded-full"></span>
@@ -588,7 +478,6 @@ export default function GameDetailPage({ allGames }) {
               </div>
             </div>
 
-            {/* Game Images Gallery */}
             {game.screenshots && game.screenshots.length > 0 && (
               <div className="theme-bg-secondary rounded-xl p-4 lg:p-8 mb-6 lg:mb-8">
                 <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
@@ -607,7 +496,7 @@ export default function GameDetailPage({ allGames }) {
                         alt={`${game.title} game image ${index + 1}`}
                         className="w-full h-24 sm:h-32 lg:h-40 object-cover"
                         onError={(e) => {
-                          e.target.style.display = 'none';
+                          e.target.style.display = "none";
                         }}
                       />
                     </div>
@@ -616,7 +505,6 @@ export default function GameDetailPage({ allGames }) {
               </div>
             )}
 
-            {/* Image Lightbox */}
             {selectedImageIndex !== null && game.screenshots && (
               <div
                 className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
@@ -628,44 +516,37 @@ export default function GameDetailPage({ allGames }) {
                 >
                   <FaTimes />
                 </button>
-
                 <button
                   onClick={handlePrevImage}
                   className="absolute left-4 text-white/80 hover:text-white text-3xl z-10"
                 >
                   <FaChevronLeft />
                 </button>
-
                 <img
                   src={game.screenshots[selectedImageIndex]}
                   alt={`${game.title} game image ${selectedImageIndex + 1}`}
                   className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
                   onClick={(e) => e.stopPropagation()}
                 />
-
                 <button
                   onClick={handleNextImage}
                   className="absolute right-4 text-white/80 hover:text-white text-3xl z-10"
                 >
                   <FaChevronRight />
                 </button>
-
                 <div className="absolute bottom-4 text-white/60 text-sm">
                   {selectedImageIndex + 1} / {game.screenshots.length}
                 </div>
               </div>
             )}
 
-            {/* Reviews Section */}
             <ReviewSection
               gameId={game._id || game.gameId || id}
               onReviewUpdate={handleReviewUpdate}
             />
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-4 lg:space-y-6">
-            {/* Quick Stats */}
             <div className="theme-bg-secondary rounded-xl p-4 lg:p-6">
               <h3 className="text-lg lg:text-xl font-bold theme-accent mb-3 lg:mb-4">
                 Quick Stats
@@ -700,7 +581,6 @@ export default function GameDetailPage({ allGames }) {
               </div>
             </div>
 
-            {/* game Poster */}
             <div className="theme-bg-secondary rounded-xl p-4 lg:p-6">
               <h3 className="text-lg lg:text-xl font-bold theme-accent mb-3 lg:mb-4">Poster</h3>
               <img
@@ -711,21 +591,6 @@ export default function GameDetailPage({ allGames }) {
             </div>
           </div>
         </div>
-
-        {/* You Might Also Like */}
-        {relatedGames.length > 0 && (
-          <div className="mt-8 lg:mt-12">
-            <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
-              <span className="w-1 theme-bg-accent h-6 lg:h-8 inline-block rounded-full"></span>
-              <h2 className="text-xl lg:text-2xl font-bold theme-text-primary">You Might Also Like</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-              {relatedGames.map((g, idx) => (
-                <GameCard key={g._id || g.id || g.gameId || idx} game={g} />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );
