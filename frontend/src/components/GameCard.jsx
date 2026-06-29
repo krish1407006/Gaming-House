@@ -43,7 +43,7 @@ function GameCard({ game }) {
         </h4>
 
         <div className="flex-1 min-h-0">
-          <p className="text-[var(--text-secondary)] text-xs sm:text-sm leading-relaxed line-clamp-4">
+          <p className="text-[var(--text-secondary)] text-xs sm:text-sm leading-relaxed line-clamp-2">
             {game.desc || game.description}
           </p>
           {(game.desc || game.description)?.length > 120 && (
