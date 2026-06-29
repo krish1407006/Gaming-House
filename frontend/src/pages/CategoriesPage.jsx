@@ -1,33 +1,60 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import GameCard from "../components/GameCard";
+import Pagination from "../components/Pagination";
 import { Icon } from "../components/Icons";
+import apiService from "../services/api";
 
-export default function CategoriesPage({ allGames, loading, error }) {
-  const [activeCategory, setActiveCategory] = useState(null);
+const PAGE_SIZE = 20;
 
-  const games = Array.isArray(allGames) ? allGames : [];
+const GENRES = [
+  "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
+  "Documentary", "Drama", "Family", "Fantasy", "History", "Horror",
+  "Music", "Mystery", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western",
+];
 
-  const categories = useMemo(() => {
-    const cats = new Set();
-    games.forEach((m) => {
-      const genre = m.category || m.genre?.[0] || "Unknown";
-      cats.add(genre);
-    });
-    return Array.from(cats).sort();
-  }, [games]);
+export default function CategoriesPage() {
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [activeGenre, setActiveGenre] = useState(null);
 
-  const filteredgames = activeCategory
-    ? games.filter((m) => (m.category || m.genre?.[0]) === activeCategory)
-    : games;
+  const fetchGames = async (page, genre) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = { page, limit: PAGE_SIZE };
+      if (genre) params.genre = genre;
+      const response = await apiService.getGames(params);
+      setGames(response?.games || []);
+      const pag = response?.pagination;
+      if (pag) {
+        setTotalPages(pag.totalPages || 1);
+        setCurrentPage(pag.currentPage || 1);
+      }
+    } catch (err) {
+      setError(err.message || "Failed to load games");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    games.forEach((m) => {
-      const cat = m.category || m.genre?.[0] || "Unknown";
-      counts[cat] = (counts[cat] || 0) + 1;
-    });
-    return counts;
-  }, [games]);
+  useEffect(() => {
+    fetchGames(1, activeGenre);
+  }, []);
+
+  const handleGenreChange = (genre) => {
+    const next = genre === activeGenre ? null : genre;
+    setActiveGenre(next);
+    fetchGames(1, next);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchGames(page, activeGenre);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
@@ -44,26 +71,26 @@ export default function CategoriesPage({ allGames, loading, error }) {
 
       <div className="flex flex-wrap gap-2 mb-6">
         <button
-          onClick={() => setActiveCategory(null)}
+          onClick={() => handleGenreChange(null)}
           className={`font-semibold px-4 py-2 text-sm rounded-lg transition-colors ${
-            !activeCategory
+            !activeGenre
               ? "bg-[var(--accent-color)] text-[var(--bg-primary)]"
               : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[var(--accent-color)]"
           }`}
         >
-          All ({games.length})
+          All
         </button>
-        {categories.map((cat) => (
+        {GENRES.map((genre) => (
           <button
-            key={cat}
-            onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+            key={genre}
+            onClick={() => handleGenreChange(genre)}
             className={`font-semibold px-4 py-2 text-sm rounded-lg transition-colors ${
-              activeCategory === cat
+              activeGenre === genre
                 ? "bg-[var(--accent-color)] text-[var(--bg-primary)]"
                 : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[var(--accent-color)]"
             }`}
           >
-            {cat} ({categoryCounts[cat] || 0})
+            {genre}
           </button>
         ))}
       </div>
@@ -78,7 +105,7 @@ export default function CategoriesPage({ allGames, loading, error }) {
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
             {error}
           </div>
-        ) : filteredgames.length === 0 ? (
+        ) : games.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl lg:text-6xl mb-4">🎮</div>
             <h3 className="text-xl lg:text-2xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
@@ -86,11 +113,18 @@ export default function CategoriesPage({ allGames, loading, error }) {
             </h3>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {filteredgames.map((game, idx) => (
-              <GameCard key={game._id || game.gameId || game.id || idx} game={game} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              {games.map((game, idx) => (
+                <GameCard key={game._id || game.gameId || `cat-${idx}`} game={game} />
+              ))}
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </>
         )}
       </div>
     </section>
