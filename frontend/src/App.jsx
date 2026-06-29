@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useState, useRef, useCallback } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import {
   SignedIn,
   SignedOut,
@@ -10,7 +10,6 @@ import {
 import { useAuth } from "@clerk/clerk-react";
 import GameDetailPage from "./pages/GameDetails";
 import TestPage from "./pages/TestPage";
-// import apiService from "./services/api"; // Temporarily disabled
 
 import Navbar from "./components/Navbar";
 import Background from "./components/Background";
@@ -24,43 +23,17 @@ import SettingsPage from "./pages/SettingsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import apiService from "./services/api";
 
-function GetToken() {
-  const { getToken } = useAuth();
-  const handleClick = async () => {
-    const token = await getToken();
-    console.log("Token:", token);
-  };
-  return <button onClick={handleClick}>Log Token</button>;
-}
-
-// fetchGames from backend API
-async function fetchGames() {
-  try {
-    console.log("� Fetching games from backend API...");
-    const response = await apiService.getGames();
-    console.log("🔍 Raw backend response:", response);
-    
-    // Backend returns { games: [...], pagination: {...} }
-    const games = Array.isArray(response) ? response : (response?.games || response?.data || []);
-    console.log("✅ Backend games loaded:", games.length, "games");
-    return games;
-  } catch (error) {
-    console.error("❌ Backend fetch failed:", error);
-    throw new Error("Failed to fetch games from backend");
-  }
-}
-
 function App() {
-  const [allGames, setAllGames] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const currentPath = location.pathname;
   const { getToken } = useAuth();
+  const navigate = useNavigate();
+  const searchTimeout = useRef(null);
 
   // Set up auth token for API service
   React.useEffect(() => {
@@ -69,25 +42,34 @@ function App() {
     }
   }, [getToken]);
 
-  // Search function
-  const handleSearch = (value) => {
+  // Search function with debounce
+  const handleSearch = useCallback((value) => {
     setSearchQuery(value);
-    
+
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+
     if (value.length < 2) {
       setSearchResults([]);
       setShowResults(false);
       return;
     }
 
-    // Search games by name/title
-    const filtered = allGames.filter(game =>
-      game.title?.toLowerCase().includes(value.toLowerCase()) ||
-      game.name?.toLowerCase().includes(value.toLowerCase())
-    );
-    
-    setSearchResults(filtered);
-    setShowResults(true);
-  };
+    searchTimeout.current = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const response = await apiService.getGames({ search: value, limit: 10 });
+        const games = response?.games || [];
+        setSearchResults(games);
+        setShowResults(true);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 400);
+  }, []);
 
   // Close search results when clicking outside
   React.useEffect(() => {
@@ -99,23 +81,6 @@ function App() {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Load games function
-  const loadGames = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchGames();
-      setAllGames(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    loadGames();
   }, []);
 
   return (
@@ -145,7 +110,7 @@ function App() {
                       key={game._id || game.id}
                       className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-[var(--bg-tertiary)] cursor-pointer border-b border-[var(--border-color)] last:border-b-0"
                       onClick={() => {
-                        window.location.href = `/game/${game._id || game.id}`;
+                        navigate(`/game/${game._id || game.id}`);
                         setShowResults(false);
                         setSearchQuery("");
                       }}
@@ -192,23 +157,15 @@ function App() {
         {/* <GetToken /> */}
 
         <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage allGames={allGames} loading={loading} error={error} />
-            }
-          />
+          <Route path="/" element={<HomePage />} />
           <Route path="/trending" element={<TrendingPage />} />
-          <Route path="/top" element={<TopRatedPage key={allGames.length} allGames={allGames} loading={loading} error={error} />} />
-          <Route path="/categories" element={<CategoriesPage allGames={allGames} loading={loading} error={error} />} />
+          <Route path="/top" element={<TopRatedPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/watchlist" element={<WatchlistPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/admin" element={<AdminDashboard onGameChange={() => loadGames()} />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/test" element={<TestPage />} />
-          <Route
-            path="/game/:id"
-            element={<GameDetailPage allGames={allGames} />}
-          />
+          <Route path="/game/:id" element={<GameDetailPage />} />
         </Routes>
       </main>
       <Chatbot />
