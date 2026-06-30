@@ -328,6 +328,50 @@ class ApiService {
     }
   }
 
+  // Homepage
+  async getHomepage(page = 1, limit = 20) {
+    try {
+      const data = await this.request(`/api/games/homepage?page=${page}&limit=${limit}`);
+      return data;
+    } catch (error) {
+      console.error("Error fetching homepage games:", error);
+      throw error;
+    }
+  }
+
+  async getAdminHomepage() {
+    try {
+      return await this.request("/api/admin/games/homepage-list");
+    } catch (error) {
+      console.error("Error fetching admin homepage:", error);
+      throw error;
+    }
+  }
+
+  async toggleGameHomepage(gameId, showOnHomepage) {
+    try {
+      return await this.request(`/api/admin/games/homepage/${gameId}`, {
+        method: "PUT",
+        body: JSON.stringify({ showOnHomepage }),
+      });
+    } catch (error) {
+      console.error("Error toggling homepage status:", error);
+      throw error;
+    }
+  }
+
+  async reorderHomepage(orderedIds) {
+    try {
+      return await this.request("/api/admin/games/reorder-homepage", {
+        method: "PUT",
+        body: JSON.stringify({ orderedIds }),
+      });
+    } catch (error) {
+      console.error("Error reordering homepage:", error);
+      throw error;
+    }
+  }
+
   async bulkUpdateGames(gameIds, updateData) {
     try {
       console.log("🔄 Bulk updating games:", gameIds.length);

@@ -380,3 +380,68 @@ export const getGameRatingsAdmin = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// ─── Homepage management ───
+
+export const getAdminHomepage = async (req, res) => {
+  try {
+    const result = await gameService.getAdminHomepageGames();
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error });
+    }
+
+    res.json(result.data);
+  } catch (error) {
+    console.error("Error in admin getAdminHomepage:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const toggleGameHomepage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { showOnHomepage } = req.body;
+
+    if (typeof showOnHomepage !== "boolean") {
+      return res.status(400).json({
+        error: "showOnHomepage must be a boolean value",
+      });
+    }
+
+    const result = await gameService.toggleHomepageGame(id, showOnHomepage);
+
+    if (!result.success) {
+      return res.status(404).json({ error: result.error });
+    }
+
+    res.json({
+      message: `game ${showOnHomepage ? "added to homepage" : "removed from homepage"} successfully`,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error("Error in admin toggleGameHomepage:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const reorderHomepage = async (req, res) => {
+  try {
+    const { orderedIds } = req.body;
+
+    if (!Array.isArray(orderedIds)) {
+      return res.status(400).json({ error: "orderedIds must be an array" });
+    }
+
+    const result = await gameService.reorderHomepage(orderedIds);
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error });
+    }
+
+    res.json(result.data);
+  } catch (error) {
+    console.error("Error in admin reorderHomepage:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

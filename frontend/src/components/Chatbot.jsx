@@ -81,6 +81,7 @@ export default function Chatbot() {
         sender: "bot",
         timestamp: new Date(),
         poster: data.poster || null,
+        screenshots: data.screenshots || [],
         title: data.title || null,
       };
       
@@ -146,6 +147,22 @@ export default function Chatbot() {
                         e.target.style.display = "none";
                       }}
                     />
+                  )}
+                  {/* Show screenshots gallery */}
+                  {msg.screenshots?.length > 0 && msg.sender === "bot" && (
+                    <div className="screenshots-gallery">
+                      {msg.screenshots.map((url, i) => (
+                        <img
+                          key={i}
+                          src={url}
+                          alt={`${msg.title || "Game"} screenshot ${i + 1}`}
+                          className="screenshot-thumb"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                      ))}
+                    </div>
                   )}
                   <div className="message-text">
                     {msg.text.split('\n').map((line, index) => (

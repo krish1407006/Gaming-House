@@ -4,8 +4,6 @@ import Pagination from "../components/Pagination";
 import apiService from "../services/api";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
 
-const PAGE_SIZE = 20;
-
 export default function HomePage() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,17 +22,16 @@ export default function HomePage() {
     return () => clearInterval(id);
   }, []);
 
-  // Fetch games with pagination
+  // Fetch homepage games with pagination
   const fetchGames = async (page) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiService.getGames({ page, limit: PAGE_SIZE });
+      const response = await apiService.getHomepage(page, 20);
       setGames(response?.games || []);
-      const pag = response?.pagination;
-      if (pag) {
-        setTotalPages(pag.totalPages || 1);
-        setCurrentPage(pag.currentPage || 1);
+      if (response?.pagination) {
+        setTotalPages(response.pagination.totalPages || 1);
+        setCurrentPage(response.pagination.currentPage || 1);
       }
     } catch (err) {
       setError(err.message || "Failed to load games");
@@ -88,7 +85,9 @@ export default function HomePage() {
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">Home</h3>
+        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">
+          {currentPage === 1 ? "Home" : `Page ${currentPage}`}
+        </h3>
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">

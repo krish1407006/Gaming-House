@@ -6,9 +6,94 @@ import connectDB from "../config/database.js";
 const mode = process.argv[2] || "posters";
 
 // ─── Poster & screenshot fixes ───
+// All posters changed from Wikipedia portrait covers to landscape images (Steam header.jpg or IGDB screenshot)
 const posterFixes = {
+  // Already correct - keep
+  "Call of Duty: Modern Warfare III": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3595270/7d0f21912a075c33bbb5ea558100e187ceb234ac/header.jpg?t=1778886604",
+    backdrop: "https://store.akamai.steamstatic.com/images/storepagebackground/app/3595270?t=1778886604",
+    screenshots: [
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3595270/8694e5cb8262343c867d8f8edb70526b19b49cf8/ss_8694e5cb8262343c867d8f8edb70526b19b49cf8.1920x1080.jpg?t=1778886604",
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3595270/757e49ee3ff2b6ebf60e479731d983cec47faa41/ss_757e49ee3ff2b6ebf60e479731d983cec47faa41.1920x1080.jpg?t=1778886604",
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3595270/f713211188a2a872d638089b2d959a337639e91a/ss_f713211188a2a872d638089b2d959a337639e91a.1920x1080.jpg?t=1778886604",
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3595270/ee37e2686b1a21ede5b74e853d046ba9bd087878/ss_ee37e2686b1a21ede5b74e853d046ba9bd087878.1920x1080.jpg?t=1778886604",
+    ],
+  },
+  "Mass Effect 5": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1328670/header.jpg?t=1777395134",
+    backdrop: "https://store.akamai.steamstatic.com/images/storepagebackground/app/1328670?t=1777395134",
+    screenshots: [
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1328670/ss_3cfdbd8a5d94f9005d33ba17bb6b163dc458ddf7.1920x1080.jpg?t=1777395134",
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1328670/ss_4e226eb092381ba6c4ea9c164a1d18574c993a8a.1920x1080.jpg?t=1777395134",
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1328670/ss_8994024759b1e6afb09a99381637c8b6fb4e4075.1920x1080.jpg?t=1777395134",
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1328670/ss_4b2b412307b72a21f68148c32fab7a278875d139.1920x1080.jpg?t=1777395134",
+    ],
+  },
+  // Steam header.jpg replacements (13 games with confirmed Steam app IDs)
+  "Doom: The Dark Ages": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3017860/header.jpg",
+    screenshots: [
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3017860/header.jpg",
+      "https://upload.wikimedia.org/wikipedia/en/f/fd/Doom_The_Dark_Ages_gameplay.jpg",
+    ],
+  },
+  "Borderlands 4": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1285190/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1285190/header.jpg"],
+  },
+  "Elden Ring Nightreign": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2622380/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2622380/header.jpg"],
+  },
+  "Mafia: The Old Country": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1941540/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1941540/header.jpg"],
+  },
+  "Like a Dragon: Pirate Yakuza in Hawaii": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3061810/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3061810/header.jpg"],
+  },
+  "Clair Obscur: Expedition 33": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1903340/header.jpg",
+    screenshots: [
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1903340/header.jpg",
+      "https://upload.wikimedia.org/wikipedia/en/6/6a/Clair_Obscur_gameplay_screenshot.png",
+    ],
+  },
+  "South of Midnight": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1934570/header.jpg",
+    screenshots: [
+      "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1934570/header.jpg",
+      "https://upload.wikimedia.org/wikipedia/en/e/ed/South_of_Midnight_gameplay_screenshot.jpg",
+    ],
+  },
+  "Death Stranding 2: On the Beach": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3280350/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3280350/header.jpg"],
+  },
+  Avowed: {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2457220/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2457220/header.jpg"],
+  },
+  Atomfall: {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/801800/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/801800/header.jpg"],
+  },
+  "Gears of War: E-Day": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3010850/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3010850/header.jpg"],
+  },
+  "The First Berserker: Khazan": {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2680010/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2680010/header.jpg"],
+  },
+  Fable: {
+    poster: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2769570/header.jpg",
+    screenshots: ["https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2769570/header.jpg"],
+  },
+  // Non-Steam games - use official screenshots/key art as landscape posters
   "Grand Theft Auto VI": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/4/46/Grand_Theft_Auto_VI.png",
+    poster: "https://rockstarintel.com/wp-content/uploads/2025/05/Vice_City_01.jpg",
     screenshots: [
       "https://rockstarintel.com/wp-content/uploads/2025/05/Vice_City_01.jpg",
       "https://rockstarintel.com/wp-content/uploads/2025/05/Lucia_Caminos_03.jpg",
@@ -18,67 +103,9 @@ const posterFixes = {
       "https://rockstarintel.com/wp-content/uploads/2025/05/Ambrosia_01.jpg",
     ],
   },
-  "Doom: The Dark Ages": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/7/7f/DOOM%2C_The_Dark_Ages_Game_Cover.jpeg",
-    screenshots: [
-      "https://upload.wikimedia.org/wikipedia/en/7/7f/DOOM%2C_The_Dark_Ages_Game_Cover.jpeg",
-      "https://upload.wikimedia.org/wikipedia/en/f/fd/Doom_The_Dark_Ages_gameplay.jpg",
-    ],
-  },
-  "Borderlands 4": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/f/fd/Borderlands_4_cover_art.jpg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/f/fd/Borderlands_4_cover_art.jpg"],
-  },
-  "Elden Ring Nightreign": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/f/f0/Elden_Ring_Nightreign_cover_art.png",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/f/f0/Elden_Ring_Nightreign_cover_art.png"],
-  },
-  "Mafia: The Old Country": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/a/af/Mafia_The_Old_Country_cover_art.jpg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/a/af/Mafia_The_Old_Country_cover_art.jpg"],
-  },
-  "Like a Dragon: Pirate Yakuza in Hawaii": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/8/81/Like_a_Dragon_Pirate_Yakuza_in_Hawaii_Cover_Art.jpg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/8/81/Like_a_Dragon_Pirate_Yakuza_in_Hawaii_Cover_Art.jpg"],
-  },
-  "Clair Obscur: Expedition 33": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/5/5a/Clair_Obscur%2C_Expedition_33_Cover_1.webp",
-    screenshots: [
-      "https://upload.wikimedia.org/wikipedia/en/5/5a/Clair_Obscur%2C_Expedition_33_Cover_1.webp",
-      "https://upload.wikimedia.org/wikipedia/en/6/6a/Clair_Obscur_gameplay_screenshot.png",
-    ],
-  },
-  "South of Midnight": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/8/83/South_of_Midnight_cover_art.jpeg",
-    screenshots: [
-      "https://upload.wikimedia.org/wikipedia/en/8/83/South_of_Midnight_cover_art.jpeg",
-      "https://upload.wikimedia.org/wikipedia/en/e/ed/South_of_Midnight_gameplay_screenshot.jpg",
-    ],
-  },
-  "Death Stranding 2: On the Beach": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/e/e0/Death_Stranding_2_Icon.jpg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/e/e0/Death_Stranding_2_Icon.jpg"],
-  },
-  Avowed: {
-    poster: "https://upload.wikimedia.org/wikipedia/en/4/4d/Avowed_key_art.jpeg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/4/4d/Avowed_key_art.jpeg"],
-  },
-  "Metroid Prime 4: Beyond": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/4/48/Metroid_Prime_4_Beyond_cover_art.png",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/4/48/Metroid_Prime_4_Beyond_cover_art.png"],
-  },
-  Atomfall: {
-    poster: "https://upload.wikimedia.org/wikipedia/en/1/13/Atomfall_cover_art.jpeg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/1/13/Atomfall_cover_art.jpeg"],
-  },
-  "Gears of War: E-Day": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/9/9e/Gears_of_War_E-Day_cover_art.png",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/9/9e/Gears_of_War_E-Day_cover_art.png"],
-  },
   "Ghost of Yotei": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/1/18/Ghost_of_Y%C5%8Dtei_cover_art.png",
+    poster: "https://sm.ign.com/t/ign_za/photo/default/4fff4e3964b95d390d4ed47a03083ea07096a58e-scaled-174541133221_feeu.1400.jpg",
     screenshots: [
-      "https://upload.wikimedia.org/wikipedia/en/1/18/Ghost_of_Y%C5%8Dtei_cover_art.png",
       "https://sm.ign.com/t/ign_za/photo/default/4fff4e3964b95d390d4ed47a03083ea07096a58e-scaled-174541133221_feeu.1400.jpg",
       "https://sm.ign.com/t/ign_za/photo/default/56d9212f57f25d54034076e8ead8994e2dc8ed0c-scaled-174541133221_vwpn.1400.jpg",
       "https://sm.ign.com/t/ign_za/photo/default/4979261102fd41bcb641905bbd67179a8aeae516-scaled-174541133221_qz3g.1400.jpg",
@@ -88,20 +115,64 @@ const posterFixes = {
     ],
   },
   "Marvel's Wolverine": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/3/3d/Marvel%27s_Wolverine_cover_art.jpg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/3/3d/Marvel%27s_Wolverine_cover_art.jpg"],
+    poster: "https://images.pushsquare.com/cc205f0f02804/marvels-wolverine-cover.cover_large.jpg",
+    screenshots: ["https://images.pushsquare.com/cc205f0f02804/marvels-wolverine-cover.cover_large.jpg"],
   },
-  "The First Berserker: Khazan": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/6/64/The_First_Berserker_Khazan_cover.jpg",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/6/64/The_First_Berserker_Khazan_cover.jpg"],
-  },
-  Fable: {
-    poster: "https://upload.wikimedia.org/wikipedia/en/b/b8/Fable_key_art.png",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/b/b8/Fable_key_art.png"],
+  "Metroid Prime 4: Beyond": {
+    poster: "https://images.nintendolife.com/59528dff85f62/prime-4-beyond.large.jpg",
+    screenshots: ["https://images.nintendolife.com/59528dff85f62/prime-4-beyond.large.jpg"],
   },
   "The Witcher IV": {
-    poster: "https://upload.wikimedia.org/wikipedia/en/4/4c/The_Witcher_IV_logo.png",
-    screenshots: ["https://upload.wikimedia.org/wikipedia/en/4/4c/The_Witcher_IV_logo.png"],
+    poster: "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd6j9.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd6j9.jpg"],
+  },
+  // Alan Wake 2 - Epic exclusive; use Steam CDN URL (app may exist for related content)
+  "Alan Wake 2": {
+    poster: "https://cdn.akamai.steamstatic.com/steam/apps/2379780/header.jpg",
+    screenshots: ["https://cdn.akamai.steamstatic.com/steam/apps/2379780/header.jpg"],
+  },
+  // Games with Wikipedia logos - replace with IGDB landscape screenshots from data.json
+  "The Legend of Zelda: Breath of the Wild": {
+    poster: "https://images.igdb.com/igdb/image/upload/t_1080p/sckj6a.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_1080p/sckj6a.jpg"],
+  },
+  Bloodborne: {
+    poster: "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/uqmif3sshdrbbcd0pu8l.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_screenshot_huge/uqmif3sshdrbbcd0pu8l.jpg"],
+  },
+  "Gran Turismo 7": {
+    poster: "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd0s0.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd0s0.jpg"],
+  },
+  Minecraft: {
+    poster: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/NewKeyArt_Header.jpg",
+    screenshots: [
+      "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/NewKeyArt_Header.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/cd/Screenshot_from_the_Minecraft_Nether.png",
+      "https://upload.wikimedia.org/wikipedia/commons/0/0f/Screenshot_from_the_Minecraft_End.png",
+      "https://upload.wikimedia.org/wikipedia/commons/5/53/Minecraft_Beta_1.8.1_Gameplay_Screenshot.png",
+    ],
+  },
+  Fortnite: {
+    poster: "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd0qy.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd0qy.jpg"],
+  },
+  "League of Legends": {
+    poster: "https://images.igdb.com/igdb/image/upload/t_1080p/ar6dl.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_1080p/ar6dl.jpg"],
+  },
+  Valorant: {
+    poster: "https://images.hdqwalls.com/wallpapers/valorant-key-art-4k-ny.jpg",
+    screenshots: [
+      "https://images.hdqwalls.com/wallpapers/valorant-key-art-4k-ny.jpg",
+      "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/scd0v0.jpg",
+      "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/fullportrait.png",
+      "https://media.valorant-api.com/agents/a3bfb853-43b2-7238-a4f1-ad90e9e46bcc/fullportrait.png",
+    ],
+  },
+  "World of Warcraft": {
+    poster: "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/qhiqlmwvvuaqxxn4cxlr.jpg",
+    screenshots: ["https://images.igdb.com/igdb/image/upload/t_screenshot_huge/qhiqlmwvvuaqxxn4cxlr.jpg"],
   },
 };
 
@@ -195,7 +266,9 @@ async function main() {
     for (const [title, data] of Object.entries(posterFixes)) {
       const game = await Game.findOne({ title });
       if (!game) { console.log(`NOT FOUND: ${title}`); continue; }
-      await Game.findByIdAndUpdate(game._id, { $set: { poster: data.poster, screenshots: data.screenshots } });
+      const setFields = { poster: data.poster, screenshots: data.screenshots };
+      if (data.backdrop) setFields.backdrop = data.backdrop;
+      await Game.findByIdAndUpdate(game._id, { $set: setFields });
       console.log(`\u2713 ${title}`);
       count++;
     }

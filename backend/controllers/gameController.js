@@ -44,6 +44,23 @@ export const getTrendingGames = async (req, res) => {
   }
 };
 
+export const getHomepageGames = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const result = await gameService.getHomepageGames(page, limit);
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error });
+    }
+
+    res.json(result.data);
+  } catch (error) {
+    console.error("Error in getHomepageGames:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export const getGameById = async (req, res) => {
   try {
     const { id } = req.params;

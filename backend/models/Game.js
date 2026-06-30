@@ -147,6 +147,15 @@ const gameSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    showOnHomepage: {
+      type: Boolean,
+      default: false,
+    },
+    homepagePosition: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,
@@ -165,5 +174,7 @@ gameSchema.index({ featured: -1 });
 gameSchema.index({ trending: -1 });
 gameSchema.index({ trendingScore: -1 });
 gameSchema.index({ trendingPosition: 1 });
+gameSchema.index({ showOnHomepage: -1 });
+gameSchema.index({ homepagePosition: 1 });
 
 export default mongoose.model("Game", gameSchema);

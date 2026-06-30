@@ -35,17 +35,51 @@ export const getGames = async (options = {}) => {
       query.$text = { $search: search };
     }
 
-    const sort = {};
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+    let games;
 
-    const listQuery = Game.find(query)
-      .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
-      .sort(sort).skip(skip).limit(parseInt(limit)).lean();
+    if (sortBy === "random") {
+      games = await Game.aggregate([
+        { $match: query },
+        { $sample: { size: parseInt(limit) } },
+        {
+          $project: {
+            title: 1, poster: 1, description: 1, director: 1,
+            releaseDate: 1, duration: 1, language: 1, country: 1,
+            genre: 1, budget: 1, boxOffice: 1, trailer: 1,
+            backdrop: 1, screenshots: 1, cast: 1,
+            averageRating: 1, totalRatings: 1, isActive: 1,
+            featured: 1, trending: 1, createdAt: 1,
+          },
+        },
+      ]);
+    } else {
+      const sort = {};
+      sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
-    const [games, totalCount] = await Promise.all([
-      listQuery,
-      Game.countDocuments(query),
-    ]);
+      const listQuery = Game.find(query)
+        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+        .sort(sort).skip(skip).limit(parseInt(limit)).lean();
+
+      const [found, totalCount] = await Promise.all([
+        listQuery,
+        Game.countDocuments(query),
+      ]);
+      games = found;
+
+      return {
+        success: true,
+        data: {
+          games,
+          pagination: {
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(totalCount / limit),
+            totalCount,
+            hasNextPage: skip + games.length < totalCount,
+            hasPrevPage: page > 1,
+          },
+        },
+      };
+    }
 
     return {
       success: true,
@@ -53,10 +87,10 @@ export const getGames = async (options = {}) => {
         games,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: Math.ceil(totalCount / limit),
-          totalCount,
-          hasNextPage: skip + games.length < totalCount,
-          hasPrevPage: page > 1,
+          totalPages: 1,
+          totalCount: games.length,
+          hasNextPage: false,
+          hasPrevPage: false,
         },
       },
     };
@@ -415,6 +449,166 @@ export const reorderTrending = async (orderedIds) => {
     return {
       success: false,
       error: "Failed to reorder trending games",
+    };
+  }
+};
+
+// ─── Homepage management ───
+
+export const getHomepageGames = async (page = 1, limit = 20) => {
+  try {
+    if (page === 1) {
+      // Page 1: admin-curated games
+      const games = await Game.find({
+        isActive: true,
+        showOnHomepage: true,
+      })
+        .sort({ homepagePosition: 1 })
+        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+        .lean();
+
+      const totalCurated = games.length;
+
+      return {
+        success: true,
+        data: {
+          games,
+          pagination: {
+            currentPage: 1,
+            totalPages: Math.ceil((await Game.countDocuments({ isActive: true })) / limit),
+            totalCurated,
+          },
+        },
+      };
+    } else {
+      // Pages 2+: all games NOT on homepage, paginated
+      const skip = (page - 1) * limit;
+
+      const [games, totalCount] = await Promise.all([
+        Game.find({ isActive: true, showOnHomepage: false })
+          .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Game.countDocuments({ isActive: true, showOnHomepage: false }),
+      ]);
+
+      // Include curated count so frontend can offset page numbering
+      const curatedCount = await Game.countDocuments({ isActive: true, showOnHomepage: true });
+
+      return {
+        success: true,
+        data: {
+          games,
+          pagination: {
+            currentPage: page,
+            totalPages: Math.ceil((totalCount + curatedCount) / limit),
+            totalCurated: curatedCount,
+          },
+        },
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching homepage games:", error);
+    return {
+      success: false,
+      error: "Failed to fetch homepage games",
+    };
+  }
+};
+
+export const getAdminHomepageGames = async () => {
+  try {
+    const allGames = await Game.find({ isActive: true })
+      .select("title poster director year releaseDate averageRating totalRatings showOnHomepage homepagePosition")
+      .sort({ homepagePosition: 1, title: 1 })
+      .lean();
+
+    const onHomepage = allGames.filter(g => g.showOnHomepage);
+    const notOnHomepage = allGames.filter(g => !g.showOnHomepage);
+
+    return {
+      success: true,
+      data: { onHomepage, notOnHomepage },
+    };
+  } catch (error) {
+    console.error("Error fetching admin homepage data:", error);
+    return {
+      success: false,
+      error: "Failed to fetch homepage data",
+    };
+  }
+};
+
+export const toggleHomepageGame = async (gameId, showOnHomepage) => {
+  try {
+    let update = { showOnHomepage };
+    if (showOnHomepage) {
+      const maxPos = await Game.findOne({ showOnHomepage: true })
+        .sort({ homepagePosition: -1 })
+        .select("homepagePosition")
+        .lean();
+      update.homepagePosition = (maxPos?.homepagePosition || 0) + 1;
+    } else {
+      update.homepagePosition = 0;
+    }
+
+    const game = await Game.findByIdAndUpdate(gameId, update, { new: true });
+
+    if (!game) {
+      return {
+        success: false,
+        error: "Game not found",
+      };
+    }
+
+    return {
+      success: true,
+      data: game,
+    };
+  } catch (error) {
+    console.error("Error toggling game homepage status:", error);
+    return {
+      success: false,
+      error: "Failed to update game homepage status",
+    };
+  }
+};
+
+export const reorderHomepage = async (orderedIds) => {
+  try {
+    const updates = orderedIds.map((id, i) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: {
+          $set: {
+            showOnHomepage: true,
+            homepagePosition: i + 1,
+          },
+        },
+      },
+    }));
+
+    await Game.bulkWrite(updates);
+
+    await Game.updateMany(
+      { _id: { $nin: orderedIds } },
+      { $set: { showOnHomepage: false, homepagePosition: 0 } }
+    );
+
+    return {
+      success: true,
+      data: {
+        message: "Homepage order updated successfully",
+        count: orderedIds.length,
+      },
+    };
+  } catch (error) {
+    console.error("Error reordering homepage games:", error);
+    return {
+      success: false,
+      error: "Failed to reorder homepage games",
     };
   }
 };

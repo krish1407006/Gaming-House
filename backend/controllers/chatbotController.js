@@ -20,6 +20,7 @@ export const getChatResponse = async (req, res) => {
       success: true,
       response: isObjectResponse ? response.text : response,
       poster: isObjectResponse ? response.poster : null,
+      screenshots: isObjectResponse ? (response.screenshots || []) : [],
       title: isObjectResponse ? response.title : null,
       query,
       timestamp: new Date(),

@@ -8,6 +8,7 @@ const router = express.Router();
 // Public routes (no authentication required)
 router.get("/", gameController.getGames);
 router.get("/trending", gameController.getTrendingGames);
+router.get("/homepage", gameController.getHomepageGames);
 router.get("/:id", gameController.getGameById);
 router.get("/:id/ratings", gameController.getGameRatings);
 

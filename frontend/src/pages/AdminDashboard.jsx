@@ -42,7 +42,11 @@ export default function AdminDashboard({ onGameChange }) {
     poster: "",
     trailer: "",
     backdrop: "",
-    screenshots: "",
+    screenshot1: "",
+    screenshot2: "",
+    screenshot3: "",
+    screenshot4: "",
+    screenshot5: "",
     year: "",
     runtime: "",
     genre: "",
@@ -62,6 +66,9 @@ export default function AdminDashboard({ onGameChange }) {
   const [showTrendingModal, setShowTrendingModal] = useState(false);
   const [trendingData, setTrendingData] = useState({ trending: [], notTrending: [] });
   const [trendingOrder, setTrendingOrder] = useState([]);
+  const [showHomepageModal, setShowHomepageModal] = useState(false);
+  const [homepageData, setHomepageData] = useState({ onHomepage: [], notOnHomepage: [] });
+  const [homepageOrder, setHomepageOrder] = useState([]);
 
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
@@ -106,6 +113,13 @@ export default function AdminDashboard({ onGameChange }) {
       errors.trailer = "Valid trailer URL is required";
     }
     
+    for (let i = 1; i <= 5; i++) {
+      const val = formData[`screenshot${i}`];
+      if (val && val.trim() && !urlPattern.test(val)) {
+        errors[`screenshot${i}`] = "Valid URL required";
+      }
+    }
+    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -145,7 +159,7 @@ export default function AdminDashboard({ onGameChange }) {
         poster: formData.poster.trim() || undefined,
         trailer: formData.trailer.trim() || undefined,
         backdrop: formData.backdrop.trim() || undefined,
-        screenshots: formData.screenshots ? formData.screenshots.split(',').map(s => s.trim()).filter(s => s) : undefined,
+        screenshots: [formData.screenshot1, formData.screenshot2, formData.screenshot3, formData.screenshot4, formData.screenshot5].filter(Boolean),
         // Convert year to proper releaseDate for backend
         releaseDate: formData.year ? new Date(`${formData.year}-01-01`) : new Date(),
         // Convert runtime to duration (number) for backend
@@ -198,7 +212,11 @@ export default function AdminDashboard({ onGameChange }) {
       poster: game.poster || "",
       trailer: game.trailer || "",
       backdrop: game.backdrop || "",
-      screenshots: Array.isArray(game.screenshots) ? game.screenshots.join(", ") : game.screenshots || "",
+      screenshot1: game.screenshots?.[0] || "",
+      screenshot2: game.screenshots?.[1] || "",
+      screenshot3: game.screenshots?.[2] || "",
+      screenshot4: game.screenshots?.[3] || "",
+      screenshot5: game.screenshots?.[4] || "",
       year: game.year || new Date(game.releaseDate).getFullYear() || "",
       runtime: game.runtime || game.duration || "",
       genre: Array.isArray(game.genre) ? game.genre.join(", ") : game.genre || "",
@@ -292,6 +310,68 @@ export default function AdminDashboard({ onGameChange }) {
     }
   };
 
+  // ─── Homepage management ───
+
+  const openHomepageModal = async () => {
+    setShowHomepageModal(true);
+    try {
+      const data = await ApiService.getAdminHomepage();
+      const onHomepage = Array.isArray(data.onHomepage) ? data.onHomepage : [];
+      const notOnHomepage = Array.isArray(data.notOnHomepage) ? data.notOnHomepage : [];
+      setHomepageData({ onHomepage, notOnHomepage });
+      setHomepageOrder(onHomepage.map(g => g._id));
+    } catch (error) {
+      console.error("Error loading homepage data:", error);
+      alert("Failed to load homepage data. Please try again.");
+    }
+  };
+
+  const moveHomepageToPosition = (id, newPos) => {
+    const newPosNum = Math.max(1, Math.min(newPos, homepageOrder.length));
+    const currentIndex = homepageOrder.indexOf(id);
+    if (currentIndex === -1 || currentIndex + 1 === newPosNum) return;
+    const newOrder = homepageOrder.filter(gid => gid !== id);
+    newOrder.splice(newPosNum - 1, 0, id);
+    setHomepageOrder(newOrder);
+  };
+
+  const removeFromHomepage = (id) => {
+    setHomepageOrder(prev => prev.filter(gid => gid !== id));
+    setHomepageData(prev => {
+      const removed = prev.onHomepage.find(g => g._id === id);
+      return {
+        onHomepage: prev.onHomepage.filter(g => g._id !== id),
+        notOnHomepage: removed ? [...prev.notOnHomepage, removed] : prev.notOnHomepage,
+      };
+    });
+  };
+
+  const addToHomepage = (id) => {
+    setHomepageOrder(prev => [...prev, id]);
+    setHomepageData(prev => {
+      const added = prev.notOnHomepage.find(g => g._id === id);
+      return {
+        onHomepage: added ? [...prev.onHomepage, added] : prev.onHomepage,
+        notOnHomepage: prev.notOnHomepage.filter(g => g._id !== id),
+      };
+    });
+  };
+
+  const saveHomepageOrder = async () => {
+    try {
+      setIsSubmitting(true);
+      const result = await ApiService.reorderHomepage(homepageOrder);
+      alert(result.message || "Homepage order saved!");
+      setShowHomepageModal(false);
+      loadgames();
+    } catch (error) {
+      console.error("Error saving homepage order:", error);
+      alert("Failed to save: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDelete = async (gameId) => {
   if (window.confirm("Are you sure you want to delete this game?")) {
       try {
@@ -316,7 +396,11 @@ export default function AdminDashboard({ onGameChange }) {
       poster: "",
       trailer: "",
       backdrop: "",
-      screenshots: "",
+    screenshot1: "",
+    screenshot2: "",
+    screenshot3: "",
+    screenshot4: "",
+    screenshot5: "",
       year: "",
       runtime: "",
       genre: "",
@@ -467,6 +551,14 @@ export default function AdminDashboard({ onGameChange }) {
             >
               <Icon name="trending" size={18} />
               <span className="truncate">Manage Trending</span>
+            </button>
+            <button
+              onClick={openHomepageModal}
+              className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-semibold transition-all text-sm lg:text-base w-1/2 lg:w-auto"
+              style={{ backgroundColor: '#1e40af', color: 'white' }}
+            >
+              <Icon name="home" size={18} />
+              <span className="truncate">Manage Homepage</span>
             </button>
             <button
               onClick={() => setShowCreateForm(true)}
@@ -895,16 +987,25 @@ export default function AdminDashboard({ onGameChange }) {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold mb-2">Screenshots (comma-separated URLs)</label>
-                          <input
-                            type="text"
-                            name="screenshots"
-                            value={formData.screenshots}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:shadow-md"
-                            placeholder="https://example.com/screen1.jpg, https://example.com/screen2.jpg"
-                            disabled={isSubmitting}
-                          />
+                          <label className="block text-sm font-semibold mb-2">Screenshots (paste up to 5 image URLs)</label>
+                          <div className="space-y-2">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                              <div key={i}>
+                                <input
+                                  type="text"
+                                  name={`screenshot${i}`}
+                                  value={formData[`screenshot${i}`]}
+                                  onChange={handleInputChange}
+                                  className={`w-full px-4 py-3 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:shadow-md ${formErrors[`screenshot${i}`] ? "border-red-500" : ""}`}
+                                  placeholder={`Screenshot ${i} URL (e.g. https://example.com/screen${i}.jpg)`}
+                                  disabled={isSubmitting}
+                                />
+                                {formErrors[`screenshot${i}`] && (
+                                  <p className="text-red-500 text-xs mt-1">{formErrors[`screenshot${i}`]}</p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1042,6 +1143,105 @@ export default function AdminDashboard({ onGameChange }) {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Manage Homepage Modal */}
+        {showHomepageModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 lg:p-4">
+            <div className="theme-bg-secondary rounded-xl max-w-3xl w-full max-h-[95vh] lg:max-h-[90vh] overflow-y-auto modal-scrollbar shadow-2xl">
+              <div className="p-4 lg:p-6 border-b theme-border flex items-center justify-between sticky top-0 theme-bg-secondary z-10">
+                <h3 className="text-lg lg:text-xl font-semibold flex items-center gap-2">
+                  <Icon name="home" size={20} />
+                  Manage Homepage Games
+                </h3>
+                <button onClick={() => setShowHomepageModal(false)} className="p-2 hover:theme-bg-hover rounded-lg transition-colors">
+                  <Icon name="x" size={20} />
+                </button>
+              </div>
+
+              <div className="p-4 lg:p-6">
+                <p className="text-sm theme-text-secondary mb-4">
+                  Select which games appear on the homepage. Up to 20 games can be shown. Reorder them with ↑↓ buttons.
+                </p>
+
+                {/* Selected games list */}
+                <div className="space-y-1 max-h-96 overflow-y-auto pr-1 mb-4">
+                  {homepageOrder.map((id, index) => {
+                    const game = [...homepageData.onHomepage, ...homepageData.notOnHomepage].find(g => g._id === id);
+                    if (!game) return null;
+                    return (
+                      <div key={id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg border border-blue-700">
+                        <input
+                          type="number"
+                          min={1}
+                          max={homepageOrder.length}
+                          value={index + 1}
+                          onChange={(e) => moveHomepageToPosition(id, parseInt(e.target.value) || 1)}
+                          className="w-8 h-6 text-center rounded text-xs font-bold shrink-0"
+                          style={{ backgroundColor: 'var(--accent-color)', color: 'white', border: 'none' }}
+                          title="Position number"
+                        />
+                        <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate">{game.title}</p>
+                          <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <button onClick={() => moveHomepageToPosition(id, index)} disabled={index === 0} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move up">
+                            <Icon name="chevronUp" size={16} />
+                          </button>
+                          <button onClick={() => moveHomepageToPosition(id, index + 2)} disabled={index >= homepageOrder.length - 1} className="p-1 hover:theme-bg-hover rounded disabled:opacity-30" title="Move down">
+                            <Icon name="chevronDown" size={16} />
+                          </button>
+                          <button onClick={() => removeFromHomepage(id)} className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors" title="Remove from homepage">
+                            <Icon name="x" size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {homepageData.notOnHomepage.map((game) => (
+                    <div key={game._id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg opacity-80 hover:opacity-100 transition-opacity">
+                      <span className="w-6 h-6 flex items-center justify-center text-xs theme-text-secondary shrink-0">-</span>
+                      <img src={game.poster} alt={game.title} className="w-8 h-10 object-cover rounded shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{game.title}</p>
+                        <p className="text-xs theme-text-secondary">{game.averageRating?.toFixed(1) || "N/A"} rating</p>
+                      </div>
+                      <button onClick={() => addToHomepage(game._id)} className="p-1.5 hover:bg-green-600 hover:text-white rounded transition-colors shrink-0" title="Add to homepage">
+                        <Icon name="plus" size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Modal Actions */}
+                <div className="flex justify-between items-center pt-4 border-t theme-border">
+                  <div></div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowHomepageModal(false)}
+                      className="px-4 py-2 theme-button-secondary rounded-lg font-semibold text-sm"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveHomepageOrder}
+                      disabled={isSubmitting}
+                      className="px-6 py-2 theme-button-primary rounded-lg font-semibold text-sm flex items-center gap-2 disabled:opacity-50"
+                    >
+                      {isSubmitting ? (
+                        <div className="settings-loading-spinner w-4 h-4"></div>
+                      ) : (
+                        <Icon name="check" size={16} />
+                      )}
+                      Save Order
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}

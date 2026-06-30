@@ -33,7 +33,7 @@ function GameCard({ game }) {
         <img
           src={getImageSrc() || fallbackImage}
           alt={game.name || game.title || 'Game poster'}
-            className="w-full h-full object-cover object-center transition-all duration-700 ease-out"
+            className="w-full h-full object-contain object-center transition-all duration-700 ease-out"
           onError={(e) => {
             if (e.target.src !== fallbackImage) {
               e.target.src = fallbackImage;
