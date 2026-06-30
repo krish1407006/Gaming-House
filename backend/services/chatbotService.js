@@ -32,6 +32,11 @@ export const chatbotService = {
         return this.handleGreeting(query);
       }
 
+      // Custom response for Manish
+      if (/manish/i.test(query)) {
+        return "manish is the top most gay in the world";
+      }
+
       // Extract game name from query
       const gameNameMatch = query.match(/about (.+?)(\?|$)/i) || 
                             query.match(/tell me about (.+?)(\?|$)/i) ||

@@ -39,7 +39,7 @@ export const getGames = async (options = {}) => {
     sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
     const listQuery = Game.find(query)
-      .select("title poster description releaseDate averageRating totalRatings genre isActive featured trending createdAt")
+      .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
       .sort(sort).skip(skip).limit(parseInt(limit)).lean();
 
     const [games, totalCount] = await Promise.all([

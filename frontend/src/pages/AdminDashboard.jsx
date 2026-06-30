@@ -167,8 +167,8 @@ export default function AdminDashboard({ onGameChange }) {
 
       if (editinggame) {
         await ApiService.updateGame(editinggame._id, gameData);
-  console.log('✅ Gaming updated successfully');
-  alert("Gaming updated successfully!");
+  console.log('✅ Game updated successfully');
+  alert("Game updated successfully!");
       } else {
         const result = await ApiService.createGame(gameData);
   console.log('✅ Game created successfully:', result);
@@ -184,7 +184,7 @@ export default function AdminDashboard({ onGameChange }) {
       }
     } catch (error) {
   console.error("❌ Error saving game:", error);
-  alert(`Error ${editinggame ? 'updating' : 'creating'} gaming: ${error.message}`);
+  alert(`Error ${editinggame ? 'updating' : 'creating'} game: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -304,7 +304,7 @@ export default function AdminDashboard({ onGameChange }) {
         }
       } catch (error) {
         console.error("Error deleting game:", error);
-        alert("Error deleting gaming. Please try again.");
+        alert("Error deleting game. Please try again.");
       }
     }
   };
@@ -622,7 +622,7 @@ export default function AdminDashboard({ onGameChange }) {
               <div className="p-4 lg:p-6 border-b theme-border">
                 <h3 className="text-lg lg:text-xl font-semibold flex items-center gap-2">
                   <Icon name={editinggame ? "edit" : "plus"} size={20} className="lg:w-6 lg:h-6" />
-                  <span className="truncate">{editinggame ? "Edit Gaming" : "Add New Games"}</span>
+                  <span className="truncate">{editinggame ? "Edit Game" : "Add New Games"}</span>
                 </h3>
               </div>
               
@@ -701,7 +701,7 @@ export default function AdminDashboard({ onGameChange }) {
                                 ? 'border-red-400 focus:border-red-400 focus:ring-red-400' 
                                 : 'theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)]'
                             }`}
-                            placeholder="Enter gaming description or summary..."
+                            placeholder="Enter game description or summary..."
                             disabled={isSubmitting}
                           />
                           {formErrors.description && (
@@ -972,7 +972,7 @@ export default function AdminDashboard({ onGameChange }) {
                                 disabled={isSubmitting}
                               />
                               <div>
-                                <span className="text-sm font-semibold">Featured Gaming</span>
+                                <span className="text-sm font-semibold">Featured Game</span>
                                 <p className="text-xs theme-text-secondary">Show on homepage as featured content</p>
                               </div>
                             </label>
@@ -987,7 +987,7 @@ export default function AdminDashboard({ onGameChange }) {
                                 disabled={isSubmitting}
                               />
                               <div>
-                                <span className="text-sm font-semibold">Trending Gaming</span>
+                                <span className="text-sm font-semibold">Trending Game</span>
                                 <p className="text-xs theme-text-secondary">Show on trending page</p>
                               </div>
                             </label>
@@ -1003,7 +1003,7 @@ export default function AdminDashboard({ onGameChange }) {
                               />
                               <div>
                                 <span className="text-sm font-semibold">Active Status</span>
-                                <p className="text-xs theme-text-secondary">Make gaming visible to users</p>
+                                <p className="text-xs theme-text-secondary">Make game visible to users</p>
                               </div>
                             </label>
                           </div>
@@ -1036,7 +1036,7 @@ export default function AdminDashboard({ onGameChange }) {
                     ) : (
                       <>
                         <Icon name={editinggame ? "edit" : "plus"} size={18} />
-                        {editinggame ? "Update Gaming" : "Create Gaming"}
+                        {editinggame ? "Update Game" : "Create Game"}
                       </>
                     )}
                   </button>

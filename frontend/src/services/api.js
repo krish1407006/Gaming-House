@@ -266,7 +266,7 @@ class ApiService {
     try {
       console.log("⭐ Toggling featured status for game:", gameId);
       return await this.request(`/api/admin/games/${gameId}/featured`, {
-        method: "PATCH",
+        method: "PUT",
       });
     } catch (error) {
       console.error("Error toggling featured status:", error);
