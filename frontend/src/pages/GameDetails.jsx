@@ -62,7 +62,7 @@ export default function GameDetailPage() {
         setIsLiked(liked.includes(id));
 
         try {
-            const related = await apiService.getGames({ limit: 50, sortBy: 'createdAt', sortOrder: 'desc' });
+            const related = await apiService.getGames({ limit: 6, sortBy: 'createdAt', sortOrder: 'desc' });
           if (related?.games) {
             const shuffled = [...related.games].sort(() => Math.random() - 0.5);
             setRelatedGames(shuffled.filter(g => (g._id || g.id) !== movieData._id).slice(0, 3));
