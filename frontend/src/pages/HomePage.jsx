@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import GameCard from "../components/GameCard";
-import Pagination from "../components/Pagination";
 import apiService from "../services/api";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
+
+const PAGE_SIZE = 20;
 
 export default function HomePage() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
-  // Background image rotation
   useEffect(() => {
     const id = setInterval(() => {
       setCurrentBgIndex((prev) =>
@@ -22,33 +24,51 @@ export default function HomePage() {
     return () => clearInterval(id);
   }, []);
 
-  // Fetch homepage games with pagination
-  const fetchGames = async (page) => {
-    setLoading(true);
+  const fetchGames = useCallback(async (pageNum) => {
+    const isInitial = pageNum === 1;
+    if (isInitial) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
     setError(null);
+
     try {
-      const response = await apiService.getHomepage(page, 20);
-      setGames(response?.games || []);
-      if (response?.pagination) {
-        setTotalPages(response.pagination.totalPages || 1);
-        setCurrentPage(response.pagination.currentPage || 1);
+      const response = await apiService.getHomepage(pageNum, PAGE_SIZE);
+      const newGames = response?.games || [];
+      const pagination = response?.pagination;
+
+      setGames((prev) => isInitial ? newGames : [...prev, ...newGames]);
+
+      if (pagination) {
+        setPage(pagination.currentPage || 1);
+        setHasMore(pagination.currentPage < pagination.totalPages);
+      } else {
+        setHasMore(false);
       }
     } catch (err) {
       setError(err.message || "Failed to load games");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  };
-
-  useEffect(() => {
-    fetchGames(currentPage);
   }, []);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    fetchGames(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  useEffect(() => {
+    fetchGames(1);
+  }, [fetchGames]);
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchGames(page + 1);
+    }
+  }, [fetchGames, loadingMore, hasMore, page]);
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasMore,
+    loading: loading || loadingMore,
+  });
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
@@ -86,7 +106,7 @@ export default function HomePage() {
 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">
-          {currentPage === 1 ? "Home" : `Page ${currentPage}`}
+          {page === 1 ? "Home" : `Page ${page}`}
         </h3>
       </div>
 
@@ -112,11 +132,16 @@ export default function HomePage() {
                 <GameCard key={game._id || game.gameId || `game-${idx}`} game={game} />
               ))}
             </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+
+            {loadingMore && (
+              <div className="flex justify-center py-6">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-3 border-[var(--accent-color)]"></div>
+              </div>
+            )}
+
+            {hasMore && !loadingMore && (
+              <div ref={sentinelRef} className="h-4" />
+            )}
           </>
         )}
       </div>
