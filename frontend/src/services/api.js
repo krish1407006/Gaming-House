@@ -20,7 +20,11 @@ function setCache(key, data) {
   } catch {}
 }
 
-const cacheableEndpoints = ['/api/games?', '/api/games/homepage?', '/api/games/trending?'];
+function clearGameCache() {
+  try {
+    Object.keys(localStorage).filter((k) => k.startsWith(CACHE_PREFIX + 'games_') || k.startsWith(CACHE_PREFIX + 'homepage_') || k.startsWith(CACHE_PREFIX + 'trending_')).forEach((k) => localStorage.removeItem(k));
+  } catch {}
+}
 
 class ApiService {
   constructor() {
@@ -307,7 +311,15 @@ class ApiService {
     try {
       const queryString = new URLSearchParams(params).toString();
       const endpoint = `/api/games/trending${queryString ? `?${queryString}` : ""}`;
+      if (params.page === 1 || !params.page) {
+        const cached = getCache('trending_' + queryString);
+        if (cached) {
+          setTimeout(() => this.request(endpoint).then((r) => { if (r) setCache('trending_' + queryString, r); }).catch(() => {}), 100);
+          return cached;
+        }
+      }
       const data = await this.request(endpoint);
+      if ((params.page === 1 || !params.page) && data) setCache('trending_' + queryString, data);
       return data;
     } catch (error) {
       console.error("Error fetching trending games:", error);
@@ -362,7 +374,16 @@ class ApiService {
   // Homepage
   async getHomepage(page = 1, limit = 20) {
     try {
-      const data = await this.request(`/api/games/homepage?page=${page}&limit=${limit}`);
+      const endpoint = `/api/games/homepage?page=${page}&limit=${limit}`;
+      if (page === 1) {
+        const cached = getCache('homepage_' + page + '_' + limit);
+        if (cached) {
+          setTimeout(() => this.request(endpoint).then((r) => { if (r) setCache('homepage_' + page + '_' + limit, r); }).catch(() => {}), 100);
+          return cached;
+        }
+      }
+      const data = await this.request(endpoint);
+      if (page === 1 && data) setCache('homepage_' + page + '_' + limit, data);
       return data;
     } catch (error) {
       console.error("Error fetching homepage games:", error);
