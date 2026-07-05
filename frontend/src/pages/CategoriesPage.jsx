@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
@@ -20,8 +20,10 @@ export default function CategoriesPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [activeGenre, setActiveGenre] = useState(null);
+  const fetchingRef = useRef(false);
 
   const fetchGames = useCallback(async (pageNum, genre) => {
+    fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
       setLoading(true);
@@ -49,6 +51,7 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false);
       setLoadingMore(false);
+      fetchingRef.current = false;
     }
   }, []);
 
@@ -65,10 +68,10 @@ export default function CategoriesPage() {
   };
 
   const loadMore = useCallback(() => {
-    if (!loadingMore && hasMore) {
+    if (!fetchingRef.current && hasMore) {
       fetchGames(page + 1, activeGenre);
     }
-  }, [fetchGames, loadingMore, hasMore, page, activeGenre]);
+  }, [fetchGames, hasMore, page, activeGenre]);
 
   const sentinelRef = useInfiniteScroll({
     onLoadMore: loadMore,
