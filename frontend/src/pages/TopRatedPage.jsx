@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
@@ -14,8 +14,10 @@ export default function TopRatedPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [minRating, setMinRating] = useState(0);
+  const fetchingRef = useRef(false);
 
   const fetchGames = useCallback(async (pageNum, minR) => {
+    fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
       setLoading(true);
@@ -51,6 +53,7 @@ export default function TopRatedPage() {
     } finally {
       setLoading(false);
       setLoadingMore(false);
+      fetchingRef.current = false;
     }
   }, []);
 
@@ -61,10 +64,10 @@ export default function TopRatedPage() {
   }, [minRating, fetchGames]);
 
   const loadMore = useCallback(() => {
-    if (!loadingMore && hasMore) {
+    if (!fetchingRef.current && hasMore) {
       fetchGames(page + 1, minRating);
     }
-  }, [fetchGames, loadingMore, hasMore, page, minRating]);
+  }, [fetchGames, hasMore, page, minRating]);
 
   const sentinelRef = useInfiniteScroll({
     onLoadMore: loadMore,
