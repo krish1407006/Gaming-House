@@ -1,6 +1,26 @@
 import { errorHandler } from '../utils/errorHandler.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gaming-house-ten.vercel.app/";
+const CACHE_PREFIX = 'gh_';
+const CACHE_TTL = 5 * 60 * 1000;
+
+function getCache(key) {
+  try {
+    const raw = localStorage.getItem(CACHE_PREFIX + key);
+    if (!raw) return null;
+    const { data, expiry } = JSON.parse(raw);
+    if (Date.now() > expiry) { localStorage.removeItem(CACHE_PREFIX + key); return null; }
+    return data;
+  } catch { return null; }
+}
+
+function setCache(key, data) {
+  try {
+    localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ data, expiry: Date.now() + CACHE_TTL }));
+  } catch {}
+}
+
+const cacheableEndpoints = ['/api/games?', '/api/games/homepage?', '/api/games/trending?'];
 
 class ApiService {
   constructor() {
@@ -82,7 +102,16 @@ class ApiService {
   async getGames(params = {}) {
     const queryString = new URLSearchParams(params).toString();
     const endpoint = `/api/games${queryString ? `?${queryString}` : ""}`;
-    return this.request(endpoint);
+    if (params.page === 1 || !params.page) {
+      const cached = getCache('games_' + queryString);
+      if (cached) {
+        setTimeout(() => this.request(endpoint).then((r) => { if (r) setCache('games_' + queryString, r); }).catch(() => {}), 100);
+        return cached;
+      }
+    }
+    const result = await this.request(endpoint);
+    if ((params.page === 1 || !params.page) && result) setCache('games_' + queryString, result);
+    return result;
   }
 
   async getGameById(gameId) {
