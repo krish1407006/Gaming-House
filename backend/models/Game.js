@@ -102,6 +102,10 @@ const gameSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
+    steamAppId: {
+      type: Number,
+      min: 0,
+    },
     budget: {
       type: Number,
       min: 0,

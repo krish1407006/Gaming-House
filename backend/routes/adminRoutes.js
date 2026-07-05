@@ -2,6 +2,7 @@ import express from "express";
 import { requireAuth } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/admin.js";
 import * as adminController from "../controllers/adminController.js";
+import * as downloadController from "../controllers/downloadController.js";
 
 const router = express.Router();
 
@@ -29,6 +30,11 @@ router.put("/games/:id/status", adminController.toggleGameStatus);
 router.put("/games/:id/featured", adminController.toggleGameFeatured);
 router.delete("/games/:id", adminController.deleteGame);
 router.get("/games/:id/ratings", adminController.getGameRatingsAdmin);
+router.get("/games/:id/downloads", downloadController.adminGetDownloads);
+router.post("/games/:id/downloads", downloadController.addDownload);
+router.put("/games/:id/downloads/:downloadId", downloadController.updateDownload);
+router.delete("/games/:id/downloads/:downloadId", downloadController.deleteDownload);
+router.put("/games/:id/steam-app", downloadController.updateSteamAppId);
 
 router.get("/stats", adminController.getDashboardStats);
 

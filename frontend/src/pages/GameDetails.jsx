@@ -9,6 +9,9 @@ import {
   FaTimes,
   FaChevronLeft,
   FaChevronRight,
+  FaDownload,
+  FaSteam,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import GameCard from "../components/GameCard";
@@ -28,6 +31,7 @@ export default function GameDetailPage() {
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [relatedGames, setRelatedGames] = useState([]);
+  const [downloads, setDownloads] = useState({ steamAppId: null, downloads: [] });
 
   useEffect(() => {
     if (getToken) {
@@ -63,6 +67,11 @@ export default function GameDetailPage() {
             const shuffled = [...related.games].sort(() => Math.random() - 0.5);
             setRelatedGames(shuffled.filter(g => (g._id || g.id) !== movieData._id).slice(0, 3));
           }
+        } catch {}
+
+        try {
+          const downloadData = await apiService.getGameDownloads(movieData._id || movieData.id || id);
+          setDownloads(downloadData);
         } catch {}
 
         setLoading(false);
@@ -575,6 +584,54 @@ export default function GameDetailPage() {
                 ))}
               </div>
             </div>
+
+            {(downloads.steamAppId || downloads.downloads.length > 0) && (
+              <div className="theme-bg-secondary rounded-xl overflow-hidden">
+                <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
+                  <div className="flex items-center gap-2">
+                    <FaDownload className="text-accent text-sm" />
+                    <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Downloads</h3>
+                  </div>
+                </div>
+                <div className="p-4 lg:p-6 space-y-3">
+                  {downloads.steamAppId && (
+                    <a
+                      href={`https://store.steampowered.com/app/${downloads.steamAppId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 rounded-lg transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg, #1b2838, #2a475e)' }}
+                    >
+                      <FaSteam className="text-2xl text-white" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-white">Steam Store</p>
+                        <p className="text-xs text-gray-400 truncate">Official version</p>
+                      </div>
+                      <FaExternalLinkAlt className="text-xs text-gray-400 shrink-0" />
+                    </a>
+                  )}
+                  {downloads.downloads.map((dl) => (
+                    <a
+                      key={dl._id}
+                      href={dl.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 rounded-lg transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'var(--bg-primary)' }}
+                    >
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: 'var(--accent-color)', color: 'var(--accent-contrast)' }}>
+                        <FaDownload />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{dl.label}</p>
+                        <p className="text-xs opacity-50 truncate">{dl.url}</p>
+                      </div>
+                      <FaExternalLinkAlt className="text-xs opacity-40 shrink-0" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="theme-bg-secondary rounded-xl overflow-hidden">
               <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">

@@ -386,6 +386,42 @@ class ApiService {
       throw error;
     }
   }
+
+  // Download Methods
+  async getGameDownloads(gameId) {
+    return this.request(`/api/games/${gameId}/downloads`);
+  }
+
+  async adminGetDownloads(gameId) {
+    return this.request(`/api/admin/games/${gameId}/downloads`);
+  }
+
+  async addDownload(gameId, data) {
+    return this.request(`/api/admin/games/${gameId}/downloads`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateDownload(gameId, downloadId, data) {
+    return this.request(`/api/admin/games/${gameId}/downloads/${downloadId}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteDownload(gameId, downloadId) {
+    return this.request(`/api/admin/games/${gameId}/downloads/${downloadId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async updateSteamAppId(gameId, steamAppId) {
+    return this.request(`/api/admin/games/${gameId}/steam-app`, {
+      method: "PUT",
+      body: JSON.stringify({ steamAppId }),
+    });
+  }
 }
 
 export const apiService = new ApiService();

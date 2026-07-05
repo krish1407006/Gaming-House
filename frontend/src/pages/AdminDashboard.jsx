@@ -70,6 +70,12 @@ export default function AdminDashboard({ onGameChange }) {
   const [homepageData, setHomepageData] = useState({ onHomepage: [], notOnHomepage: [] });
   const [homepageOrder, setHomepageOrder] = useState([]);
 
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [downloadGame, setDownloadGame] = useState(null);
+  const [downloadData, setDownloadData] = useState({ steamAppId: '', downloads: [] });
+  const [newDownloadUrl, setNewDownloadUrl] = useState('');
+  const [newDownloadLabel, setNewDownloadLabel] = useState('');
+
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
 
@@ -419,6 +425,62 @@ export default function AdminDashboard({ onGameChange }) {
     setShowCreateForm(false);
   };
 
+  const openDownloadModal = async (game) => {
+    setDownloadGame(game);
+    setShowDownloadModal(true);
+    setNewDownloadUrl('');
+    setNewDownloadLabel('');
+    try {
+      const data = await ApiService.adminGetDownloads(game._id);
+      setDownloadData({
+        steamAppId: data.steamAppId !== null && data.steamAppId !== undefined ? String(data.steamAppId) : '',
+        downloads: data.downloads || [],
+      });
+    } catch (error) {
+      console.error("Error loading downloads:", error);
+      setDownloadData({ steamAppId: '', downloads: [] });
+    }
+  };
+
+  const handleSteamAppIdChange = async () => {
+    if (!downloadGame) return;
+    const val = downloadData.steamAppId ? parseInt(downloadData.steamAppId) : null;
+    try {
+      const result = await ApiService.updateSteamAppId(downloadGame._id, val);
+      setDownloadData(prev => ({ ...prev, steamAppId: result.steamAppId !== null && result.steamAppId !== undefined ? String(result.steamAppId) : '' }));
+      alert("Steam App ID updated!");
+    } catch (error) {
+      alert("Error updating Steam App ID: " + error.message);
+    }
+  };
+
+  const handleAddDownload = async () => {
+    if (!downloadGame || !newDownloadUrl.trim()) return;
+    try {
+      await ApiService.addDownload(downloadGame._id, {
+        url: newDownloadUrl.trim(),
+        label: newDownloadLabel.trim() || 'Download',
+      });
+      setNewDownloadUrl('');
+      setNewDownloadLabel('');
+      const data = await ApiService.adminGetDownloads(downloadGame._id);
+      setDownloadData(prev => ({ ...prev, downloads: data.downloads || [] }));
+    } catch (error) {
+      alert("Error adding download: " + error.message);
+    }
+  };
+
+  const handleDeleteDownload = async (downloadId) => {
+    if (!downloadGame || !window.confirm("Delete this download link?")) return;
+    try {
+      await ApiService.deleteDownload(downloadGame._id, downloadId);
+      const data = await ApiService.adminGetDownloads(downloadGame._id);
+      setDownloadData(prev => ({ ...prev, downloads: data.downloads || [] }));
+    } catch (error) {
+      alert("Error deleting download: " + error.message);
+    }
+  };
+
   // Function to make current user admin (development only)
   const makeUserAdmin = async () => {
     if (!user) return;
@@ -689,6 +751,13 @@ export default function AdminDashboard({ onGameChange }) {
                             title="Edit"
                           >
                             <Icon name="edit" size={14} className="lg:w-4 lg:h-4" />
+                          </button>
+                          <button
+                            onClick={() => openDownloadModal(game)}
+                            className="p-1.5 lg:p-2 theme-bg-secondary hover:theme-bg-hover rounded transition-colors"
+                            title="Manage Downloads"
+                          >
+                            <Icon name="download" size={14} className="lg:w-4 lg:h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(game._id)}
@@ -1349,6 +1418,105 @@ export default function AdminDashboard({ onGameChange }) {
                         <Icon name="check" size={16} />
                       )}
                       Save Order
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Manage Downloads Modal */}
+        {showDownloadModal && downloadGame && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 lg:p-4">
+            <div className="theme-bg-secondary rounded-xl max-w-xl w-full max-h-[95vh] lg:max-h-[90vh] overflow-y-auto modal-scrollbar shadow-2xl">
+              <div className="p-4 lg:p-6 border-b theme-border flex items-center justify-between sticky top-0 theme-bg-secondary z-10">
+                <h3 className="text-lg lg:text-xl font-semibold flex items-center gap-2">
+                  <Icon name="download" size={20} />
+                  Manage Downloads - {downloadGame.title}
+                </h3>
+                <button onClick={() => setShowDownloadModal(false)} className="p-2 hover:theme-bg-hover rounded-lg transition-colors">
+                  <Icon name="x" size={20} />
+                </button>
+              </div>
+
+              <div className="p-4 lg:p-6 space-y-6">
+                {/* Steam App ID */}
+                <div>
+                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <Icon name="link" size={16} />
+                    Steam Store Link
+                  </h4>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      value={downloadData.steamAppId}
+                      onChange={(e) => setDownloadData(prev => ({ ...prev, steamAppId: e.target.value }))}
+                      className="flex-1 px-4 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none"
+                      placeholder="Steam App ID (e.g., 1245620)"
+                    />
+                    <button
+                      onClick={handleSteamAppIdChange}
+                      className="px-4 py-2 theme-button-primary rounded-lg font-semibold text-sm"
+                    >
+                      Save
+                    </button>
+                  </div>
+                  <p className="text-xs theme-text-secondary mt-1">
+                    The Steam store URL will be: https://store.steampowered.com/app/{downloadData.steamAppId || '{id}'}
+                  </p>
+                </div>
+
+                {/* Piracy Downloads */}
+                <div>
+                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <Icon name="link" size={16} />
+                    Piracy Download Links
+                  </h4>
+
+                  <div className="space-y-2 mb-4">
+                    {downloadData.downloads.length === 0 ? (
+                      <p className="text-sm theme-text-secondary">No download links added yet.</p>
+                    ) : (
+                      downloadData.downloads.map((dl) => (
+                        <div key={dl._id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg border theme-border">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold truncate">{dl.label}</p>
+                            <p className="text-xs theme-text-secondary truncate">{dl.url}</p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteDownload(dl._id)}
+                            className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded transition-colors shrink-0"
+                            title="Delete"
+                          >
+                            <Icon name="trash" size={14} />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newDownloadLabel}
+                      onChange={(e) => setNewDownloadLabel(e.target.value)}
+                      className="w-28 px-3 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none text-sm"
+                      placeholder="Label"
+                    />
+                    <input
+                      type="url"
+                      value={newDownloadUrl}
+                      onChange={(e) => setNewDownloadUrl(e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none text-sm"
+                      placeholder="https://example.com/game-download"
+                    />
+                    <button
+                      onClick={handleAddDownload}
+                      disabled={!newDownloadUrl.trim()}
+                      className="px-4 py-2 theme-button-primary rounded-lg font-semibold text-sm disabled:opacity-50"
+                    >
+                      <Icon name="plus" size={16} />
                     </button>
                   </div>
                 </div>
