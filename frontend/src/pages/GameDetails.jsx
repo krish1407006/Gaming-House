@@ -302,7 +302,7 @@ export default function GameDetailPage() {
           <img
             src={game.backdrop || game.poster}
             alt={game.title}
-            className="w-full h-48 sm:h-64 lg:h-96 object-cover"
+            className="w-full h-56 sm:h-80 lg:h-[500px] object-cover"
             onError={(e) => {
               if (e.target.src !== game.poster) {
                 e.target.src = game.poster;
@@ -483,34 +483,44 @@ export default function GameDetailPage() {
 
             {selectedImageIndex !== null && game.screenshots && (
               <div
-                className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+                className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-fade-in"
                 onClick={handleCloseLightbox}
               >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40 pointer-events-none" />
+
                 <button
                   onClick={handleCloseLightbox}
-                  className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl z-10"
+                  className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl z-10 w-10 h-10 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 transition-all"
                 >
                   <FaTimes />
                 </button>
+
                 <button
                   onClick={handlePrevImage}
-                  className="absolute left-4 text-white/80 hover:text-white text-3xl z-10"
+                  className="absolute left-2 sm:left-4 text-white/80 hover:text-white text-3xl z-10 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 transition-all"
                 >
                   <FaChevronLeft />
                 </button>
-                <img
-                  src={game.screenshots[selectedImageIndex]}
-                  alt={`${game.title} game image ${selectedImageIndex + 1}`}
-                  className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                />
+
+                <div className="w-full h-full flex items-center justify-center p-4 sm:p-8">
+                  <img
+                    src={game.screenshots[selectedImageIndex]}
+                    alt={`${game.title} game image ${selectedImageIndex + 1}`}
+                    className="w-full h-full object-contain select-none"
+                    style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    onClick={(e) => e.stopPropagation()}
+                    draggable={false}
+                  />
+                </div>
+
                 <button
                   onClick={handleNextImage}
-                  className="absolute right-4 text-white/80 hover:text-white text-3xl z-10"
+                  className="absolute right-2 sm:right-4 text-white/80 hover:text-white text-3xl z-10 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 transition-all"
                 >
                   <FaChevronRight />
                 </button>
-                <div className="absolute bottom-4 text-white/60 text-sm">
+
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/50 text-white/80 text-sm px-4 py-1.5 rounded-full backdrop-blur-sm">
                   {selectedImageIndex + 1} / {game.screenshots.length}
                 </div>
               </div>
