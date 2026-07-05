@@ -1470,7 +1470,7 @@ export default function AdminDashboard({ onGameChange }) {
                 {/* Piracy Downloads */}
                 <div>
                   <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
-                    <Icon name="link" size={16} />
+                    <Icon name="download" size={16} />
                     Piracy Download Links
                   </h4>
 
