@@ -4,7 +4,7 @@ import * as ratingService from "../services/ratingService.js";
 
 export const getGames = async (req, res) => {
   try {
-    const { page, limit, genre, search, sortBy, sortOrder, featured } =
+    const { page, limit, genre, search, sortBy, sortOrder, featured, ids } =
       req.query;
 
     const result = await gameService.getGames({
@@ -16,6 +16,7 @@ export const getGames = async (req, res) => {
       sortOrder,
       activeOnly: true,
       featuredOnly: featured === "true",
+      ids: ids ? ids.split(",") : undefined,
     });
 
     if (!result.success) {
