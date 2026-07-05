@@ -302,7 +302,7 @@ export default function GameDetailPage() {
           <img
             src={game.backdrop || game.poster}
             alt={game.title}
-            className="w-full h-56 sm:h-80 lg:h-[500px] object-cover"
+            className="w-full h-48 sm:h-64 lg:h-96 object-cover"
             onError={(e) => {
               if (e.target.src !== game.poster) {
                 e.target.src = game.poster;
