@@ -782,6 +782,28 @@ export default function AdminDashboard({ onGameChange }) {
               </table>
             </div>
           )}
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 p-4 border-t theme-border">
+              <button
+                onClick={() => loadgames(Math.max(1, page - 1))}
+                disabled={page <= 1}
+                className="px-3 py-1.5 rounded theme-bg-secondary hover:theme-bg-hover disabled:opacity-30 text-sm font-semibold"
+              >
+                Prev
+              </button>
+              <span className="text-sm px-2">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={() => loadgames(Math.min(totalPages, page + 1))}
+                disabled={page >= totalPages}
+                className="px-3 py-1.5 rounded theme-bg-secondary hover:theme-bg-hover disabled:opacity-30 text-sm font-semibold"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Create/Edit game Modal */}
