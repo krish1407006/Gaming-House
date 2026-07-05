@@ -25,43 +25,12 @@ export default function WatchlistPage() {
         console.log("Watchlist items type:", typeof watchlistItems, "Array?", Array.isArray(watchlistItems));
 
         if (Array.isArray(watchlistItems)) {
-          // Extract game IDs from watchlist items and ensure they're strings
           const gameIds = watchlistItems.map((item) => String(item.gameId || item.movieId));
-          console.log("game IDs from watchlist:", gameIds);
-          console.log("gameIds after string conversion:", gameIds.map(id => `'${id}' (${typeof id})`));
-          
-          // Fetch full game details for each game ID
-          const allgamesResponse = await ApiService.getGames();
-          console.log("🌐 Full API Response:", allgamesResponse);
-          
-          // Handle new API response structure with pagination
-          const games = Array.isArray(allgamesResponse) 
-            ? allgamesResponse 
-            : (allgamesResponse?.games || []);
-          
-          console.log("[Watchlist] Extracted games array:", games);
-          console.log("All games structure (first game):", games[0]);
-          console.log("game _id type:", typeof games[0]?._id, "Value:", games[0]?._id);
-          console.log("Looking for game IDs:", gameIds);
-          console.log("gameIds types:", gameIds.map(id => typeof id));
-          
-          const watchlistgames = games.filter((game) => {
-            const gameId = game._id || game.gameId || game.id;
-            console.log("Comparing gameId:", gameId, "(type:", typeof gameId, ") with watchlist IDs:", gameIds);
-            
-            // Convert both to strings for comparison (handles ObjectId vs String)
-            const gameIdStr = String(gameId);
-            const isMatch = gameIds.includes(gameIdStr);
-            
-            if (isMatch) {
-              console.log("[Watchlist] Found matching game:", game.title, "with ID:", gameId);
-            } else {
-              console.log("[Watchlist] No match for game:", game.title, "ID:", gameId);
-            }
-            return isMatch;
-          });
-          console.log("Full watchlist games:", watchlistgames);
-          setWatchlist(watchlistgames);
+
+          const response = await ApiService.getGames({ ids: gameIds.join(","), limit: 100 });
+          const games = response?.games || [];
+
+          setWatchlist(games);
         } else {
           console.error("Unexpected watchlist format:", watchlistItems);
           setWatchlist([]);
@@ -77,15 +46,9 @@ export default function WatchlistPage() {
           console.log("Local watchlist:", localWatchlist);
 
           if (localWatchlist.length > 0) {
-          const allgamesResponse = await ApiService.getGames();
-            const games = Array.isArray(allgamesResponse) 
-              ? allgamesResponse 
-              : (allgamesResponse?.games || []);
-            const watchlistgames = games.filter((game) =>
-              localWatchlist.includes(game._id || game.gameId)
-            );
-            console.log("Local watchlist games:", watchlistgames);
-            setWatchlist(watchlistgames);
+            const response = await ApiService.getGames({ ids: localWatchlist.join(","), limit: 100 });
+            const games = response?.games || [];
+            setWatchlist(games);
             setError(null); // Clear error since we found local data
           }
         } catch (localErr) {

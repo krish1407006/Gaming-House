@@ -27,6 +27,10 @@ export const getGames = async (options = {}) => {
       query.featured = true;
     }
 
+    if (options.ids) {
+      query._id = { $in: options.ids.map(id => new mongoose.Types.ObjectId(id)) };
+    }
+
     if (genre) {
       query.genre = { $in: [genre] };
     }
