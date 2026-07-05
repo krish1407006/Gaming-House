@@ -1,30 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+
+const PAGE_SIZE = 20;
 
 export default function TrendingPage() {
   const [trendinggames, setTrendinggames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  const fetchTrending = async () => {
-    try {
+  const fetchTrending = useCallback(async (pageNum) => {
+    const isInitial = pageNum === 1;
+    if (isInitial) {
       setLoading(true);
-      setError(null);
-      const games = await apiService.getTrending();
-      setTrendinggames(games);
+    } else {
+      setLoadingMore(true);
+    }
+    setError(null);
+
+    try {
+      const data = await apiService.getTrending({ page: pageNum, limit: PAGE_SIZE });
+      const newGames = data?.games || [];
+      const pagination = data?.pagination;
+
+      setTrendinggames((prev) => isInitial ? newGames : [...prev, ...newGames]);
+
+      if (pagination) {
+        setPage(pagination.currentPage || 1);
+        setHasMore(pagination.hasNextPage);
+      } else {
+        setHasMore(false);
+      }
     } catch (err) {
       console.error("Error fetching trending games:", err);
       setError("Failed to load trending games");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchTrending();
-  }, []);
+    fetchTrending(1);
+  }, [fetchTrending]);
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchTrending(page + 1);
+    }
+  }, [fetchTrending, loadingMore, hasMore, page]);
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasMore,
+    loading: loading || loadingMore,
+  });
 
   const bannerImg = trendinggames[0]?.poster || trendinggames[0]?.image || null;
 
