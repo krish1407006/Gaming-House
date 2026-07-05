@@ -502,16 +502,22 @@ export default function GameDetailPage() {
                   <FaChevronLeft />
                 </button>
 
-                <div className="w-full h-full flex items-center justify-center p-4 sm:p-8">
-                  <img
-                    src={game.screenshots[selectedImageIndex]}
-                    alt={`${game.title} game image ${selectedImageIndex + 1}`}
-                    className="w-full h-full object-contain select-none"
-                    style={{ maxWidth: '100%', maxHeight: '100%' }}
-                    onClick={(e) => e.stopPropagation()}
-                    draggable={false}
-                  />
-                </div>
+                <img
+                  src={game.screenshots[selectedImageIndex]}
+                  alt={`${game.title} game image ${selectedImageIndex + 1}`}
+                  className="select-none"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    margin: 'auto',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  draggable={false}
+                />
 
                 <button
                   onClick={handleNextImage}
