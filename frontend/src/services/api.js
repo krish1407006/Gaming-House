@@ -250,10 +250,12 @@ class ApiService {
   async createGame(gameData) {
     try {
       console.log("� Creating new game:", gameData.title);
-      return await this.request("/api/admin/games", {
+      const result = await this.request("/api/admin/games", {
         method: "POST",
         body: JSON.stringify(gameData),
       });
+      clearGameCache();
+      return result;
     } catch (error) {
       console.error("Error creating game:", error);
       throw error;
@@ -263,10 +265,12 @@ class ApiService {
   async updateGame(gameId, gameData) {
     try {
       console.log("� Updating game:", gameId);
-      return await this.request(`/api/admin/games/${gameId}`, {
+      const result = await this.request(`/api/admin/games/${gameId}`, {
         method: "PUT",
         body: JSON.stringify(gameData),
       });
+      clearGameCache();
+      return result;
     } catch (error) {
       console.error("Error updating game:", error);
       throw error;
@@ -276,9 +280,11 @@ class ApiService {
   async deleteGame(gameId) {
     try {
       console.log("� Deleting game:", gameId);
-      return await this.request(`/api/admin/games/${gameId}`, {
+      const result = await this.request(`/api/admin/games/${gameId}`, {
         method: "DELETE",
       });
+      clearGameCache();
+      return result;
     } catch (error) {
       console.error("Error deleting game:", error);
       throw error;
