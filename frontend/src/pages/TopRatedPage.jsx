@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import GameCard from "../components/GameCard";
-import Pagination from "../components/Pagination";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 
 const PAGE_SIZE = 20;
 
 export default function TopRatedPage() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [minRating, setMinRating] = useState(0);
 
-  const fetchGames = async (page, minR) => {
-    setLoading(true);
+  const fetchGames = useCallback(async (pageNum, minR) => {
+    const isInitial = pageNum === 1;
+    if (isInitial) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
     setError(null);
+
     try {
       const params = {
-        page,
+        page: pageNum,
         limit: PAGE_SIZE,
         sortBy: "averageRating",
         sortOrder: "desc",
@@ -31,33 +38,44 @@ export default function TopRatedPage() {
         ? all.filter((g) => (g.averageRating || 0) >= minR)
         : all;
 
-      setGames(filtered);
+      setGames((prev) => isInitial ? filtered : [...prev, ...filtered]);
       const pag = response?.pagination;
       if (pag) {
-        setTotalPages(pag.totalPages || 1);
-        setCurrentPage(pag.currentPage || 1);
+        setPage(pag.currentPage || 1);
+        setHasMore(pag.hasNextPage);
+      } else {
+        setHasMore(false);
       }
     } catch (err) {
       setError(err.message || "Failed to load top rated games");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  };
-
-  useEffect(() => {
-    fetchGames(1, minRating);
   }, []);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    fetchGames(page, minRating);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  useEffect(() => {
+    setPage(1);
+    setHasMore(true);
+    fetchGames(1, minRating);
+  }, [minRating, fetchGames]);
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchGames(page + 1, minRating);
+    }
+  }, [fetchGames, loadingMore, hasMore, page, minRating]);
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasMore,
+    loading: loading || loadingMore,
+  });
 
   const handleRatingFilter = (value) => {
     const r = Number(value);
     setMinRating(r);
-    fetchGames(1, r);
+    setGames([]);
   };
 
   return (
