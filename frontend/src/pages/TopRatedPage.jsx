@@ -137,11 +137,10 @@ export default function TopRatedPage() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               {games.map((game, idx) => {
-                const rank = (currentPage - 1) * PAGE_SIZE + idx + 1;
                 return (
                   <div key={game._id || game.gameId || `top-${idx}`} className="relative">
                     <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
-                      #{rank}
+                      #{idx + 1}
                     </div>
                     <GameCard game={game} />
                     <div className="mt-2 text-center">
@@ -159,11 +158,16 @@ export default function TopRatedPage() {
                 );
               })}
             </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+
+            {loadingMore && (
+              <div className="flex justify-center py-6">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-3 border-[var(--accent-color)]"></div>
+              </div>
+            )}
+
+            {hasMore && !loadingMore && (
+              <div ref={sentinelRef} className="h-4" />
+            )}
           </>
         )}
       </div>
