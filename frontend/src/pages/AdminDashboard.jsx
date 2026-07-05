@@ -1444,7 +1444,7 @@ export default function AdminDashboard({ onGameChange }) {
                 {/* Steam App ID */}
                 <div>
                   <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
-                    <Icon name="link" size={16} />
+                    <Icon name="externalLink" size={16} />
                     Steam Store Link
                   </h4>
                   <div className="flex gap-2">
