@@ -56,6 +56,7 @@ export default function AdminDashboard({ onGameChange }) {
     budget: "",
     boxOffice: "",
     awards: "",
+    steamAppId: "",
     featured: false,
     trending: false,
     isActive: true,
@@ -184,6 +185,7 @@ export default function AdminDashboard({ onGameChange }) {
         country: formData.country || 'USA',
         budget: formData.budget ? parseInt(formData.budget) : undefined,
         boxOffice: formData.boxOffice ? parseInt(formData.boxOffice) : undefined,
+        steamAppId: formData.steamAppId ? parseInt(formData.steamAppId) : undefined,
         featured: formData.featured,
         trending: formData.trending,
         isActive: formData.isActive,
@@ -240,6 +242,7 @@ export default function AdminDashboard({ onGameChange }) {
       budget: game.budget || "",
       boxOffice: game.boxOffice || "",
       awards: game.awards || "",
+      steamAppId: game.steamAppId ? String(game.steamAppId) : "",
       featured: game.featured || false,
       trending: game.trending || false,
       isActive: game.isActive !== false,
@@ -424,6 +427,7 @@ export default function AdminDashboard({ onGameChange }) {
       budget: "",
       boxOffice: "",
       awards: "",
+      steamAppId: "",
     featured: false,
     trending: false,
     isActive: true,
@@ -1154,6 +1158,19 @@ export default function AdminDashboard({ onGameChange }) {
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:shadow-md"
                             placeholder="Oscar Winner, Golden Globe Nominee"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold mb-2">Steam App ID</label>
+                          <input
+                            type="text"
+                            name="steamAppId"
+                            value={formData.steamAppId}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border hover:border-opacity-80 focus:theme-border-accent focus:ring-[var(--accent-color)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:shadow-md"
+                            placeholder="730"
                             disabled={isSubmitting}
                           />
                         </div>

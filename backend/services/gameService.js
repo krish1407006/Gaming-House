@@ -61,14 +61,20 @@ export const getGames = async (options = {}) => {
       sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
       const listQuery = Game.find(query)
-        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt steamAppId")
         .sort(sort).skip(skip).limit(parseInt(limit)).lean();
 
-      const [found, totalCount] = await Promise.all([
+      const [found, totalCount, downloadData] = await Promise.all([
         listQuery,
         Game.countDocuments(query),
+        mongoose.model('Download').aggregate([
+          { $group: { _id: '$game', count: { $sum: 1 } } },
+        ]),
       ]);
       games = found;
+      const dlMap = {};
+      for (const d of downloadData) dlMap[d._id.toString()] = d.count;
+      games = games.map(g => ({ ...g, downloadsCount: dlMap[g._id.toString()] || 0 }));
 
       return {
         success: true,
