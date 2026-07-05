@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import GameCard from "../components/GameCard";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
@@ -14,6 +14,7 @@ export default function HomePage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const fetchingRef = useRef(false);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -25,6 +26,7 @@ export default function HomePage() {
   }, []);
 
   const fetchGames = useCallback(async (pageNum) => {
+    fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
       setLoading(true);
@@ -51,6 +53,7 @@ export default function HomePage() {
     } finally {
       setLoading(false);
       setLoadingMore(false);
+      fetchingRef.current = false;
     }
   }, []);
 
@@ -59,10 +62,10 @@ export default function HomePage() {
   }, [fetchGames]);
 
   const loadMore = useCallback(() => {
-    if (!loadingMore && hasMore) {
+    if (!fetchingRef.current && hasMore) {
       fetchGames(page + 1);
     }
-  }, [fetchGames, loadingMore, hasMore, page]);
+  }, [fetchGames, hasMore, page]);
 
   const sentinelRef = useInfiniteScroll({
     onLoadMore: loadMore,
@@ -106,7 +109,7 @@ export default function HomePage() {
 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">
-          {page === 1 ? "Home" : `Page ${page}`}
+          Home
         </h3>
       </div>
 
