@@ -599,60 +599,74 @@ export default function GameDetailPage() {
             </div>
 
             {(downloads.steamAppId || downloads.downloads.length > 0) && (
-              <div className="rounded-xl overflow-hidden border-2" style={{ borderColor: 'var(--accent-color)', boxShadow: '0 0 20px color-mix(in srgb, var(--accent-color) 30%, transparent)' }}>
-                <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3" style={{ background: 'linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 70%, black))' }}>
-                  <div className="flex items-center gap-2">
-                    <FaDownload className="text-white text-sm drop-shadow-glow" />
-                    <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight text-white drop-shadow-glow">Download Game</h3>
+              <div className="rounded-xl overflow-hidden relative group/downloads">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/40 via-blue-600/20 to-cyan-600/40 opacity-60 group-hover/downloads:opacity-80 transition-opacity duration-500"></div>
+                <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 40px rgba(139,92,246,0.15)' }}></div>
+                <div className="relative">
+                  <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-3 lg:pb-4 border-b border-white/10" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.2), rgba(6,182,212,0.3))' }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #a855f7, #3b82f6)' }}>
+                          <FaDownload className="text-white text-sm" />
+                        </div>
+                        <div>
+                          <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight text-white">Download Game</h3>
+                          <p className="text-[10px] text-white/60 -mt-0.5">Choose your source</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" style={{ animationDelay: '0.2s' }}></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" style={{ animationDelay: '0.4s' }}></span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="p-4 lg:p-6 space-y-3" style={{ background: 'linear-gradient(180deg, var(--bg-secondary), var(--bg-primary))' }}>
-                  {downloads.steamAppId && (
-                    <a
-                      href={`https://store.steampowered.com/app/${downloads.steamAppId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative flex items-center gap-3 p-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
-                      style={{ background: 'linear-gradient(135deg, #1b2838, #2a475e)' }}
-                    >
-                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }}>
-                        <FaSteam className="text-xl text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white">Steam Store</p>
-                        <p className="text-xs text-gray-400 truncate">Official version — Buy on Steam</p>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-bold text-white bg-green-500 px-2 py-0.5 rounded-full">Official</span>
-                        <FaExternalLinkAlt className="text-xs text-gray-400 group-hover:text-white transition-colors shrink-0" />
-                      </div>
-                    </a>
-                  )}
-                  {downloads.downloads.map((dl, i) => (
-                    <a
-                      key={dl._id}
-                      href={dl.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative flex items-center gap-3 p-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
-                      style={{ background: i === 0 ? 'linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05))' : 'var(--bg-primary)', border: i === 0 ? '1px solid rgba(220,38,38,0.3)' : '1px solid transparent' }}
-                    >
-                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: i === 0 ? 'linear-gradient(135deg, #dc2626, #ef4444)' : 'linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 70%, black))', boxShadow: i === 0 ? '0 0 12px rgba(220,38,38,0.5)' : 'none' }}>
-                        <FaDownload className="text-sm text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold truncate">{dl.label}</p>
-                        <p className="text-xs opacity-50 truncate group-hover:opacity-70 transition-opacity">{dl.url}</p>
-                      </div>
-                      {i === 0 && (
-                        <span className="text-[10px] font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/30 animate-pulse">Free</span>
-                      )}
-                      <FaExternalLinkAlt className="text-xs opacity-40 group-hover:opacity-70 transition-all shrink-0" />
-                    </a>
-                  ))}
-                  <p className="text-[10px] text-center opacity-40 pt-1">Click any link to open in a new tab</p>
+                  <div className="p-4 lg:p-5 space-y-3" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6))' }}>
+                    {downloads.steamAppId && (
+                      <a
+                        href={`https://store.steampowered.com/app/${downloads.steamAppId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20"
+                        style={{ background: 'linear-gradient(135deg, rgba(27,40,56,0.9), rgba(42,71,94,0.9))' }}
+                      >
+                        <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-white/10">
+                          <FaSteam className="text-xl text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Buy on Steam</p>
+                          <p className="text-xs text-blue-300 truncate">Official store &dash; DRM-free</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-white bg-emerald-500/90 px-2 py-1 rounded-md">Official</span>
+                          <FaExternalLinkAlt className="text-xs text-white/40 group-hover:text-white/80 transition-colors shrink-0" />
+                        </div>
+                      </a>
+                    )}
+                    {downloads.downloads.map((dl, i) => (
+                      <a
+                        key={dl._id}
+                        href={dl.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
+                        style={{ background: i === 0 ? 'linear-gradient(135deg, rgba(220,38,38,0.25), rgba(220,38,38,0.08))' : 'rgba(255,255,255,0.05)', border: i === 0 ? '1px solid rgba(220,38,38,0.35)' : '1px solid rgba(255,255,255,0.06)' }}
+                      >
+                        <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: i === 0 ? 'linear-gradient(135deg, #dc2626, #ef4444)' : 'linear-gradient(135deg, rgba(139,92,246,0.5), rgba(59,130,246,0.5))', boxShadow: i === 0 ? '0 0 16px rgba(220,38,38,0.4)' : 'none' }}>
+                          <FaDownload className="text-white text-sm" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white truncate">{dl.label}</p>
+                          <p className="text-xs text-white/50 truncate group-hover:text-white/70 transition-colors">{dl.url}</p>
+                        </div>
+                        {i === 0 && (
+                          <span className="text-[10px] font-bold text-red-400 bg-red-500/15 px-2 py-1 rounded-md border border-red-500/30 animate-pulse">Free</span>
+                        )}
+                        <FaExternalLinkAlt className="text-xs text-white/30 group-hover:text-white/60 transition-all shrink-0" />
+                      </a>
+                    ))}
+                    <p className="text-[10px] text-center text-white/30 pt-0.5">Links open in a new tab</p>
+                  </div>
                 </div>
               </div>
             )}
