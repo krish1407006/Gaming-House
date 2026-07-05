@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import GameCard from "../components/GameCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
@@ -13,8 +13,10 @@ export default function TrendingPage() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const fetchingRef = useRef(false);
 
   const fetchTrending = useCallback(async (pageNum) => {
+    fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
       setLoading(true);
@@ -42,6 +44,7 @@ export default function TrendingPage() {
     } finally {
       setLoading(false);
       setLoadingMore(false);
+      fetchingRef.current = false;
     }
   }, []);
 
@@ -50,10 +53,10 @@ export default function TrendingPage() {
   }, [fetchTrending]);
 
   const loadMore = useCallback(() => {
-    if (!loadingMore && hasMore) {
+    if (!fetchingRef.current && hasMore) {
       fetchTrending(page + 1);
     }
-  }, [fetchTrending, loadingMore, hasMore, page]);
+  }, [fetchTrending, hasMore, page]);
 
   const sentinelRef = useInfiniteScroll({
     onLoadMore: loadMore,
