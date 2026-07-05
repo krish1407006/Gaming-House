@@ -75,21 +75,29 @@ export default function AdminDashboard({ onGameChange }) {
   const [downloadData, setDownloadData] = useState({ steamAppId: '', downloads: [] });
   const [newDownloadUrl, setNewDownloadUrl] = useState('');
   const [newDownloadLabel, setNewDownloadLabel] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const ADMIN_PAGE_SIZE = 20;
 
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
 
   // Load games
   useEffect(() => {
-    loadgames();
+    loadgames(1);
   }, []);
 
-  const loadgames = async () => {
+  const loadgames = async (pageNum = page) => {
     try {
       setLoading(true);
-      const response = await ApiService.getGames();
+      const response = await ApiService.getGames({ page: pageNum, limit: ADMIN_PAGE_SIZE, sortBy: 'createdAt', sortOrder: 'desc' });
       const gameData = Array.isArray(response) ? response : response.games || [];
       setgames(gameData);
+      const pag = response?.pagination;
+      if (pag) {
+        setPage(pag.currentPage || 1);
+        setTotalPages(pag.totalPages || 1);
+      }
     } catch (error) {
       console.error("Error loading games:", error);
     } finally {
