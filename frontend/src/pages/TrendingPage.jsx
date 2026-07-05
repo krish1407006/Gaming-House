@@ -113,32 +113,44 @@ export default function TrendingPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            {trendinggames.map((game, idx) => {
-              const avgRating = game.averageRating || game.rating || 0;
-              const reviewCount = game.totalRatings || 0;
-              return (
-                <div key={game._id || game.gameId || game.id || idx} className="relative">
-                  <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
-                    #{idx + 1}
-                  </div>
-                  <GameCard game={game} />
-                  <div className="mt-2 text-center">
-                    <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      <span className="flex items-center gap-1">
-                        <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{reviewCount > 0 ? avgRating.toFixed(1) : 'N/A'}
-                      </span>
-                      <span>•</span>
-                      <span className="truncate">
-                        {reviewCount > 0 ? `${reviewCount} reviews` : 'Trending'}
-                        {game.trending && ' 🔥'}
-                      </span>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+              {trendinggames.map((game, idx) => {
+                const avgRating = game.averageRating || game.rating || 0;
+                const reviewCount = game.totalRatings || 0;
+                return (
+                  <div key={game._id || game.gameId || game.id || idx} className="relative">
+                    <div className="absolute -top-1 lg:-top-2 -left-1 lg:-left-2 bg-[var(--accent-color)] text-[var(--bg-primary)] rounded-full w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center font-bold text-xs lg:text-sm z-10">
+                      #{idx + 1}
+                    </div>
+                    <GameCard game={game} />
+                    <div className="mt-2 text-center">
+                      <div className="flex justify-center items-center gap-1 lg:gap-2 text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        <span className="flex items-center gap-1">
+                          <Icon name="star" size={14} className="lg:w-4 lg:h-4 mr-1" style={{ color: 'var(--accent-color)' }} />{reviewCount > 0 ? avgRating.toFixed(1) : 'N/A'}
+                        </span>
+                        <span>•</span>
+                        <span className="truncate">
+                          {reviewCount > 0 ? `${reviewCount} reviews` : 'Trending'}
+                          {game.trending && ' 🔥'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+
+            {loadingMore && (
+              <div className="flex justify-center py-6">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-3 border-[var(--accent-color)]"></div>
+              </div>
+            )}
+
+            {hasMore && !loadingMore && (
+              <div ref={sentinelRef} className="h-4" />
+            )}
+          </>
         )}
       </div>
     </section>
