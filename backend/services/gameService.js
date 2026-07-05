@@ -53,9 +53,16 @@ export const getGames = async (options = {}) => {
             backdrop: 1, screenshots: 1, cast: 1,
             averageRating: 1, totalRatings: 1, isActive: 1,
             featured: 1, trending: 1, createdAt: 1,
+            steamAppId: 1,
           },
         },
       ]);
+      const dlData2 = await mongoose.model('Download').aggregate([
+        { $group: { _id: '$game', count: { $sum: 1 } } },
+      ]);
+      const dlMap2 = {};
+      for (const d of dlData2) dlMap2[d._id.toString()] = d.count;
+      games = games.map(g => ({ ...g, downloadsCount: dlMap2[g._id.toString()] || 0 }));
     } else {
       const sort = {};
       sort[sortBy] = sortOrder === "desc" ? -1 : 1;

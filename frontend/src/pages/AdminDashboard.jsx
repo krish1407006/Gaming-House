@@ -704,6 +704,8 @@ export default function AdminDashboard({ onGameChange }) {
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base hidden sm:table-cell">Director</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base">Year</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base hidden md:table-cell">Rating</th>
+                    <th className="text-center p-2 lg:p-4 font-semibold text-sm lg:text-base">Steam</th>
+                    <th className="text-center p-2 lg:p-4 font-semibold text-sm lg:text-base">DL</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base hidden lg:table-cell">Status</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base">Actions</th>
                   </tr>
