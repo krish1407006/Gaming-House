@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import GameCard from "../components/GameCard";
-import Pagination from "../components/Pagination";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 
 const PAGE_SIZE = 20;
 
@@ -15,46 +15,66 @@ const GENRES = [
 export default function CategoriesPage() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [activeGenre, setActiveGenre] = useState(null);
 
-  const fetchGames = async (page, genre) => {
-    setLoading(true);
+  const fetchGames = useCallback(async (pageNum, genre) => {
+    const isInitial = pageNum === 1;
+    if (isInitial) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
     setError(null);
+
     try {
-      const params = { page, limit: PAGE_SIZE };
+      const params = { page: pageNum, limit: PAGE_SIZE };
       if (genre) params.genre = genre;
       const response = await apiService.getGames(params);
-      setGames(response?.games || []);
+      const newGames = response?.games || [];
+
+      setGames((prev) => isInitial ? newGames : [...prev, ...newGames]);
       const pag = response?.pagination;
       if (pag) {
-        setTotalPages(pag.totalPages || 1);
-        setCurrentPage(pag.currentPage || 1);
+        setPage(pag.currentPage || 1);
+        setHasMore(pag.hasNextPage);
+      } else {
+        setHasMore(false);
       }
     } catch (err) {
       setError(err.message || "Failed to load games");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    setPage(1);
+    setHasMore(true);
     fetchGames(1, activeGenre);
-  }, []);
+  }, [activeGenre, fetchGames]);
 
   const handleGenreChange = (genre) => {
     const next = genre === activeGenre ? null : genre;
     setActiveGenre(next);
-    fetchGames(1, next);
+    setGames([]);
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    fetchGames(page, activeGenre);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchGames(page + 1, activeGenre);
+    }
+  }, [fetchGames, loadingMore, hasMore, page, activeGenre]);
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasMore,
+    loading: loading || loadingMore,
+  });
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
@@ -119,11 +139,16 @@ export default function CategoriesPage() {
                 <GameCard key={game._id || game.gameId || `cat-${idx}`} game={game} />
               ))}
             </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+
+            {loadingMore && (
+              <div className="flex justify-center py-6">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-3 border-[var(--accent-color)]"></div>
+              </div>
+            )}
+
+            {hasMore && !loadingMore && (
+              <div ref={sentinelRef} className="h-4" />
+            )}
           </>
         )}
       </div>
