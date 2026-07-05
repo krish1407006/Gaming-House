@@ -31,13 +31,15 @@ export const getGames = async (req, res) => {
 
 export const getTrendingGames = async (req, res) => {
   try {
-    const result = await gameService.getTrendingGames();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const result = await gameService.getTrendingGames({ page, limit });
 
     if (!result.success) {
       return res.status(500).json({ error: result.error });
     }
 
-    res.json({ games: result.data });
+    res.json(result.data);
   } catch (error) {
     console.error("Error in getTrendingGames:", error);
     res.status(500).json({ error: "Internal server error" });

@@ -274,10 +274,12 @@ class ApiService {
     }
   }
 
-  async getTrending() {
+  async getTrending(params = {}) {
     try {
-      const data = await this.request("/api/games/trending");
-      return Array.isArray(data) ? data : (data?.games || data?.data || []);
+      const queryString = new URLSearchParams(params).toString();
+      const endpoint = `/api/games/trending${queryString ? `?${queryString}` : ""}`;
+      const data = await this.request(endpoint);
+      return data;
     } catch (error) {
       console.error("Error fetching trending games:", error);
       throw error;

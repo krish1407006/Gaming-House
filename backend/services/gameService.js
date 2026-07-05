@@ -286,19 +286,34 @@ export const toggleGameFeatured = async (gameId, featured) => {
   }
 };
 
-export const getTrendingGames = async () => {
+export const getTrendingGames = async (options = {}) => {
   try {
-    const games = await Game.find({
-      isActive: true,
-      trending: true,
-    })
-      .sort({ trendingPosition: 1, trendingScore: -1 })
-      .limit(50)
-      .lean();
+    const { page = 1, limit = 20 } = options;
+    const skip = (page - 1) * limit;
+
+    const query = { isActive: true, trending: true };
+
+    const [games, totalCount] = await Promise.all([
+      Game.find(query)
+        .sort({ trendingPosition: 1, trendingScore: -1 })
+        .skip(skip)
+        .limit(parseInt(limit))
+        .lean(),
+      Game.countDocuments(query),
+    ]);
 
     return {
       success: true,
-      data: games,
+      data: {
+        games,
+        pagination: {
+          currentPage: parseInt(page),
+          totalPages: Math.ceil(totalCount / limit),
+          totalCount,
+          hasNextPage: skip + games.length < totalCount,
+          hasPrevPage: page > 1,
+        },
+      },
     };
   } catch (error) {
     console.error("Error fetching trending games:", error);
