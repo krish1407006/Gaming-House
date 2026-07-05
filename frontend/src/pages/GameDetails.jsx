@@ -585,54 +585,6 @@ export default function GameDetailPage() {
               </div>
             </div>
 
-            {(downloads.steamAppId || downloads.downloads.length > 0) && (
-              <div className="theme-bg-secondary rounded-xl overflow-hidden">
-                <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
-                  <div className="flex items-center gap-2">
-                    <FaDownload className="text-accent text-sm" />
-                    <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Downloads</h3>
-                  </div>
-                </div>
-                <div className="p-4 lg:p-6 space-y-3">
-                  {downloads.steamAppId && (
-                    <a
-                      href={`https://store.steampowered.com/app/${downloads.steamAppId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg, #1b2838, #2a475e)' }}
-                    >
-                      <FaSteam className="text-2xl text-white" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-white">Steam Store</p>
-                        <p className="text-xs text-gray-400 truncate">Official version</p>
-                      </div>
-                      <FaExternalLinkAlt className="text-xs text-gray-400 shrink-0" />
-                    </a>
-                  )}
-                  {downloads.downloads.map((dl) => (
-                    <a
-                      key={dl._id}
-                      href={dl.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'var(--bg-primary)' }}
-                    >
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: 'var(--accent-color)', color: 'var(--accent-contrast)' }}>
-                        <FaDownload />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate">{dl.label}</p>
-                        <p className="text-xs opacity-50 truncate">{dl.url}</p>
-                      </div>
-                      <FaExternalLinkAlt className="text-xs opacity-40 shrink-0" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="theme-bg-secondary rounded-xl overflow-hidden">
               <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
                 <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Poster</h3>
@@ -645,6 +597,65 @@ export default function GameDetailPage() {
                 />
               </div>
             </div>
+
+            {(downloads.steamAppId || downloads.downloads.length > 0) && (
+              <div className="rounded-xl overflow-hidden border-2" style={{ borderColor: 'var(--accent-color)', boxShadow: '0 0 20px color-mix(in srgb, var(--accent-color) 30%, transparent)' }}>
+                <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3" style={{ background: 'linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 70%, black))' }}>
+                  <div className="flex items-center gap-2">
+                    <FaDownload className="text-white text-sm drop-shadow-glow" />
+                    <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight text-white drop-shadow-glow">Download Game</h3>
+                  </div>
+                </div>
+                <div className="p-4 lg:p-6 space-y-3" style={{ background: 'linear-gradient(180deg, var(--bg-secondary), var(--bg-primary))' }}>
+                  {downloads.steamAppId && (
+                    <a
+                      href={`https://store.steampowered.com/app/${downloads.steamAppId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative flex items-center gap-3 p-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+                      style={{ background: 'linear-gradient(135deg, #1b2838, #2a475e)' }}
+                    >
+                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                        <FaSteam className="text-xl text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-white">Steam Store</p>
+                        <p className="text-xs text-gray-400 truncate">Official version — Buy on Steam</p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-white bg-green-500 px-2 py-0.5 rounded-full">Official</span>
+                        <FaExternalLinkAlt className="text-xs text-gray-400 group-hover:text-white transition-colors shrink-0" />
+                      </div>
+                    </a>
+                  )}
+                  {downloads.downloads.map((dl, i) => (
+                    <a
+                      key={dl._id}
+                      href={dl.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative flex items-center gap-3 p-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+                      style={{ background: i === 0 ? 'linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05))' : 'var(--bg-primary)', border: i === 0 ? '1px solid rgba(220,38,38,0.3)' : '1px solid transparent' }}
+                    >
+                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: i === 0 ? 'linear-gradient(135deg, #dc2626, #ef4444)' : 'linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 70%, black))', boxShadow: i === 0 ? '0 0 12px rgba(220,38,38,0.5)' : 'none' }}>
+                        <FaDownload className="text-sm text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold truncate">{dl.label}</p>
+                        <p className="text-xs opacity-50 truncate group-hover:opacity-70 transition-opacity">{dl.url}</p>
+                      </div>
+                      {i === 0 && (
+                        <span className="text-[10px] font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/30 animate-pulse">Free</span>
+                      )}
+                      <FaExternalLinkAlt className="text-xs opacity-40 group-hover:opacity-70 transition-all shrink-0" />
+                    </a>
+                  ))}
+                  <p className="text-[10px] text-center opacity-40 pt-1">Click any link to open in a new tab</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
