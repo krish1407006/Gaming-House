@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import GameCard from "../components/GameCard";
+import SkeletonCard from "../components/SkeletonCard";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
@@ -115,10 +116,8 @@ export default function HomePage() {
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-72 lg:h-96 text-[var(--accent-color)]">
-            <div className="animate-spin rounded-full h-12 w-12 lg:h-16 lg:w-16 border-b-4 border-[var(--accent-color)] mb-4"></div>
-            <span className="text-lg lg:text-xl font-bold">Loading games...</span>
-            <span className="text-xs lg:text-sm text-gray-400 mt-2 text-center px-4">Discovering amazing content for you</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+            <SkeletonCard count={6} />
           </div>
         ) : error ? (
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
