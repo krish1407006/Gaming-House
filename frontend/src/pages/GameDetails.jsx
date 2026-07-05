@@ -627,15 +627,35 @@ export default function GameDetailPage() {
                         href={`https://store.steampowered.com/app/${downloads.steamAppId}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const steamUrl = `steam://store/${downloads.steamAppId}`;
+                          const webUrl = `https://store.steampowered.com/app/${downloads.steamAppId}`;
+                          const iframe = document.createElement('iframe');
+                          iframe.style.position = 'fixed';
+                          iframe.style.top = '-9999px';
+                          iframe.style.width = '0';
+                          iframe.style.height = '0';
+                          iframe.src = steamUrl;
+                          document.body.appendChild(iframe);
+                          const timer = setTimeout(() => {
+                            document.body.removeChild(iframe);
+                            window.open(webUrl, '_blank', 'noopener');
+                          }, 800);
+                          window.addEventListener('blur', () => {
+                            clearTimeout(timer);
+                            document.body.removeChild(iframe);
+                          }, { once: true });
+                        }}
+                        className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20 cursor-pointer"
                         style={{ background: 'linear-gradient(135deg, rgba(27,40,56,0.9), rgba(42,71,94,0.9))' }}
                       >
                         <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-white/10">
                           <FaSteam className="text-xl text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-white">Buy on Steam</p>
-                          <p className="text-xs text-blue-300 truncate">Official store &dash; DRM-free</p>
+                          <p className="text-sm font-bold text-white">Open in Steam</p>
+                          <p className="text-xs text-blue-300 truncate">Launches Steam client &dash; Install now</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] font-bold text-white bg-emerald-500/90 px-2 py-1 rounded-md">Official</span>
