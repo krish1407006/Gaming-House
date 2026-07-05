@@ -48,7 +48,7 @@ export const addDownload = async (req, res) => {
   try {
     const { id } = req.params;
     const { userId } = getAuth(req);
-    const { url, label, isActive } = req.body;
+    const { url, label, type, isActive } = req.body;
 
     const game = await Game.findById(id);
     if (!game) {
@@ -59,9 +59,11 @@ export const addDownload = async (req, res) => {
       return res.status(400).json({ error: "URL is required" });
     }
 
+    const downloadType = type === "genuine" ? "genuine" : "piracy";
+
     const download = await Download.create({
       gameId: id,
-      type: "piracy",
+      type: downloadType,
       url: url.trim(),
       label: label?.trim() || "Download",
       isActive: isActive !== undefined ? isActive : true,
@@ -81,7 +83,7 @@ export const addDownload = async (req, res) => {
 export const updateDownload = async (req, res) => {
   try {
     const { id, downloadId } = req.params;
-    const { url, label, isActive } = req.body;
+    const { url, label, type, isActive } = req.body;
 
     const download = await Download.findOne({ _id: downloadId, gameId: id });
     if (!download) {
@@ -90,6 +92,7 @@ export const updateDownload = async (req, res) => {
 
     if (url !== undefined) download.url = url.trim();
     if (label !== undefined) download.label = label.trim();
+    if (type !== undefined) download.type = type;
     if (isActive !== undefined) download.isActive = isActive;
 
     await download.save();

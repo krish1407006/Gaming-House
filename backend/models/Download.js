@@ -10,7 +10,7 @@ const downloadSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["piracy"],
+      enum: ["piracy", "genuine"],
       default: "piracy",
       required: true,
     },

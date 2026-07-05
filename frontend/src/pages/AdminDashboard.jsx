@@ -74,8 +74,10 @@ export default function AdminDashboard({ onGameChange }) {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadGame, setDownloadGame] = useState(null);
   const [downloadData, setDownloadData] = useState({ steamAppId: '', downloads: [] });
-  const [newDownloadUrl, setNewDownloadUrl] = useState('');
-  const [newDownloadLabel, setNewDownloadLabel] = useState('');
+  const [newPiracyUrl, setNewPiracyUrl] = useState('');
+  const [newPiracyLabel, setNewPiracyLabel] = useState('');
+  const [newGenuineUrl, setNewGenuineUrl] = useState('');
+  const [newGenuineLabel, setNewGenuineLabel] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const ADMIN_PAGE_SIZE = 20;
@@ -440,8 +442,10 @@ export default function AdminDashboard({ onGameChange }) {
   const openDownloadModal = async (game) => {
     setDownloadGame(game);
     setShowDownloadModal(true);
-    setNewDownloadUrl('');
-    setNewDownloadLabel('');
+    setNewPiracyUrl('');
+    setNewPiracyLabel('');
+    setNewGenuineUrl('');
+    setNewGenuineLabel('');
     try {
       const data = await ApiService.adminGetDownloads(game._id);
       setDownloadData({
@@ -466,15 +470,23 @@ export default function AdminDashboard({ onGameChange }) {
     }
   };
 
-  const handleAddDownload = async () => {
-    if (!downloadGame || !newDownloadUrl.trim()) return;
+  const handleAddDownload = async (type) => {
+    const url = type === 'genuine' ? newGenuineUrl : newPiracyUrl;
+    const label = type === 'genuine' ? newGenuineLabel : newPiracyLabel;
+    if (!downloadGame || !url.trim()) return;
     try {
       await ApiService.addDownload(downloadGame._id, {
-        url: newDownloadUrl.trim(),
-        label: newDownloadLabel.trim() || 'Download',
+        url: url.trim(),
+        label: label.trim() || 'Download',
+        type,
       });
-      setNewDownloadUrl('');
-      setNewDownloadLabel('');
+      if (type === 'genuine') {
+        setNewGenuineUrl('');
+        setNewGenuineLabel('');
+      } else {
+        setNewPiracyUrl('');
+        setNewPiracyLabel('');
+      }
       const data = await ApiService.adminGetDownloads(downloadGame._id);
       setDownloadData(prev => ({ ...prev, downloads: data.downloads || [] }));
     } catch (error) {
@@ -704,8 +716,6 @@ export default function AdminDashboard({ onGameChange }) {
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base hidden sm:table-cell">Director</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base">Year</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base hidden md:table-cell">Rating</th>
-                    <th className="text-center p-2 lg:p-4 font-semibold text-sm lg:text-base">Steam</th>
-                    <th className="text-center p-2 lg:p-4 font-semibold text-sm lg:text-base">DL</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base hidden lg:table-cell">Status</th>
                     <th className="text-left p-2 lg:p-4 font-semibold text-sm lg:text-base">Actions</th>
                   </tr>
@@ -1516,18 +1526,18 @@ export default function AdminDashboard({ onGameChange }) {
                   </p>
                 </div>
 
-                {/* Piracy Downloads */}
+                {/* Genuine Downloads */}
                 <div>
                   <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
-                    <Icon name="download" size={16} />
-                    Piracy Download Links
+                    <Icon name="shield" size={16} />
+                    Genuine Download Links
                   </h4>
 
                   <div className="space-y-2 mb-4">
-                    {downloadData.downloads.length === 0 ? (
-                      <p className="text-sm theme-text-secondary">No download links added yet.</p>
+                    {downloadData.downloads.filter(d => d.type === 'genuine').length === 0 ? (
+                      <p className="text-sm theme-text-secondary">No genuine download links added yet.</p>
                     ) : (
-                      downloadData.downloads.map((dl) => (
+                      downloadData.downloads.filter(d => d.type === 'genuine').map((dl) => (
                         <div key={dl._id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg border theme-border">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold truncate">{dl.label}</p>
@@ -1548,21 +1558,75 @@ export default function AdminDashboard({ onGameChange }) {
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      value={newDownloadLabel}
-                      onChange={(e) => setNewDownloadLabel(e.target.value)}
+                      value={newGenuineLabel}
+                      onChange={(e) => setNewGenuineLabel(e.target.value)}
                       className="w-28 px-3 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none text-sm"
                       placeholder="Label"
                     />
                     <input
                       type="url"
-                      value={newDownloadUrl}
-                      onChange={(e) => setNewDownloadUrl(e.target.value)}
+                      value={newGenuineUrl}
+                      onChange={(e) => setNewGenuineUrl(e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none text-sm"
+                      placeholder="https://store.steampowered.com/app/..."
+                    />
+                    <button
+                      onClick={() => handleAddDownload('genuine')}
+                      disabled={!newGenuineUrl.trim()}
+                      className="px-4 py-2 theme-button-primary rounded-lg font-semibold text-sm disabled:opacity-50"
+                    >
+                      <Icon name="plus" size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Piracy Downloads */}
+                <div>
+                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <Icon name="download" size={16} />
+                    Piracy Download Links
+                  </h4>
+
+                  <div className="space-y-2 mb-4">
+                    {downloadData.downloads.filter(d => d.type === 'piracy').length === 0 ? (
+                      <p className="text-sm theme-text-secondary">No piracy download links added yet.</p>
+                    ) : (
+                      downloadData.downloads.filter(d => d.type === 'piracy').map((dl) => (
+                        <div key={dl._id} className="flex items-center gap-2 p-2 theme-bg-primary rounded-lg border theme-border">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold truncate">{dl.label}</p>
+                            <p className="text-xs theme-text-secondary truncate">{dl.url}</p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteDownload(dl._id)}
+                            className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded transition-colors shrink-0"
+                            title="Delete"
+                          >
+                            <Icon name="trash" size={14} />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newPiracyLabel}
+                      onChange={(e) => setNewPiracyLabel(e.target.value)}
+                      className="w-28 px-3 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none text-sm"
+                      placeholder="Label"
+                    />
+                    <input
+                      type="url"
+                      value={newPiracyUrl}
+                      onChange={(e) => setNewPiracyUrl(e.target.value)}
                       className="flex-1 px-3 py-2 rounded-lg border-2 theme-bg-primary theme-text-primary theme-border focus:theme-border-accent focus:outline-none text-sm"
                       placeholder="https://example.com/game-download"
                     />
                     <button
-                      onClick={handleAddDownload}
-                      disabled={!newDownloadUrl.trim()}
+                      onClick={() => handleAddDownload('piracy')}
+                      disabled={!newPiracyUrl.trim()}
                       className="px-4 py-2 theme-button-primary rounded-lg font-semibold text-sm disabled:opacity-50"
                     >
                       <Icon name="plus" size={16} />
