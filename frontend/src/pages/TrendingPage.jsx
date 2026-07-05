@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import GameCard from "../components/GameCard";
+import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
