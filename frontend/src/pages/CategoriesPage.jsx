@@ -80,22 +80,24 @@ export default function CategoriesPage() {
     loading: loading || loadingMore,
   });
 
+  const bannerImg = games[0]?.poster || games[0]?.image || null;
+
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
-      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-[var(--border-color)] relative h-48 sm:h-56 lg:h-64 flex items-center justify-center mb-6 lg:mb-8 bg-[#000000]">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#000000] via-[#0a0a0a] to-[#000000] z-0"></div>
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-          <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-[0.04]" style={{ background: 'radial-gradient(circle, #667eea, transparent)' }}></div>
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full opacity-[0.04]" style={{ background: 'radial-gradient(circle, #764ba2, transparent)' }}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-[0.02]" style={{ background: 'radial-gradient(circle, #fff, transparent)' }}></div>
-        </div>
-        <div className="relative z-10 text-center px-4">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 tracking-wide font-heading">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#667eea] via-[#764ba2] to-[#667eea] bg-[length:200%_auto] animate-[shimmer_3s_ease-in-out_infinite]">
-              <Icon name="grid" size={24} className="inline lg:w-8 lg:h-8 mr-2" style={{ color: '#667eea' }} />Categories
-            </span>
+      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-[var(--border-color)] relative h-48 sm:h-56 lg:h-64 flex items-center justify-center mb-6 lg:mb-8 bg-[var(--bg-secondary)]">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#000000cc] to-[#00000099] z-10"></div>
+        {bannerImg && (
+          <img
+            src={bannerImg}
+            alt="Banner"
+            className="object-cover w-full h-full absolute top-0 left-0"
+          />
+        )}
+        <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg font-heading">
+            <Icon name="grid" size={20} className="inline lg:w-8 lg:h-8 mr-2" style={{ color: 'var(--accent-color)' }} />Categories
           </h2>
-          <p className="text-sm sm:text-base lg:text-lg drop-shadow-lg font-medium" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-white text-sm sm:text-base lg:text-xl drop-shadow-lg font-medium">
             Browse games by genre and category
           </p>
         </div>
@@ -104,10 +106,10 @@ export default function CategoriesPage() {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => handleGenreChange(null)}
-          className={`font-semibold px-4 py-2 text-sm rounded-lg transition-all ${
+          className={`font-semibold px-4 py-2 text-sm rounded-lg transition-colors ${
             !activeGenre
-              ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-[#667eea]/20"
-              : "bg-[#000000] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[#667eea] hover:text-white"
+              ? "bg-[var(--accent-color)] text-[var(--bg-primary)]"
+              : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[var(--accent-color)]"
           }`}
         >
           All
@@ -116,10 +118,10 @@ export default function CategoriesPage() {
           <button
             key={genre}
             onClick={() => handleGenreChange(genre)}
-            className={`font-semibold px-4 py-2 text-sm rounded-lg transition-all ${
+            className={`font-semibold px-4 py-2 text-sm rounded-lg transition-colors ${
               activeGenre === genre
-                ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-[#667eea]/20"
-                : "bg-[#000000] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[#667eea] hover:text-white"
+                ? "bg-[var(--accent-color)] text-[var(--bg-primary)]"
+                : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:border-[var(--accent-color)]"
             }`}
           >
             {genre}

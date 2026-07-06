@@ -82,29 +82,31 @@ export default function TopRatedPage() {
     setGames([]);
   };
 
+  const bannerImg = games[0]?.poster || games[0]?.image || null;
+
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">
-      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-[var(--border-color)] relative h-48 sm:h-56 lg:h-64 flex items-center justify-center mb-6 lg:mb-8 bg-[#000000]">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#000000] via-[#0a0a0a] to-[#000000] z-0"></div>
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-          <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-[0.04]" style={{ background: 'radial-gradient(circle, #667eea, transparent)' }}></div>
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full opacity-[0.04]" style={{ background: 'radial-gradient(circle, #764ba2, transparent)' }}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-[0.02]" style={{ background: 'radial-gradient(circle, #fff, transparent)' }}></div>
-        </div>
-        <div className="relative z-10 text-center px-4">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 tracking-wide font-heading">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#667eea] via-[#764ba2] to-[#667eea] bg-[length:200%_auto] animate-[shimmer_3s_ease-in-out_infinite]">
-              <Icon name="star" size={24} className="inline lg:w-8 lg:h-8 mr-2" style={{ color: '#667eea' }} />Top Rated Games
-            </span>
+      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-[var(--border-color)] relative h-48 sm:h-56 lg:h-64 flex items-center justify-center mb-6 lg:mb-8 bg-[var(--bg-secondary)]">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#000000cc] to-[#00000099] z-10"></div>
+        {bannerImg && (
+          <img
+            src={bannerImg}
+            alt="Banner"
+            className="object-cover w-full h-full absolute top-0 left-0"
+          />
+        )}
+        <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold mb-2 tracking-wide text-[var(--accent-color)] drop-shadow-lg font-heading">
+            <Icon name="star" size={20} className="inline lg:w-8 lg:h-8 mr-2" style={{ color: 'var(--accent-color)' }} />Top Rated Games
           </h2>
-          <p className="text-sm sm:text-base lg:text-lg drop-shadow-lg font-medium" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-white text-sm sm:text-base lg:text-xl drop-shadow-lg font-medium">
             The highest rated games according to our community
           </p>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 lg:mb-6">
-        <h3 className="text-xl lg:text-2xl font-bold font-heading bg-clip-text text-transparent bg-gradient-to-r from-[#667eea] to-[#764ba2]">
+        <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">
           Highest Rated
         </h3>
         <div className="flex items-center gap-2">
@@ -112,7 +114,7 @@ export default function TopRatedPage() {
           <select
             value={minRating}
             onChange={(e) => handleRatingFilter(e.target.value)}
-            className="bg-[#000000] border border-[var(--border-color)] text-[var(--text-primary)] px-3 py-2 rounded-lg text-sm touch-target focus:outline-none focus:border-[#667eea] focus:ring-1 focus:ring-[#667eea] transition-all"
+            className="bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] px-3 py-2 rounded-md text-sm touch-target"
           >
             <option value={0}>All Ratings</option>
             <option value={7}>Good (7+)</option>
