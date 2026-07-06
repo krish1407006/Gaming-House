@@ -2,24 +2,20 @@ import mongoose from "mongoose";
 import Game from "../models/Game.js";
 import Rating from "../models/Rating.js";
 
-let downloadCountsCache = null;
-let downloadCountsCacheTime = 0;
-const DOWNLOAD_CACHE_TTL = 60000;
+const LISTING_FIELDS = "title poster description releaseDate averageRating totalRatings genre";
 
-async function getDownloadCounts() {
+let totalActiveCount = null;
+let totalActiveCountTime = 0;
+const COUNT_CACHE_TTL = 60000;
+
+async function getTotalActiveCount() {
   const now = Date.now();
-  if (downloadCountsCache && now - downloadCountsCacheTime < DOWNLOAD_CACHE_TTL) {
-    return downloadCountsCache;
+  if (totalActiveCount !== null && now - totalActiveCountTime < COUNT_CACHE_TTL) {
+    return totalActiveCount;
   }
-  const data = await mongoose.model('Download').aggregate([
-    { $match: { isActive: true } },
-    { $group: { _id: '$game', count: { $sum: 1 } } },
-  ]);
-  const map = {};
-  for (const d of data) map[d._id.toString()] = d.count;
-  downloadCountsCache = map;
-  downloadCountsCacheTime = now;
-  return map;
+  totalActiveCount = await Game.countDocuments({ isActive: true });
+  totalActiveCountTime = now;
+  return totalActiveCount;
 }
 
 export const getGames = async (options = {}) => {
@@ -39,55 +35,32 @@ export const getGames = async (options = {}) => {
 
     const query = {};
 
-    if (activeOnly) {
-      query.isActive = true;
-    }
-
-    if (featuredOnly) {
-      query.featured = true;
-    }
+    if (activeOnly) query.isActive = true;
+    if (featuredOnly) query.featured = true;
 
     if (options.ids) {
       query._id = { $in: options.ids.map(id => new mongoose.Types.ObjectId(id)) };
     }
 
-    if (genre) {
-      query.genre = { $in: [genre] };
-    }
+    if (genre) query.genre = { $in: [genre] };
 
-    if (search) {
-      query.$text = { $search: search };
-    }
+    if (search) query.$text = { $search: search };
 
     if (sortBy === "random") {
-      const [games, dlMap] = await Promise.all([
-        Game.aggregate([
-          { $match: query },
-          { $sample: { size: parseInt(limit) } },
-          {
-            $project: {
-              title: 1, poster: 1, description: 1, director: 1,
-              releaseDate: 1, duration: 1, language: 1, country: 1,
-              genre: 1, budget: 1, boxOffice: 1, trailer: 1,
-              backdrop: 1, screenshots: 1, cast: 1,
-              averageRating: 1, totalRatings: 1, isActive: 1,
-              featured: 1, trending: 1, createdAt: 1,
-              steamAppId: 1,
-            },
-          },
-        ]),
-        getDownloadCounts(),
+      const games = await Game.aggregate([
+        { $match: query },
+        { $sample: { size: parseInt(limit) } },
+        { $project: { title: 1, poster: 1, description: 1, releaseDate: 1, averageRating: 1, totalRatings: 1, genre: 1 } },
       ]);
-      const result = games.map(g => ({ ...g, downloadsCount: dlMap[g._id.toString()] || 0 }));
 
       return {
         success: true,
         data: {
-          games: result,
+          games,
           pagination: {
             currentPage: parseInt(page),
             totalPages: 1,
-            totalCount: result.length,
+            totalCount: games.length,
             hasNextPage: false,
             hasPrevPage: false,
           },
@@ -98,25 +71,22 @@ export const getGames = async (options = {}) => {
     const sort = {};
     sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
-    const [found, totalCount, dlMap] = await Promise.all([
+    const [found, totalCount] = await Promise.all([
       Game.find(query)
-        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt steamAppId")
+        .select(LISTING_FIELDS)
         .sort(sort).skip(skip).limit(parseInt(limit)).lean(),
       Game.countDocuments(query),
-      getDownloadCounts(),
     ]);
-
-    const games = found.map(g => ({ ...g, downloadsCount: dlMap[g._id.toString()] || 0 }));
 
     return {
       success: true,
       data: {
-        games,
+        games: found,
         pagination: {
           currentPage: parseInt(page),
           totalPages: Math.ceil(totalCount / limit),
           totalCount,
-          hasNextPage: skip + games.length < totalCount,
+          hasNextPage: skip + found.length < totalCount,
           hasPrevPage: page > 1,
         },
       },
@@ -322,6 +292,7 @@ export const getTrendingGames = async (options = {}) => {
 
     const [games, totalCount] = await Promise.all([
       Game.find(query)
+        .select(LISTING_FIELDS)
         .sort({ trendingPosition: 1, trendingScore: -1 })
         .skip(skip)
         .limit(parseInt(limit))
@@ -504,10 +475,10 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
         Game.find({ isActive: true, showOnHomepage: true })
           .sort({ homepagePosition: 1 })
           .limit(limit)
-          .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+          .select(LISTING_FIELDS)
           .lean(),
         Game.countDocuments({ isActive: true, showOnHomepage: true }),
-        Game.countDocuments({ isActive: true }),
+        getTotalActiveCount(),
       ]);
 
       return {
@@ -527,7 +498,7 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
 
     const [games, totalCount, curatedCount] = await Promise.all([
       Game.find({ isActive: true, showOnHomepage: false })
-        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+        .select(LISTING_FIELDS)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
