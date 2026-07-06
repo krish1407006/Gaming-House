@@ -820,87 +820,339 @@ body.light-theme::after {
   border-radius: 50%;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.5;
+  filter: blur(60px);
 }
 
 .floating-orb--1 {
-  width: 400px;
-  height: 400px;
-  top: -10%;
-  left: -5%;
-  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  width: 550px;
+  height: 550px;
+  top: -20%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.35) 0%, rgba(0, 212, 255, 0.1) 50%, transparent 80%);
   animation: floatOrb1 25s ease-in-out infinite alternate;
 }
 
 .floating-orb--2 {
-  width: 300px;
-  height: 300px;
-  bottom: -5%;
-  right: -3%;
-  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  width: 450px;
+  height: 450px;
+  bottom: -15%;
+  right: -8%;
+  background: radial-gradient(circle, rgba(255, 0, 110, 0.35) 0%, rgba(255, 0, 110, 0.1) 50%, transparent 80%);
   animation: floatOrb2 20s ease-in-out infinite alternate;
 }
 
 .floating-orb--3 {
-  width: 200px;
-  height: 200px;
-  top: 40%;
+  width: 350px;
+  height: 350px;
+  top: 30%;
   left: 60%;
-  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, rgba(102, 126, 234, 0.08) 50%, transparent 80%);
   animation: floatOrb3 30s ease-in-out infinite alternate;
 }
 
 .floating-orb--4 {
-  width: 150px;
-  height: 150px;
-  top: 20%;
-  right: 20%;
-  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+  width: 250px;
+  height: 250px;
+  top: 10%;
+  right: 10%;
+  background: radial-gradient(circle, rgba(255, 0, 110, 0.3) 0%, rgba(255, 0, 110, 0.08) 50%, transparent 80%);
   animation: floatOrb4 18s ease-in-out infinite alternate;
 }
 
+.floating-orb--5 {
+  width: 300px;
+  height: 300px;
+  bottom: 25%;
+  left: 5%;
+  background: radial-gradient(circle, rgba(118, 75, 162, 0.3) 0%, rgba(118, 75, 162, 0.08) 50%, transparent 80%);
+  animation: floatOrb5 22s ease-in-out infinite alternate;
+}
+
 .light-theme .floating-orb--1 {
-  background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 80%);
 }
 .light-theme .floating-orb--2 {
-  background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 0, 110, 0.12) 0%, transparent 80%);
 }
 .light-theme .floating-orb--3 {
-  background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 80%);
 }
 .light-theme .floating-orb--4 {
-  background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 0, 110, 0.1) 0%, transparent 80%);
+}
+.light-theme .floating-orb--5 {
+  background: radial-gradient(circle, rgba(118, 75, 162, 0.1) 0%, transparent 80%);
 }
 
 @keyframes floatOrb1 {
   0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(60px, 40px) scale(1.1); }
-  66% { transform: translate(-30px, 80px) scale(0.95); }
-  100% { transform: translate(40px, -20px) scale(1.05); }
+  33% { transform: translate(80px, 50px) scale(1.1); }
+  66% { transform: translate(-40px, 100px) scale(0.95); }
+  100% { transform: translate(50px, -30px) scale(1.05); }
 }
 
 @keyframes floatOrb2 {
   0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-50px, -30px) scale(1.15); }
-  66% { transform: translate(30px, -60px) scale(0.9); }
-  100% { transform: translate(-20px, 30px) scale(1.05); }
+  33% { transform: translate(-60px, -40px) scale(1.15); }
+  66% { transform: translate(40px, -80px) scale(0.9); }
+  100% { transform: translate(-30px, 40px) scale(1.05); }
 }
 
 @keyframes floatOrb3 {
   0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-80px, 40px) scale(1.1); }
-  100% { transform: translate(60px, -40px) scale(0.95); }
+  50% { transform: translate(-100px, 50px) scale(1.1); }
+  100% { transform: translate(80px, -50px) scale(0.95); }
 }
 
 @keyframes floatOrb4 {
   0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(40px, -50px) scale(1.05); }
-  100% { transform: translate(-40px, 30px) scale(0.95); }
+  50% { transform: translate(50px, -60px) scale(1.05); }
+  100% { transform: translate(-50px, 40px) scale(0.95); }
 }
 
-/* Floating glow animations for background particles */
-@keyframes floatGlow {
+@keyframes floatOrb5 {
   0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(60px, -40px) scale(1.2); }
+  50% { transform: translate(-60px, -40px) scale(1.1); }
+  100% { transform: translate(40px, 50px) scale(0.95); }
+}
+
+/* ========== FLOATING PARTICLES ========== */
+.floating-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFloat linear infinite;
+  box-shadow: 0 0 6px 2px currentColor;
+}
+
+.particle:nth-child(1) {
+  left: 5%;
+  width: 4px;
+  height: 4px;
+  color: #00d4ff;
+  background: #00d4ff;
+  animation-duration: 18s;
+  animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+  left: 12%;
+  width: 5px;
+  height: 5px;
+  color: #ff006e;
+  background: #ff006e;
+  animation-duration: 22s;
+  animation-delay: 0.8s;
+}
+
+.particle:nth-child(3) {
+  left: 19%;
+  width: 4px;
+  height: 4px;
+  color: #667eea;
+  background: #667eea;
+  animation-duration: 20s;
+  animation-delay: 1.6s;
+}
+
+.particle:nth-child(4) {
+  left: 26%;
+  width: 5px;
+  height: 5px;
+  color: #00d4ff;
+  background: #00d4ff;
+  animation-duration: 24s;
+  animation-delay: 2.4s;
+}
+
+.particle:nth-child(5) {
+  left: 33%;
+  width: 4px;
+  height: 4px;
+  color: #ff006e;
+  background: #ff006e;
+  animation-duration: 17s;
+  animation-delay: 0.3s;
+}
+
+.particle:nth-child(6) {
+  left: 40%;
+  width: 5px;
+  height: 5px;
+  color: #764ba2;
+  background: #764ba2;
+  animation-duration: 21s;
+  animation-delay: 1.1s;
+}
+
+.particle:nth-child(7) {
+  left: 47%;
+  width: 4px;
+  height: 4px;
+  color: #667eea;
+  background: #667eea;
+  animation-duration: 25s;
+  animation-delay: 2.2s;
+}
+
+.particle:nth-child(8) {
+  left: 54%;
+  width: 5px;
+  height: 5px;
+  color: #00d4ff;
+  background: #00d4ff;
+  animation-duration: 19s;
+  animation-delay: 0.6s;
+}
+
+.particle:nth-child(9) {
+  left: 61%;
+  width: 4px;
+  height: 4px;
+  color: #ff006e;
+  background: #ff006e;
+  animation-duration: 23s;
+  animation-delay: 1.8s;
+}
+
+.particle:nth-child(10) {
+  left: 68%;
+  width: 5px;
+  height: 5px;
+  color: #764ba2;
+  background: #764ba2;
+  animation-duration: 20s;
+  animation-delay: 3s;
+}
+
+.particle:nth-child(11) {
+  left: 75%;
+  width: 4px;
+  height: 4px;
+  color: #667eea;
+  background: #667eea;
+  animation-duration: 24s;
+  animation-delay: 0.4s;
+}
+
+.particle:nth-child(12) {
+  left: 82%;
+  width: 5px;
+  height: 5px;
+  color: #00d4ff;
+  background: #00d4ff;
+  animation-duration: 18s;
+  animation-delay: 1.3s;
+}
+
+.particle:nth-child(13) {
+  left: 89%;
+  width: 4px;
+  height: 4px;
+  color: #ff006e;
+  background: #ff006e;
+  animation-duration: 22s;
+  animation-delay: 2.7s;
+}
+
+.particle:nth-child(14) {
+  left: 95%;
+  width: 5px;
+  height: 5px;
+  color: #764ba2;
+  background: #764ba2;
+  animation-duration: 26s;
+  animation-delay: 1.9s;
+}
+
+.particle:nth-child(15) {
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  color: #00d4ff;
+  background: #00d4ff;
+  animation-duration: 19s;
+  animation-delay: 3.5s;
+}
+
+.particle:nth-child(16) {
+  left: 8%;
+  width: 4px;
+  height: 4px;
+  color: #ff006e;
+  background: #ff006e;
+  animation-duration: 21s;
+  animation-delay: 2.1s;
+}
+
+.particle:nth-child(17) {
+  left: 22%;
+  width: 5px;
+  height: 5px;
+  color: #667eea;
+  background: #667eea;
+  animation-duration: 23s;
+  animation-delay: 0.7s;
+}
+
+.particle:nth-child(18) {
+  left: 37%;
+  width: 4px;
+  height: 4px;
+  color: #764ba2;
+  background: #764ba2;
+  animation-duration: 25s;
+  animation-delay: 2.9s;
+}
+
+.particle:nth-child(19) {
+  left: 60%;
+  width: 5px;
+  height: 5px;
+  color: #00d4ff;
+  background: #00d4ff;
+  animation-duration: 18s;
+  animation-delay: 1.4s;
+}
+
+.particle:nth-child(20) {
+  left: 78%;
+  width: 4px;
+  height: 4px;
+  color: #ff006e;
+  background: #ff006e;
+  animation-duration: 22s;
+  animation-delay: 2.6s;
+}
+
+@keyframes particleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(100vh) scale(0);
+  }
+  15% {
+    opacity: 0.9;
+    transform: translateY(85vh) scale(1);
+  }
+  85% {
+    opacity: 0.9;
+    transform: translateY(15vh) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5vh) scale(1.2);
+  }
+}
+
+.light-theme .particle {
+  opacity: 0 !important;
 }
 

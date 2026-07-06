@@ -5,6 +5,29 @@ export default function Background() {
       <div className="floating-orb floating-orb--2" />
       <div className="floating-orb floating-orb--3" />
       <div className="floating-orb floating-orb--4" />
+      <div className="floating-orb floating-orb--5" />
+      <div className="floating-particles">
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+        <div className="particle" />
+      </div>
     </div>
   );
 }
