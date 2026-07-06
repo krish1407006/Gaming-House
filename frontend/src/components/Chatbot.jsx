@@ -21,7 +21,7 @@ export default function Chatbot() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowGreeting(false), 5000);
+    const timer = setTimeout(() => setShowGreeting(false), 7000);
     return () => clearTimeout(timer);
   }, []);
 
