@@ -133,3 +133,10 @@
 .card-fade-in:nth-child(49) { animation-delay: 2.4s; }
 .card-fade-in:nth-child(50) { animation-delay: 2.45s; }
 .card-fade-in:nth-child(51) { animation-delay: 2.5s; }
+
+/* Shimmer animation for gradient text */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
