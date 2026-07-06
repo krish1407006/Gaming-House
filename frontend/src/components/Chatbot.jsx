@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaRobot, FaTimes, FaArrowUp, FaGamepad } from "react-icons/fa";
+import { FaRobot, FaTimes, FaArrowUp, FaGamepad, FaUser, FaHeadset } from "react-icons/fa";
 import "../styles/chatbot.css";
 
 export default function Chatbot() {
@@ -19,11 +19,10 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Handle closing chatbot - clears chat history
   const handleCloseChatbot = () => {
     setIsOpen(false);
-    setMessages(initialMessages); // Reset to welcome message only
-    setInputValue(""); // Clear input field
+    setMessages(initialMessages);
+    setInputValue("");
   };
 
   const scrollToBottom = () => {
@@ -38,7 +37,6 @@ export default function Chatbot() {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    // Add user message
     const userMessage = {
       id: Date.now(),
       text: inputValue,
@@ -52,9 +50,8 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      // Simulate thinking time (1.5 - 2.5 seconds) for realistic response
       const thinkingTime = 1500 + Math.random() * 1000;
-      
+
       const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
       const response = await fetch(
@@ -71,10 +68,9 @@ export default function Chatbot() {
       );
 
       const data = await response.json();
-      
-      // Wait for thinking time to complete before showing response
+
       await new Promise(resolve => setTimeout(resolve, thinkingTime));
-      
+
       const botMessage = {
         id: Date.now() + 1,
         text: data.response || "I couldn't find information about that game. Try asking about a specific game title!",
@@ -84,14 +80,13 @@ export default function Chatbot() {
         screenshots: data.screenshots || [],
         title: data.title || null,
       };
-      
+
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error:", error);
-      
-      // Wait for thinking time even on error
+
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const errorMessage = {
         id: Date.now() + 1,
         text: "Sorry, I encountered an error. Please try again later!",
@@ -108,24 +103,30 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Chatbot Button */}
-      <button
-        onClick={() => isOpen ? handleCloseChatbot() : setIsOpen(true)}
-        className="chatbot-button"
-        title="Open Gaming Assistant"
-      >
-        {isOpen ? <FaTimes /> : <FaGamepad />}
-      </button>
+      <div className="chatbot-button-wrapper">
+        <div className="chatbot-button-ring" />
+        <button
+          onClick={() => isOpen ? handleCloseChatbot() : setIsOpen(true)}
+          className={`chatbot-button ${isOpen ? "chatbot-button--open" : ""}`}
+          title="Open Gaming Assistant"
+        >
+          {isOpen ? <FaTimes /> : <FaHeadset />}
+        </button>
+      </div>
 
-      {/* Chatbot Window */}
       {isOpen && (
         <div className="chatbot-container">
           <div className="chatbot-header">
-            <div className="flex items-center gap-2">
-              <FaRobot className="text-xl" />
+            <div className="chatbot-header-left">
+              <div className="chatbot-avatar">
+                <FaRobot />
+              </div>
               <div>
                 <h3>Gaming Assistant</h3>
-                <p className="text-xs opacity-75">Online</p>
+                <div className="chatbot-status">
+                  <span className="status-dot" />
+                  <span>Online</span>
+                </div>
               </div>
             </div>
             <button onClick={handleCloseChatbot} className="close-btn">
@@ -136,19 +137,22 @@ export default function Chatbot() {
           <div className="chatbot-messages">
             {messages.map((msg) => (
               <div key={msg.id} className={`message ${msg.sender}`}>
-                <div className="message-content">
-                  {/* Show poster if available */}
+                {msg.sender === "bot" && (
+                  <div className="message-avatar bot-avatar">
+                    <FaRobot />
+                  </div>
+                )}
+                <div className={`message-content ${msg.sender === "bot" ? "message-content-bot" : "message-content-user"}`}>
                   {msg.poster && msg.sender === "bot" && (
-                    <img 
-                      src={msg.poster} 
-                      alt={msg.title || "Game Poster"} 
+                    <img
+                      src={msg.poster}
+                      alt={msg.title || "Game Poster"}
                       className="game-poster"
                       onError={(e) => {
                         e.target.style.display = "none";
                       }}
                     />
                   )}
-                  {/* Show screenshots gallery */}
                   {msg.screenshots?.length > 0 && msg.sender === "bot" && (
                     <div className="screenshots-gallery">
                       {msg.screenshots.map((url, i) => (
@@ -178,11 +182,19 @@ export default function Chatbot() {
                     })}
                   </span>
                 </div>
+                {msg.sender === "user" && (
+                  <div className="message-avatar user-avatar">
+                    <FaUser />
+                  </div>
+                )}
               </div>
             ))}
             {isLoading && (
               <div className="message bot">
-                <div className="message-content">
+                <div className="message-avatar bot-avatar">
+                  <FaRobot />
+                </div>
+                <div className="message-content message-content-bot">
                   <div className="typing-indicator">
                     <span></span>
                     <span></span>
