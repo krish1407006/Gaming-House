@@ -90,6 +90,16 @@
   background-color: var(--bg-tertiary);
 }
 
+.theme-bg-glass {
+  background-color: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.light-theme .theme-bg-glass {
+  background-color: rgba(250, 250, 250, 0.85);
+}
+
 .theme-card {
   background-color: var(--card-bg);
   box-shadow: 0 2px 8px var(--card-shadow);

@@ -395,7 +395,7 @@ export default function GameDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-            <div className="theme-bg-secondary rounded-xl overflow-hidden">
+            <div className="theme-bg-glass rounded-xl overflow-hidden border border-white/5">
               <div className="px-4 lg:px-8 pt-4 lg:pt-8 pb-2 lg:pb-4 border-b border-white/5">
                 <div className="flex items-center gap-3">
                   <div className="w-1 h-5 lg:h-6 rounded-full" style={{ background: 'linear-gradient(to bottom, var(--accent-color), transparent)' }}></div>
@@ -464,7 +464,7 @@ export default function GameDetailPage() {
             </div>
 
             {game.screenshots && game.screenshots.length > 0 && (
-              <div className="theme-bg-secondary rounded-xl p-4 lg:p-8 mb-6 lg:mb-8">
+              <div className="theme-bg-glass rounded-xl p-4 lg:p-8 mb-6 lg:mb-8 border border-white/5">
                 <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
                   <span className="w-1 theme-bg-accent h-5 lg:h-6 inline-block rounded-full"></span>
                   <h2 className="text-xl lg:text-2xl font-bold theme-text-primary">Game Images</h2>
@@ -547,7 +547,7 @@ export default function GameDetailPage() {
             />
 
             {relatedGames.length > 0 && (
-              <div className="theme-bg-secondary rounded-xl overflow-hidden">
+              <div className="theme-bg-glass rounded-xl overflow-hidden border border-white/5">
                 <div className="px-4 lg:px-8 pt-4 lg:pt-8 pb-2 lg:pb-4 border-b border-white/5">
                   <div className="flex items-center gap-3">
                     <div className="w-1 h-5 lg:h-6 rounded-full" style={{ background: 'linear-gradient(to bottom, var(--accent-color), transparent)' }}></div>
@@ -566,7 +566,7 @@ export default function GameDetailPage() {
           </div>
 
           <div className="space-y-4 lg:space-y-6">
-            <div className="theme-bg-secondary rounded-xl overflow-hidden">
+            <div className="theme-bg-glass rounded-xl overflow-hidden border border-white/5">
               <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
                 <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Quick Stats</h3>
               </div>
@@ -585,7 +585,7 @@ export default function GameDetailPage() {
               </div>
             </div>
 
-            <div className="theme-bg-secondary rounded-xl overflow-hidden">
+            <div className="theme-bg-glass rounded-xl overflow-hidden border border-white/5">
               <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2 lg:pb-3 border-b border-white/5">
                 <h3 className="text-base lg:text-lg font-heading font-bold tracking-tight">Poster</h3>
               </div>

@@ -357,7 +357,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       </div>
 
       {/* Other Reviews Section */}
-      <div className="theme-bg-secondary rounded-xl p-4 lg:p-6">
+      <div className="theme-bg-glass rounded-xl p-4 lg:p-6 border border-white/5">
         <h3 className="text-lg lg:text-xl font-bold theme-text-primary mb-3 lg:mb-4">
           Reviews ({reviews.length})
         </h3>
