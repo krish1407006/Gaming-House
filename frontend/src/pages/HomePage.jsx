@@ -88,6 +88,8 @@ export default function HomePage() {
               index === currentBgIndex ? "opacity-80" : "opacity-0"
             }`}
             style={{ objectPosition: bg.position }}
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
           />
         ))}
 

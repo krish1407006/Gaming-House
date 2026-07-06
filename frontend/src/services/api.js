@@ -2,7 +2,7 @@ import { errorHandler } from '../utils/errorHandler.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gaming-house-ten.vercel.app/";
 const CACHE_PREFIX = 'gh_';
-const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_TTL = 10 * 60 * 1000;
 
 function getCache(key) {
   try {
@@ -104,19 +104,17 @@ class ApiService {
     return null;
   }
 
-  // Movie endpoints
   async getGames(params = {}) {
     const queryString = new URLSearchParams(params).toString();
     const endpoint = `/api/games${queryString ? `?${queryString}` : ""}`;
-    if (params.page === 1 || !params.page) {
-      const cached = getCache('games_' + queryString);
-      if (cached) {
-        setTimeout(() => this.request(endpoint).then((r) => { if (r) setCache('games_' + queryString, r); }).catch(() => {}), 100);
-        return cached;
-      }
+    const cacheKey = 'games_' + queryString;
+    const cached = getCache(cacheKey);
+    if (cached) {
+      this.request(endpoint).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+      return cached;
     }
     const result = await this.request(endpoint);
-    if ((params.page === 1 || !params.page) && result) setCache('games_' + queryString, result);
+    if (result) setCache(cacheKey, result);
     return result;
   }
 
@@ -319,15 +317,14 @@ class ApiService {
     try {
       const queryString = new URLSearchParams(params).toString();
       const endpoint = `/api/games/trending${queryString ? `?${queryString}` : ""}`;
-      if (params.page === 1 || !params.page) {
-        const cached = getCache('trending_' + queryString);
-        if (cached) {
-          setTimeout(() => this.request(endpoint).then((r) => { if (r) setCache('trending_' + queryString, r); }).catch(() => {}), 100);
-          return cached;
-        }
+      const cacheKey = 'trending_' + queryString;
+      const cached = getCache(cacheKey);
+      if (cached) {
+        this.request(endpoint).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+        return cached;
       }
       const data = await this.request(endpoint);
-      if ((params.page === 1 || !params.page) && data) setCache('trending_' + queryString, data);
+      if (data) setCache(cacheKey, data);
       return data;
     } catch (error) {
       console.error("Error fetching trending games:", error);
@@ -379,19 +376,17 @@ class ApiService {
     }
   }
 
-  // Homepage
   async getHomepage(page = 1, limit = 20) {
     try {
       const endpoint = `/api/games/homepage?page=${page}&limit=${limit}`;
-      if (page === 1) {
-        const cached = getCache('homepage_' + page + '_' + limit);
-        if (cached) {
-          setTimeout(() => this.request(endpoint).then((r) => { if (r) setCache('homepage_' + page + '_' + limit, r); }).catch(() => {}), 100);
-          return cached;
-        }
+      const cacheKey = 'homepage_' + page + '_' + limit;
+      const cached = getCache(cacheKey);
+      if (cached) {
+        this.request(endpoint).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+        return cached;
       }
       const data = await this.request(endpoint);
-      if (page === 1 && data) setCache('homepage_' + page + '_' + limit, data);
+      if (data) setCache(cacheKey, data);
       return data;
     } catch (error) {
       console.error("Error fetching homepage games:", error);

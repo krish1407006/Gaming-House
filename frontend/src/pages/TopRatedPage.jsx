@@ -93,6 +93,8 @@ export default function TopRatedPage() {
             src={bannerImg}
             alt="Banner"
             className="object-cover w-full h-full absolute top-0 left-0"
+            loading="lazy"
+            decoding="async"
           />
         )}
         <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">

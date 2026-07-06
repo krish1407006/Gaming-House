@@ -2,11 +2,31 @@ import mongoose from "mongoose";
 import Game from "../models/Game.js";
 import Rating from "../models/Rating.js";
 
+let downloadCountsCache = null;
+let downloadCountsCacheTime = 0;
+const DOWNLOAD_CACHE_TTL = 60000;
+
+async function getDownloadCounts() {
+  const now = Date.now();
+  if (downloadCountsCache && now - downloadCountsCacheTime < DOWNLOAD_CACHE_TTL) {
+    return downloadCountsCache;
+  }
+  const data = await mongoose.model('Download').aggregate([
+    { $match: { isActive: true } },
+    { $group: { _id: '$game', count: { $sum: 1 } } },
+  ]);
+  const map = {};
+  for (const d of data) map[d._id.toString()] = d.count;
+  downloadCountsCache = map;
+  downloadCountsCacheTime = now;
+  return map;
+}
+
 export const getGames = async (options = {}) => {
   try {
     const {
       page = 1,
-      limit = 200,
+      limit = 50,
       genre,
       search,
       sortBy = "createdAt",
@@ -39,64 +59,54 @@ export const getGames = async (options = {}) => {
       query.$text = { $search: search };
     }
 
-    let games;
-
     if (sortBy === "random") {
-      games = await Game.aggregate([
-        { $match: query },
-        { $sample: { size: parseInt(limit) } },
-        {
-          $project: {
-            title: 1, poster: 1, description: 1, director: 1,
-            releaseDate: 1, duration: 1, language: 1, country: 1,
-            genre: 1, budget: 1, boxOffice: 1, trailer: 1,
-            backdrop: 1, screenshots: 1, cast: 1,
-            averageRating: 1, totalRatings: 1, isActive: 1,
-            featured: 1, trending: 1, createdAt: 1,
-            steamAppId: 1,
+      const [games, dlMap] = await Promise.all([
+        Game.aggregate([
+          { $match: query },
+          { $sample: { size: parseInt(limit) } },
+          {
+            $project: {
+              title: 1, poster: 1, description: 1, director: 1,
+              releaseDate: 1, duration: 1, language: 1, country: 1,
+              genre: 1, budget: 1, boxOffice: 1, trailer: 1,
+              backdrop: 1, screenshots: 1, cast: 1,
+              averageRating: 1, totalRatings: 1, isActive: 1,
+              featured: 1, trending: 1, createdAt: 1,
+              steamAppId: 1,
+            },
           },
-        },
-      ]);
-      const dlData2 = await mongoose.model('Download').aggregate([
-        { $group: { _id: '$game', count: { $sum: 1 } } },
-      ]);
-      const dlMap2 = {};
-      for (const d of dlData2) dlMap2[d._id.toString()] = d.count;
-      games = games.map(g => ({ ...g, downloadsCount: dlMap2[g._id.toString()] || 0 }));
-    } else {
-      const sort = {};
-      sort[sortBy] = sortOrder === "desc" ? -1 : 1;
-
-      const listQuery = Game.find(query)
-        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt steamAppId")
-        .sort(sort).skip(skip).limit(parseInt(limit)).lean();
-
-      const [found, totalCount, downloadData] = await Promise.all([
-        listQuery,
-        Game.countDocuments(query),
-        mongoose.model('Download').aggregate([
-          { $group: { _id: '$game', count: { $sum: 1 } } },
         ]),
+        getDownloadCounts(),
       ]);
-      games = found;
-      const dlMap = {};
-      for (const d of downloadData) dlMap[d._id.toString()] = d.count;
-      games = games.map(g => ({ ...g, downloadsCount: dlMap[g._id.toString()] || 0 }));
+      const result = games.map(g => ({ ...g, downloadsCount: dlMap[g._id.toString()] || 0 }));
 
       return {
         success: true,
         data: {
-          games,
+          games: result,
           pagination: {
             currentPage: parseInt(page),
-            totalPages: Math.ceil(totalCount / limit),
-            totalCount,
-            hasNextPage: skip + games.length < totalCount,
-            hasPrevPage: page > 1,
+            totalPages: 1,
+            totalCount: result.length,
+            hasNextPage: false,
+            hasPrevPage: false,
           },
         },
       };
     }
+
+    const sort = {};
+    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    const [found, totalCount, dlMap] = await Promise.all([
+      Game.find(query)
+        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt steamAppId")
+        .sort(sort).skip(skip).limit(parseInt(limit)).lean(),
+      Game.countDocuments(query),
+      getDownloadCounts(),
+    ]);
+
+    const games = found.map(g => ({ ...g, downloadsCount: dlMap[g._id.toString()] || 0 }));
 
     return {
       success: true,
@@ -104,10 +114,10 @@ export const getGames = async (options = {}) => {
         games,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: 1,
-          totalCount: games.length,
-          hasNextPage: false,
-          hasPrevPage: false,
+          totalPages: Math.ceil(totalCount / limit),
+          totalCount,
+          hasNextPage: skip + games.length < totalCount,
+          hasPrevPage: page > 1,
         },
       },
     };
@@ -490,16 +500,14 @@ export const reorderTrending = async (orderedIds) => {
 export const getHomepageGames = async (page = 1, limit = 20) => {
   try {
     if (page === 1) {
-      // Page 1: admin-curated games
-      const games = await Game.find({
-        isActive: true,
-        showOnHomepage: true,
-      })
-        .sort({ homepagePosition: 1 })
-        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
-        .lean();
-
-      const totalCurated = games.length;
+      const [games, totalCurated] = await Promise.all([
+        Game.find({ isActive: true, showOnHomepage: true })
+          .sort({ homepagePosition: 1 })
+          .limit(limit)
+          .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+          .lean(),
+        Game.countDocuments({ isActive: true, showOnHomepage: true }),
+      ]);
 
       return {
         success: true,
@@ -507,13 +515,12 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
           games,
           pagination: {
             currentPage: 1,
-            totalPages: Math.ceil((await Game.countDocuments({ isActive: true })) / limit),
+            totalPages: Math.ceil(totalCurated / limit) || 1,
             totalCurated,
           },
         },
       };
     } else {
-      // Pages 2+: all games NOT on homepage, paginated
       const skip = (page - 1) * limit;
 
       const [games, totalCount] = await Promise.all([
@@ -526,17 +533,14 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
         Game.countDocuments({ isActive: true, showOnHomepage: false }),
       ]);
 
-      // Include curated count so frontend can offset page numbering
-      const curatedCount = await Game.countDocuments({ isActive: true, showOnHomepage: true });
-
       return {
         success: true,
         data: {
           games,
           pagination: {
             currentPage: page,
-            totalPages: Math.ceil((totalCount + curatedCount) / limit),
-            totalCurated: curatedCount,
+            totalPages: Math.ceil(totalCount / limit) || 1,
+            totalCurated: 0,
           },
         },
       };

@@ -175,10 +175,10 @@ gameSchema.index({ releaseDate: -1 });
 gameSchema.index({ averageRating: -1 });
 gameSchema.index({ isActive: 1 });
 gameSchema.index({ featured: -1 });
-gameSchema.index({ trending: -1 });
+gameSchema.index({ trending: -1, trendingPosition: 1, trendingScore: -1 });
 gameSchema.index({ trendingScore: -1 });
 gameSchema.index({ trendingPosition: 1 });
-gameSchema.index({ showOnHomepage: -1 });
+gameSchema.index({ showOnHomepage: 1, homepagePosition: 1 });
 gameSchema.index({ homepagePosition: 1 });
 
 export default mongoose.model("Game", gameSchema);
