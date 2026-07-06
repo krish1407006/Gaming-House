@@ -500,13 +500,14 @@ export const reorderTrending = async (orderedIds) => {
 export const getHomepageGames = async (page = 1, limit = 20) => {
   try {
     if (page === 1) {
-      const [games, totalCurated] = await Promise.all([
+      const [games, totalCurated, totalAllActive] = await Promise.all([
         Game.find({ isActive: true, showOnHomepage: true })
           .sort({ homepagePosition: 1 })
           .limit(limit)
           .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
           .lean(),
         Game.countDocuments({ isActive: true, showOnHomepage: true }),
+        Game.countDocuments({ isActive: true }),
       ]);
 
       return {
@@ -515,36 +516,37 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
           games,
           pagination: {
             currentPage: 1,
-            totalPages: Math.ceil(totalCurated / limit) || 1,
+            totalPages: Math.ceil(totalAllActive / limit) || 1,
             totalCurated,
           },
         },
       };
-    } else {
-      const skip = (page - 1) * limit;
-
-      const [games, totalCount] = await Promise.all([
-        Game.find({ isActive: true, showOnHomepage: false })
-          .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit)
-          .lean(),
-        Game.countDocuments({ isActive: true, showOnHomepage: false }),
-      ]);
-
-      return {
-        success: true,
-        data: {
-          games,
-          pagination: {
-            currentPage: page,
-            totalPages: Math.ceil(totalCount / limit) || 1,
-            totalCurated: 0,
-          },
-        },
-      };
     }
+
+    const skip = (page - 1) * limit;
+
+    const [games, totalCount, curatedCount] = await Promise.all([
+      Game.find({ isActive: true, showOnHomepage: false })
+        .select("title poster description director releaseDate duration language country genre budget boxOffice trailer backdrop screenshots cast averageRating totalRatings isActive featured trending createdAt")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Game.countDocuments({ isActive: true, showOnHomepage: false }),
+      Game.countDocuments({ isActive: true, showOnHomepage: true }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        games,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil((totalCount + curatedCount) / limit) || 1,
+          totalCurated: curatedCount,
+        },
+      },
+    };
   } catch (error) {
     console.error("Error fetching homepage games:", error);
     return {
