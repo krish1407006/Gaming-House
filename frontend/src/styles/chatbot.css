@@ -51,13 +51,13 @@
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a1a3e 0%, #8B0000 100%);
   opacity: 0.3;
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .chatbot-button--open ~ .chatbot-button-ring {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #1a1a3e 0%, #8B0000 100%);
 }
 
 @keyframes pulse-ring {
