@@ -118,12 +118,20 @@ export default function WatchlistPage() {
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary">
-      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border theme-border relative h-40 sm:h-48 lg:h-56 theme-bg-secondary flex items-center justify-center mb-6 lg:mb-8">
-        <div className="relative z-10 text-center px-4">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide theme-accent drop-shadow-lg font-heading">
+      <div className="rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border theme-border relative h-48 sm:h-56 lg:h-64 flex items-center justify-center mb-6 lg:mb-8 theme-bg-secondary">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#000000cc] to-[#00000099] z-10"></div>
+        {watchlist.length > 0 && (
+          <img
+            src={watchlist[0]?.poster || watchlist[0]?.image}
+            alt="Banner"
+            className="object-cover w-full h-full absolute top-0 left-0"
+          />
+        )}
+        <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold mb-2 tracking-wide theme-accent drop-shadow-lg font-heading">
             📚 My Watchlist
           </h2>
-          <p className="theme-text-secondary text-sm sm:text-base lg:text-lg drop-shadow">
+          <p className="text-white text-sm sm:text-base lg:text-xl drop-shadow-lg font-medium">
             Games you want to play later
           </p>
         </div>
