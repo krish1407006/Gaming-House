@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaRobot, FaTimes, FaArrowUp, FaGamepad, FaUser, FaHeadset } from "react-icons/fa";
+import { FaRobot, FaTimes, FaArrowUp, FaGamepad, FaUser } from "react-icons/fa";
 import "../styles/chatbot.css";
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(true);
   const initialMessages = [
     {
       id: 1,
@@ -18,6 +19,16 @@ export default function Chatbot() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowGreeting(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleOpenChatbot = () => {
+    setIsOpen(true);
+    setShowGreeting(false);
+  };
 
   const handleCloseChatbot = () => {
     setIsOpen(false);
@@ -104,13 +115,20 @@ export default function Chatbot() {
   return (
     <>
       <div className="chatbot-button-wrapper">
+        {showGreeting && !isOpen && (
+          <div className="chatbot-greeting">
+            <FaGamepad className="chatbot-greeting-icon" />
+            <span>Hey! I'm your gaming chatbot 🎮</span>
+            <div className="chatbot-greeting-arrow" />
+          </div>
+        )}
         <div className="chatbot-button-ring" />
         <button
-          onClick={() => isOpen ? handleCloseChatbot() : setIsOpen(true)}
+          onClick={() => isOpen ? handleCloseChatbot() : handleOpenChatbot()}
           className={`chatbot-button ${isOpen ? "chatbot-button--open" : ""}`}
           title="Open Gaming Assistant"
         >
-          {isOpen ? <FaTimes /> : <FaHeadset />}
+          {isOpen ? <FaTimes /> : <FaGamepad />}
         </button>
       </div>
 
