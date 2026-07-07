@@ -395,7 +395,7 @@ export default function GameDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-            <div className="theme-bg-glass rounded-xl overflow-hidden border border-white/5">
+            <div className="theme-bg-glass rounded-xl overflow-hidden">
               <div className="px-4 lg:px-8 pt-4 lg:pt-8 pb-2 lg:pb-4 border-b border-white/5">
                 <div className="flex items-center gap-3">
                   <div className="w-1 h-5 lg:h-6 rounded-full" style={{ background: 'linear-gradient(to bottom, var(--accent-color), transparent)' }}></div>
