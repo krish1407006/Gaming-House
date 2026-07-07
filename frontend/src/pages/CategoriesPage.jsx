@@ -4,6 +4,8 @@ import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import SlowLoadNotice from "../components/SlowLoadNotice";
+import { useSlowLoadNotice } from "../hooks/useSlowLoadNotice";
 
 const PAGE_SIZE = 8;
 
@@ -14,20 +16,26 @@ const GENRES = [
 ];
 
 export default function CategoriesPage() {
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cachedInitial = apiService.peekGames({ page: 1, limit: PAGE_SIZE });
+  const [games, setGames] = useState(cachedInitial?.games ?? []);
+  const [loading, setLoading] = useState(!cachedInitial);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [activeGenre, setActiveGenre] = useState(null);
   const fetchingRef = useRef(false);
+  const showSlowNotice = useSlowLoadNotice(loading);
 
   const fetchGames = useCallback(async (pageNum, genre) => {
     fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
-      setLoading(true);
+      const peekParams = { page: pageNum, limit: PAGE_SIZE };
+      if (genre) peekParams.genre = genre;
+      if (!apiService.peekGames(peekParams)) {
+        setLoading(true);
+      }
     } else {
       setLoadingMore(true);
     }
@@ -130,6 +138,7 @@ export default function CategoriesPage() {
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
+        <SlowLoadNotice show={showSlowNotice} />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <SkeletonCard count={8} />

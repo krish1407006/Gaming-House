@@ -4,18 +4,22 @@ import SkeletonCard from "../components/SkeletonCard";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
+import SlowLoadNotice from "../components/SlowLoadNotice";
+import { useSlowLoadNotice } from "../hooks/useSlowLoadNotice";
 
 const PAGE_SIZE = 8;
 
 export default function HomePage() {
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cachedInitial = apiService.peekHomepage(1, PAGE_SIZE);
+  const [games, setGames] = useState(cachedInitial?.games ?? []);
+  const [loading, setLoading] = useState(!cachedInitial);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
   const fetchingRef = useRef(false);
+  const showSlowNotice = useSlowLoadNotice(loading);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -30,7 +34,9 @@ export default function HomePage() {
     fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
-      setLoading(true);
+      if (!apiService.peekHomepage(pageNum, PAGE_SIZE)) {
+        setLoading(true);
+      }
     } else {
       setLoadingMore(true);
     }
@@ -90,6 +96,7 @@ export default function HomePage() {
             style={{ objectPosition: bg.position }}
             loading={index === 0 ? "eager" : "lazy"}
             decoding="async"
+            fetchPriority={index === 0 ? "high" : "low"}
           />
         ))}
 
@@ -117,6 +124,7 @@ export default function HomePage() {
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
+        <SlowLoadNotice show={showSlowNotice} />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <SkeletonCard count={8} />
@@ -133,7 +141,7 @@ export default function HomePage() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               {games.map((game, idx) => (
-                <GameCard key={game._id || game.gameId || `game-${idx}`} game={game} />
+                <GameCard key={game._id || game.gameId || `game-${idx}`} game={game} priority={idx < 3} />
               ))}
             </div>
 

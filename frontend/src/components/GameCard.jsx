@@ -2,7 +2,7 @@ import React from "react";
 import StarRating from "./StarRating";
 import { Link } from "react-router-dom";
 
-function GameCard({ game }) {
+function GameCard({ game, priority = false }) {
   const gameId = game.gameId || game._id || `temp_${Date.now()}`;
 
   const fallbackImage = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
@@ -34,8 +34,9 @@ function GameCard({ game }) {
           src={getImageSrc() || fallbackImage}
           alt={game.name || game.title || 'Game poster'}
           className="w-full h-full object-contain object-center transition-all duration-700 ease-out"
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
           decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
           onError={(e) => {
             if (e.target.src !== fallbackImage) {
               e.target.src = fallbackImage;

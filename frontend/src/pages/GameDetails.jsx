@@ -23,8 +23,8 @@ export default function GameDetailPage() {
   const { getToken } = useAuth();
   const { isSignedIn } = useUser();
 
-  const [game, setGame] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [game, setGame] = useState(() => apiService.peekGameById(id) ?? null);
+  const [loading, setLoading] = useState(() => !apiService.peekGameById(id));
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState("");
 
@@ -40,7 +40,10 @@ export default function GameDetailPage() {
   }, [getToken]);
 
   const loadMovieData = useCallback(async () => {
-    setLoading(true);
+    const cached = apiService.peekGameById(id);
+    if (!cached) {
+      setLoading(true);
+    }
     setError(null);
 
     if (!id || id.trim() === "" || id === "undefined" || id === "null") {
@@ -54,6 +57,7 @@ export default function GameDetailPage() {
 
       if (movieData && (movieData._id || movieData.id)) {
         setGame(movieData);
+        setLoading(false);
 
         const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
         const liked = JSON.parse(localStorage.getItem("likedGames") || "[]");
@@ -61,20 +65,21 @@ export default function GameDetailPage() {
         setIsWatchlisted(watchlist.includes(id));
         setIsLiked(liked.includes(id));
 
-        try {
-            const related = await apiService.getGames({ limit: 6, sortBy: 'createdAt', sortOrder: 'desc' });
-          if (related?.games) {
-            const shuffled = [...related.games].sort(() => Math.random() - 0.5);
-            setRelatedGames(shuffled.filter(g => (g._id || g.id) !== movieData._id).slice(0, 3));
-          }
-        } catch {}
+        const gameId = movieData._id || movieData.id || id;
+        const [relatedResult, downloadResult] = await Promise.allSettled([
+          apiService.getGames({ limit: 6, sortBy: "createdAt", sortOrder: "desc" }),
+          apiService.getGameDownloads(gameId),
+        ]);
 
-        try {
-          const downloadData = await apiService.getGameDownloads(movieData._id || movieData.id || id);
-          setDownloads(downloadData);
-        } catch {}
+        if (relatedResult.status === "fulfilled" && relatedResult.value?.games) {
+          const shuffled = [...relatedResult.value.games].sort(() => Math.random() - 0.5);
+          setRelatedGames(shuffled.filter((g) => (g._id || g.id) !== movieData._id).slice(0, 3));
+        }
 
-        setLoading(false);
+        if (downloadResult.status === "fulfilled") {
+          setDownloads(downloadResult.value);
+        }
+
         return;
       }
     } catch {

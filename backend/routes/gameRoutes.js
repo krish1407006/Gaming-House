@@ -6,15 +6,20 @@ import * as downloadController from "../controllers/downloadController.js";
 
 const router = express.Router();
 
+const cachePublic = (_req, res, next) => {
+  res.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
+  next();
+};
+
 // Public routes (no authentication required)
-router.get("/", gameController.getGames);
-router.get("/trending", gameController.getTrendingGames);
-router.get("/homepage", gameController.getHomepageGames);
-router.get("/:id", gameController.getGameById);
-router.get("/:id/ratings", gameController.getGameRatings);
+router.get("/", cachePublic, gameController.getGames);
+router.get("/trending", cachePublic, gameController.getTrendingGames);
+router.get("/homepage", cachePublic, gameController.getHomepageGames);
+router.get("/:id", cachePublic, gameController.getGameById);
+router.get("/:id/ratings", cachePublic, gameController.getGameRatings);
 
 // Public download routes
-router.get("/:id/downloads", downloadController.getGameDownloads);
+router.get("/:id/downloads", cachePublic, downloadController.getGameDownloads);
 
 // User routes (authentication required)
 router.post("/:id/rate", requireAuth(), gameController.rateGame);

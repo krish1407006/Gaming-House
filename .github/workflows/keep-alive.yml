@@ -1,0 +1,17 @@
+name: Keep Render Server Awake
+
+on:
+  schedule:
+    # Render free tier sleeps after ~15 min idle — ping every 10 min
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: curl -fsS --max-time 90 "https://gaming-house.onrender.com/health"
+
+      - name: Warm games API
+        run: curl -fsS --max-time 90 "https://gaming-house.onrender.com/api/games/homepage?page=1&limit=8"

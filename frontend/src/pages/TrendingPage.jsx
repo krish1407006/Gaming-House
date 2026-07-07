@@ -4,23 +4,29 @@ import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import SlowLoadNotice from "../components/SlowLoadNotice";
+import { useSlowLoadNotice } from "../hooks/useSlowLoadNotice";
 
 const PAGE_SIZE = 8;
 
 export default function TrendingPage() {
-  const [trendinggames, setTrendinggames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cachedInitial = apiService.peekTrending({ page: 1, limit: PAGE_SIZE });
+  const [trendinggames, setTrendinggames] = useState(cachedInitial?.games ?? []);
+  const [loading, setLoading] = useState(!cachedInitial);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const fetchingRef = useRef(false);
+  const showSlowNotice = useSlowLoadNotice(loading);
 
   const fetchTrending = useCallback(async (pageNum) => {
     fetchingRef.current = true;
     const isInitial = pageNum === 1;
     if (isInitial) {
-      setLoading(true);
+      if (!apiService.peekTrending({ page: pageNum, limit: PAGE_SIZE })) {
+        setLoading(true);
+      }
     } else {
       setLoadingMore(true);
     }
@@ -96,6 +102,7 @@ export default function TrendingPage() {
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
+        <SlowLoadNotice show={showSlowNotice} />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <SkeletonCard count={8} />

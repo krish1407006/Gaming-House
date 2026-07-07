@@ -1,8 +1,20 @@
 import { errorHandler } from '../utils/errorHandler.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gaming-house-ten.vercel.app/";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gaming-house.onrender.com";
 const CACHE_PREFIX = 'gh_';
-const CACHE_TTL = 10 * 60 * 1000;
+const CACHE_TTL = 30 * 60 * 1000;
+
+const PUBLIC_ENDPOINTS = [
+  '/api/games',
+  '/api/games/trending',
+  '/api/games/homepage',
+  '/health',
+];
+
+function isPublicEndpoint(endpoint) {
+  if (PUBLIC_ENDPOINTS.some((p) => endpoint.startsWith(p))) return true;
+  return /^\/api\/games\/[^/]+(\/ratings|\/downloads)?$/.test(endpoint);
+}
 
 function getCache(key) {
   try {
@@ -20,9 +32,45 @@ function setCache(key, data) {
   } catch {}
 }
 
+export function peekCache(key) {
+  return getCache(key);
+}
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchWithRetry(url, config, { retries = 2, retryDelay = 4000, timeout = 90000 } = {}) {
+  let lastError;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const response = await fetch(url, { ...config, signal: controller.signal });
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      lastError = error;
+      if (attempt < retries) {
+        await sleep(retryDelay * (attempt + 1));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 function clearGameCache() {
   try {
-    Object.keys(localStorage).filter((k) => k.startsWith(CACHE_PREFIX + 'games_') || k.startsWith(CACHE_PREFIX + 'homepage_') || k.startsWith(CACHE_PREFIX + 'trending_')).forEach((k) => localStorage.removeItem(k));
+    Object.keys(localStorage)
+      .filter((k) =>
+        k.startsWith(CACHE_PREFIX + 'games_') ||
+        k.startsWith(CACHE_PREFIX + 'homepage_') ||
+        k.startsWith(CACHE_PREFIX + 'trending_') ||
+        k.startsWith(CACHE_PREFIX + 'game_')
+      )
+      .forEach((k) => localStorage.removeItem(k));
   } catch {}
 }
 
@@ -53,14 +101,19 @@ class ApiService {
       ...options,
     };
 
-    // Add auth token if available
-    const token = await this.getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (!isPublicEndpoint(endpoint)) {
+      const token = await this.getAuthToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
+    const useRetry = (options.method || "GET") === "GET" && isPublicEndpoint(endpoint);
+
     try {
-      const response = await fetch(url, config);
+      const response = useRetry
+        ? await fetchWithRetry(url, config)
+        : await fetch(url, config);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -118,8 +171,20 @@ class ApiService {
     return result;
   }
 
+  peekGameById(gameId) {
+    return getCache('game_' + gameId);
+  }
+
   async getGameById(gameId) {
-    return this.request(`/api/games/${gameId}`);
+    const cacheKey = 'game_' + gameId;
+    const cached = getCache(cacheKey);
+    if (cached) {
+      this.request(`/api/games/${gameId}`).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+      return cached;
+    }
+    const result = await this.request(`/api/games/${gameId}`);
+    if (result) setCache(cacheKey, result);
+    return result;
   }
 
   async getGameRatings(gameId, params = {}) {
@@ -376,6 +441,10 @@ class ApiService {
     }
   }
 
+  peekHomepage(page = 1, limit = 20) {
+    return getCache('homepage_' + page + '_' + limit);
+  }
+
   async getHomepage(page = 1, limit = 20) {
     try {
       const endpoint = `/api/games/homepage?page=${page}&limit=${limit}`;
@@ -392,6 +461,32 @@ class ApiService {
       console.error("Error fetching homepage games:", error);
       throw error;
     }
+  }
+
+  peekTrending(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    return getCache('trending_' + queryString);
+  }
+
+  peekGames(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    return getCache('games_' + queryString);
+  }
+
+  async prefetchCritical() {
+    const tasks = [
+      this.getHomepage(1, 8).catch(() => {}),
+      this.request('/health').catch(() => {}),
+    ];
+    await Promise.allSettled(tasks);
+  }
+
+  startKeepAlive() {
+    if (typeof window === 'undefined' || this._keepAliveStarted) return;
+    this._keepAliveStarted = true;
+    setInterval(() => {
+      this.request('/health').catch(() => {});
+    }, 5 * 60 * 1000);
   }
 
   async getAdminHomepage() {
