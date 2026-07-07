@@ -649,8 +649,7 @@ export default function GameDetailPage() {
                                   document.body.removeChild(iframe);
                                 }, { once: true });
                               }}
-                              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20 cursor-pointer"
-                              style={{ background: 'linear-gradient(135deg, rgba(27,40,56,0.9), rgba(42,71,94,0.9))' }}
+                              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20 cursor-pointer bg-black/20 backdrop-blur-sm"
                             >
                               <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-white/10">
                                 <FaSteam className="text-xl text-white" />
