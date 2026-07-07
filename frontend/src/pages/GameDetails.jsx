@@ -289,7 +289,7 @@ export default function GameDetailPage() {
   }
 
   return (
-    <section className="px-4 lg:px-8 py-4 lg:py-6 theme-text-primary">
+    <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary theme-text-primary">
       {notification && (
         <div className="fixed top-4 right-4 theme-bg-accent theme-text-accent-contrast px-4 lg:px-6 py-2 lg:py-3 rounded-lg shadow-lg z-50 font-semibold text-sm lg:text-base">
           {notification}
