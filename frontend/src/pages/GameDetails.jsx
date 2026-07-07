@@ -259,7 +259,7 @@ export default function GameDetailPage() {
   if (error || !game) {
     return (
       <section className="px-4 lg:px-8 py-4 lg:py-6 theme-bg-primary min-h-screen flex items-center justify-center">
-        <div className="text-center p-8 theme-bg-secondary rounded-xl shadow-lg max-w-md mx-auto">
+        <div className="text-center p-8 theme-bg-glass rounded-xl shadow-lg max-w-md mx-auto">
           <div className="mb-4">
             <svg className="w-16 h-16 mx-auto" style={{ color: 'var(--accent-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
