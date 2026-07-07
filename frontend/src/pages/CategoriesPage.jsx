@@ -4,6 +4,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import { dedupeGamesById } from "../utils/dedupeGames";
 
 
 const PAGE_SIZE = 8;
@@ -44,7 +45,9 @@ export default function CategoriesPage() {
       const response = await apiService.getGames(params);
       const newGames = response?.games || [];
 
-      setGames((prev) => isInitial ? newGames : [...prev, ...newGames]);
+      setGames((prev) =>
+        dedupeGamesById(isInitial ? newGames : [...prev, ...newGames])
+      );
       const pag = response?.pagination;
       if (pag) {
         setPage(pag.currentPage || 1);

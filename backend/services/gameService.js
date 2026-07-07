@@ -4,6 +4,15 @@ import Rating from "../models/Rating.js";
 
 const LISTING_FIELDS = "title poster description releaseDate averageRating totalRatings genre";
 
+function buildSort(sortBy = "createdAt", sortOrder = "desc") {
+  const sort = {};
+  sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+  if (sortBy !== "_id") {
+    sort._id = 1;
+  }
+  return sort;
+}
+
 const VALID_GENRES = [
   "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
   "Documentary", "Drama", "Family", "Fantasy", "History", "Horror",
@@ -48,6 +57,32 @@ export function sanitizeGameUpdateData(updateData = {}) {
         sanitized[key] = num;
       }
     }
+  }
+
+  for (const key of [
+    "poster",
+    "backdrop",
+    "trailer",
+    "publisher",
+    "director",
+    "language",
+    "country",
+  ]) {
+    if (sanitized[key] === "" || sanitized[key] == null) {
+      delete sanitized[key];
+    }
+  }
+
+  if (Array.isArray(sanitized.screenshots) && sanitized.screenshots.length === 0) {
+    delete sanitized.screenshots;
+  }
+
+  if (Array.isArray(sanitized.cast) && sanitized.cast.length === 0) {
+    delete sanitized.cast;
+  }
+
+  if (Array.isArray(sanitized.highlights) && sanitized.highlights.length === 0) {
+    delete sanitized.highlights;
   }
 
   return sanitized;
@@ -118,10 +153,7 @@ export const getGames = async (options = {}) => {
       };
     }
 
-    const sort = {};
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
-
-    let queryBuilder = Game.find(query).sort(sort).skip(skip).limit(parseInt(limit));
+    let queryBuilder = Game.find(query).sort(buildSort(sortBy, sortOrder)).skip(skip).limit(parseInt(limit));
     if (!includeAllFields) {
       queryBuilder = queryBuilder.select(LISTING_FIELDS);
     }
@@ -223,10 +255,21 @@ export const updateGame = async (gameId, updateData) => {
   try {
     const validUpdateData = sanitizeGameUpdateData(updateData);
 
-    const game = await Game.findByIdAndUpdate(gameId, validUpdateData, {
-      new: true,
-      runValidators: true,
-    });
+    if (Object.keys(validUpdateData).length === 0) {
+      return {
+        success: false,
+        error: "No valid fields to update",
+      };
+    }
+
+    const game = await Game.findByIdAndUpdate(
+      gameId,
+      { $set: validUpdateData },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!game) {
       return {
@@ -345,7 +388,7 @@ export const getTrendingGames = async (options = {}) => {
     const [games, totalCount] = await Promise.all([
       Game.find(query)
         .select(LISTING_FIELDS)
-        .sort({ trendingPosition: 1, trendingScore: -1 })
+        .sort({ trendingPosition: 1, trendingScore: -1, _id: 1 })
         .skip(skip)
         .limit(parseInt(limit))
         .lean(),
@@ -546,12 +589,12 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
       };
     }
 
-    const skip = (page - 1) * limit;
+    const skip = (page - 2) * limit;
 
     const [games, totalCount, curatedCount] = await Promise.all([
       Game.find({ isActive: true, showOnHomepage: false })
         .select(LISTING_FIELDS)
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: 1 })
         .skip(skip)
         .limit(limit)
         .lean(),

@@ -22,6 +22,8 @@ import WatchlistPage from "./pages/WatchlistPage";
 import SettingsPage from "./pages/SettingsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import apiService from "./services/api";
+import { getGameImageUrl } from "./utils/imageUrl";
+import { dedupeGamesById } from "./utils/dedupeGames";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,7 +60,7 @@ function App() {
       setSearchLoading(true);
       try {
         const response = await apiService.getGames({ search: value, limit: 10 });
-        const games = response?.games || [];
+        const games = dedupeGamesById(response?.games || []);
         setSearchResults(games);
         setShowResults(true);
       } catch {
@@ -119,9 +121,10 @@ function App() {
                       }}
                     >
                       <img
-                        src={game.poster || game.image}
+                        src={getGameImageUrl(game)}
                         alt={game.title || game.name}
                         className="w-8 h-10 sm:w-12 sm:h-16 object-cover rounded"
+                        referrerPolicy="no-referrer"
                       />
                       <div>
                         <h4 className="font-semibold text-xs sm:text-base text-[var(--text-primary)]">

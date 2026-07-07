@@ -9,8 +9,18 @@ const API_BASE_URL = normalizeBaseUrl(
 );
 
 export { API_BASE_URL };
-const CACHE_PREFIX = 'gh_';
+const CACHE_PREFIX = 'gh_v5_';
 const CACHE_TTL = 30 * 60 * 1000;
+
+function purgeLegacyCache() {
+  try {
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("gh_") && !key.startsWith(CACHE_PREFIX))
+      .forEach((key) => localStorage.removeItem(key));
+  } catch {}
+}
+
+purgeLegacyCache();
 
 const PUBLIC_ENDPOINTS = [
   '/api/games',
@@ -74,15 +84,20 @@ async function fetchWithRetry(url, config, { retries = 2, retryDelay = 4000, tim
   throw lastError;
 }
 
-function clearGameCache() {
+function clearGameCache(gameId) {
   try {
     Object.keys(localStorage)
-      .filter((k) =>
-        k.startsWith(CACHE_PREFIX + 'games_') ||
-        k.startsWith(CACHE_PREFIX + 'homepage_') ||
-        k.startsWith(CACHE_PREFIX + 'trending_') ||
-        k.startsWith(CACHE_PREFIX + 'game_')
-      )
+      .filter((k) => {
+        if (gameId) {
+          return k === CACHE_PREFIX + 'game_' + gameId;
+        }
+        return (
+          k.startsWith(CACHE_PREFIX + 'games_') ||
+          k.startsWith(CACHE_PREFIX + 'homepage_') ||
+          k.startsWith(CACHE_PREFIX + 'trending_') ||
+          k.startsWith(CACHE_PREFIX + 'game_')
+        );
+      })
       .forEach((k) => localStorage.removeItem(k));
   } catch {}
 }
@@ -220,10 +235,13 @@ class ApiService {
     return getCache('game_' + gameId);
   }
 
-  async getGameById(gameId) {
+  async getGameById(gameId, { forceRefresh = false } = {}) {
     const cacheKey = 'game_' + gameId;
+    if (forceRefresh) {
+      clearGameCache(gameId);
+    }
     const cached = getCache(cacheKey);
-    if (cached) {
+    if (cached && !forceRefresh) {
       this.request(`/api/games/${gameId}`).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
       return cached;
     }
@@ -242,16 +260,20 @@ class ApiService {
 
   // Rating endpoints
   async createOrUpdateRating(gameId, ratingData) {
-    return this.request(`/api/games/${gameId}/rate`, {
+    const result = await this.request(`/api/games/${gameId}/rate`, {
       method: "POST",
       body: JSON.stringify(ratingData),
     });
+    clearGameCache(gameId);
+    return result;
   }
 
   async deleteRating(gameId) {
-    return this.request(`/api/games/${gameId}/rate`, {
+    const result = await this.request(`/api/games/${gameId}/rate`, {
       method: "DELETE",
     });
+    clearGameCache(gameId);
+    return result;
   }
 
   async markReviewHelpful(ratingId) {

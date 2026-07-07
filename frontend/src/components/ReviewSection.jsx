@@ -39,7 +39,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       }
 
       // Load game details including user rating
-      const gameData = await apiService.getGameById(gameId);
+      const gameData = await apiService.getGameById(gameId, { forceRefresh: true });
 
       if (gameData.userRating) {
         setUserRating(gameData.userRating);

@@ -25,6 +25,16 @@ const reviewTemplates = [
   "Really immersive experience with great attention to world-building.",
   "Good but not great. There are better options in this genre.",
   "An emotional journey that stayed with me long after I finished playing.",
+  "The level design is phenomenal and each area feels handcrafted with purpose.",
+  "Performance is smooth and the art direction is consistently stunning throughout.",
+  "The character development is some of the best I have seen in gaming.",
+  "Great voice acting and a script that actually made me care about the characters.",
+  "Tight controls and responsive gameplay make this a joy to play.",
+  "The open world feels alive with dynamic events and interesting encounters.",
+  "Excellent pacing that keeps you engaged from the opening scene to the credits.",
+  "The weapon variety and upgrade system adds so much depth to the gameplay loop.",
+  "This is the kind of game that reminds you why you love video games.",
+  "A solid experience with great production values and satisfying mechanics.",
 ];
 
 const negativeReviews = [
@@ -36,6 +46,8 @@ const negativeReviews = [
   "I wanted to like this game but the technical problems made it unplayable at times.",
   "Mediocre at best. There are much better games in this genre.",
   "The controls are clunky and the UI is a mess. Needs major improvements.",
+  "Repetitive mission structure really drags down the overall experience.",
+  "The microtransactions are aggressively predatory and ruin the progression.",
 ];
 
 const topGames = {
@@ -52,6 +64,7 @@ const topGames = {
   "Final Fantasy VII Remake": 9.0,
   "Resident Evil 4 Remake": 9.2,
   "Minecraft": 8.8,
+  "Grand Theft Auto VI": 9.8,
   "Grand Theft Auto V": 9.5,
   "Spider-Man 2": 9.0,
   "Alan Wake 2": 9.0,
@@ -64,7 +77,7 @@ const topGames = {
   "Helldivers 2": 8.5,
   "Star Wars Jedi: Survivor": 8.5,
   "Metal Gear Solid V": 9.0,
-  "Cyberpunk 2077": 8.0,
+  "Cyberpunk 2077": 8.5,
   "Hogwarts Legacy": 8.0,
   "Palworld": 8.0,
   "Gran Turismo 7": 8.5,
@@ -74,7 +87,7 @@ const topGames = {
   "Assassin's Creed: Mirage": 7.5,
   "FC 24": 7.5,
   "Mortal Kombat 1": 8.0,
-  "Call of Duty: Modern Warfare III": 6.5,
+  "Call of Duty: Modern Warfare III": 7.0,
   "NBA 2K24": 6.5,
   "Overwatch 2": 7.0,
   "Apex Legends": 8.0,
@@ -83,20 +96,20 @@ const topGames = {
   "Lost Ark": 7.5,
   "New World": 7.0,
   "Final Fantasy XIV": 9.0,
-  "World of Warcraft": 8.0,
+  "World of Warcraft": 8.5,
   "Counter-Strike 2": 8.0,
   "Valorant": 8.0,
   "Dota 2": 8.0,
   "League of Legends": 7.5,
   "Fortnite": 7.5,
-  "Grand Theft Auto VI": 9.5,
+  "Grand Theft Auto VI": 9.8,
   "Monster Hunter Wilds": 8.8,
   "Doom: The Dark Ages": 8.5,
   "Death Stranding 2: On the Beach": 8.5,
   "Assassin's Creed Shadows": 8.0,
   Avowed: 8.0,
   "Metroid Prime 4: Beyond": 9.0,
-  "Ghost of Yotei": 8.5,
+  "Ghost of Yotei": 9.5,
   "Borderlands 4": 8.0,
   "Sid Meier's Civilization VII": 8.5,
   "Split Fiction": 8.5,
@@ -108,16 +121,17 @@ const topGames = {
   "Like a Dragon: Pirate Yakuza in Hawaii": 8.0,
   "Clair Obscur: Expedition 33": 7.5,
   "South of Midnight": 7.5,
-  "The Witcher IV": 9.0,
+  "The Witcher IV": 9.5,
   "Marvel's Wolverine": 8.5,
   "Gears of War: E-Day": 8.5,
   "Mass Effect 5": 8.5,
-  "Resident Evil 2 Remake": 9.0,
-  "Resident Evil 3 Remake": 7.5,
-  "Resident Evil 7: Biohazard": 9.0,
-  "Resident Evil Village": 8.5,
-  "Resident Evil 5": 7.5,
-  "Resident Evil 0": 7.0,
+  "Resident Evil 2 Remake": 9.5,
+  "Resident Evil 3 Remake": 8.5,
+  "Resident Evil 7: Biohazard": 9.5,
+  "Resident Evil Village": 9.2,
+  "Resident Evil 5": 8.5,
+  "Resident Evil 0": 8.0,
+  "Starfield": 7.5,
 };
 
 function getTargetRating(title) {
@@ -129,7 +143,7 @@ function getTargetRating(title) {
 }
 
 function generateRating(targetAvg) {
-  const variation = (Math.random() - 0.5) * 4;
+  const variation = (Math.random() - 0.5) * 3;
   let rating = Math.round(targetAvg + variation);
   rating = Math.max(1, Math.min(10, rating));
   return rating;
@@ -158,6 +172,8 @@ function generateReviewsForGame(game, count) {
         " Absolutely amazing, 10/10 would recommend to everyone.",
         " This is gaming at its absolute finest.",
         " A landmark title that will be remembered for years.",
+        " One of those rare games that comes along once in a generation.",
+        " Sets a new benchmark for the entire genre.",
       ];
       review += extras[Math.floor(Math.random() * extras.length)];
     } else if (rating <= 4) {

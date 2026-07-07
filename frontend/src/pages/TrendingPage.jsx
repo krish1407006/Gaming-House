@@ -4,6 +4,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import { dedupeGamesById } from "../utils/dedupeGames";
 
 
 const PAGE_SIZE = 8;
@@ -34,7 +35,9 @@ export default function TrendingPage() {
       const newGames = data?.games || [];
       const pagination = data?.pagination;
 
-      setTrendinggames((prev) => isInitial ? newGames : [...prev, ...newGames]);
+      setTrendinggames((prev) =>
+        dedupeGamesById(isInitial ? newGames : [...prev, ...newGames])
+      );
 
       if (pagination) {
         setPage(pagination.currentPage || 1);

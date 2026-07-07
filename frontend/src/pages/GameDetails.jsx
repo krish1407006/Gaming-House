@@ -17,6 +17,7 @@ import { Link, useParams } from "react-router-dom";
 import GameCard from "../components/GameCard";
 import ReviewSection from "../components/ReviewSection";
 import apiService from "../services/api";
+import { normalizeImageUrl } from "../utils/imageUrl";
 
 export default function GameDetailPage() {
   const { id } = useParams();
@@ -240,7 +241,7 @@ export default function GameDetailPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedImageIndex]);
 
-  const handleReviewUpdate = (updatedRating) => {
+  const handleReviewUpdate = async (updatedRating) => {
     if (updatedRating) {
       showNotification(
         `Review ${updatedRating.rating ? "updated" : "submitted"} successfully!`
@@ -248,7 +249,15 @@ export default function GameDetailPage() {
     } else {
       showNotification("Review deleted successfully!");
     }
-    loadGameData();
+
+    try {
+      const gameData = await apiService.getGameById(id, { forceRefresh: true });
+      if (gameData && (gameData._id || gameData.id)) {
+        setGame(gameData);
+      }
+    } catch {
+      loadGameData();
+    }
   };
 
   if (loading) {
@@ -314,21 +323,18 @@ export default function GameDetailPage() {
         <div className="relative mb-6 lg:mb-8 rounded-xl lg:rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
-            src={game.backdrop || game.poster}
+            src={normalizeImageUrl(game.poster)}
             alt={game.title}
-            className="w-full h-48 sm:h-64 lg:h-96 object-cover"
-            onError={(e) => {
-              if (e.target.src !== game.poster) {
-                e.target.src = game.poster;
-              }
-            }}
+            className="w-full h-48 sm:h-64 lg:h-96 object-cover object-center"
+            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 z-20 flex items-center px-4 sm:px-8 lg:px-12">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 items-center max-w-4xl w-full">
               <img
-                src={game.poster}
+                src={normalizeImageUrl(game.poster)}
                 alt={game.title}
                 className="w-20 sm:w-32 lg:w-48 h-auto rounded-lg lg:rounded-xl shadow-2xl border-2 theme-border-accent shrink-0"
+                referrerPolicy="no-referrer"
               />
               <div className="flex-1 text-center sm:text-left">
                 <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold theme-accent mb-2 lg:mb-4 drop-shadow-lg font-heading">
@@ -482,9 +488,10 @@ export default function GameDetailPage() {
                       onClick={() => handleImageClick(index)}
                     >
                       <img
-                        src={screenshot}
+                        src={normalizeImageUrl(screenshot)}
                         alt={`${game.title} game image ${index + 1}`}
                         className="w-full h-24 sm:h-32 lg:h-40 object-cover"
+                        referrerPolicy="no-referrer"
                         onError={(e) => {
                           e.target.style.display = "none";
                         }}
@@ -517,9 +524,10 @@ export default function GameDetailPage() {
                 </button>
 
                 <img
-                  src={game.screenshots[selectedImageIndex]}
+                  src={normalizeImageUrl(game.screenshots[selectedImageIndex])}
                   alt={`${game.title} game image ${selectedImageIndex + 1}`}
                   className="select-none"
+                  referrerPolicy="no-referrer"
                   style={{
                     position: 'absolute',
                     inset: 0,
@@ -596,9 +604,10 @@ export default function GameDetailPage() {
               </div>
               <div className="p-4 lg:p-6">
                 <img
-                  src={game.poster}
+                  src={normalizeImageUrl(game.poster)}
                   alt={game.title}
                   className="w-full rounded-lg shadow-lg"
+                  referrerPolicy="no-referrer"
                 />
               </div>
             </div>

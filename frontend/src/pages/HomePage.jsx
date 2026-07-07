@@ -3,6 +3,7 @@ import GameCard from "../components/GameCard";
 import SkeletonCard from "../components/SkeletonCard";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import { dedupeGamesById } from "../utils/dedupeGames";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
 
 
@@ -44,7 +45,9 @@ export default function HomePage() {
       const newGames = response?.games || [];
       const pagination = response?.pagination;
 
-      setGames((prev) => isInitial ? newGames : [...prev, ...newGames]);
+      setGames((prev) =>
+        dedupeGamesById(isInitial ? newGames : [...prev, ...newGames])
+      );
 
       if (pagination) {
         setPage(pagination.currentPage || 1);

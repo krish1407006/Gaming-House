@@ -4,6 +4,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import { dedupeGamesById } from "../utils/dedupeGames";
 
 
 const PAGE_SIZE = 8;
@@ -47,7 +48,9 @@ export default function TopRatedPage() {
         ? all.filter((g) => (g.averageRating || 0) >= minR)
         : all;
 
-      setGames((prev) => isInitial ? filtered : [...prev, ...filtered]);
+      setGames((prev) =>
+        dedupeGamesById(isInitial ? filtered : [...prev, ...filtered])
+      );
       const pag = response?.pagination;
       if (pag) {
         setPage(pag.currentPage || 1);

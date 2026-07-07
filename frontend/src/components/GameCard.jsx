@@ -1,6 +1,10 @@
 import React from "react";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getGameImageUrl, normalizeImageUrl } from "../utils/imageUrl";
+
+const EPIC_FALLBACK =
+  "https://fortnite-api.com/images/map_en.png";
 
 function GameCard({ game, priority = false }) {
   const gameId = game.gameId || game._id || `temp_${Date.now()}`;
@@ -13,8 +17,8 @@ function GameCard({ game, priority = false }) {
   `);
 
   const getImageSrc = () => {
-    const imageUrl = game.image || game.poster;
-    return (imageUrl && imageUrl.trim() !== '' && imageUrl !== null && imageUrl !== undefined) ? imageUrl : fallbackImage;
+    const imageUrl = getGameImageUrl(game);
+    return imageUrl && imageUrl.trim() !== "" ? imageUrl : fallbackImage;
   };
 
   const title = game.name || game.title || 'Untitled Game';
@@ -37,8 +41,23 @@ function GameCard({ game, priority = false }) {
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={priority ? "high" : "auto"}
+          referrerPolicy="no-referrer"
           onError={(e) => {
-            if (e.target.src !== fallbackImage) {
+            const src = e.target.src;
+            if (src.includes("unrealengine.com") && src !== EPIC_FALLBACK) {
+              e.target.src = EPIC_FALLBACK;
+              return;
+            }
+            const normalized = normalizeImageUrl(src);
+            if (normalized !== src) {
+              e.target.src = normalized;
+              return;
+            }
+            if (src.includes("library_hero")) {
+              e.target.src = src.replace("library_hero", "header");
+              return;
+            }
+            if (src !== fallbackImage) {
               e.target.src = fallbackImage;
             }
           }}
