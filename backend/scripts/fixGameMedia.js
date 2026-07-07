@@ -176,6 +176,42 @@ export async function updateNintendoPosters() {
   await mongoose.disconnect();
 }
 
+// ─── fixZeldaMedia ────────────────────────────────────────
+export async function fixZeldaMedia() {
+  const POSTER =
+    "https://assets.nintendo.com/image/upload/f_auto/q_auto/dpr_2.0/c_scale,w_1920/ncom/en_US/games/switch/t/the-legend-of-zelda-breath-of-the-wild-switch/hero";
+  const BACKDROP =
+    "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_scale,w_1920/Marketing/68272fb37fa56918996af8bfceddbc4223c2746af7c325b2067f0c62c65ef8c0/pmp_lhsdvby/parallax/link-landscape-small-bg-2x";
+  const SCREENSHOT_BASE =
+    "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_scale,w_1920/store/software/switch/70010000000025/";
+  const SCREENSHOTS = [
+    POSTER,
+    `${SCREENSHOT_BASE}7137262b5a64d921e193653f8aa0b722925abc5680380ca0e18a5cfd91697f58`,
+    `${SCREENSHOT_BASE}eb82bc845c62948e12a4b7c8c241a22bf6d2acc9cbe7db00898926d861adf0ae`,
+    `${SCREENSHOT_BASE}37559b8fa80cf0708c8dcef23ef4fea9af26d997a7c6f981565bc50eeaa3cc0f`,
+    `${SCREENSHOT_BASE}b478fce889ed0237b252978f046884121f6be959f5b4b62e4fc03970bd617647`,
+    `${SCREENSHOT_BASE}68f832d604ad2a85fa3dda00ae5345232fe271e01df40a48bb1fb2ed291f92f4`,
+    `${SCREENSHOT_BASE}0375d13a121f32ff06ef96aac1919b138f3ebe13e40cc0b2de7d39237b87fb86`,
+    `${SCREENSHOT_BASE}8f7854a3b7271d364e1e421aced946982235d22b420e1a0cec5296a62d97c225`,
+  ];
+
+  await connectDB();
+  const result = await Game.updateOne(
+    { title: "The Legend of Zelda: Breath of the Wild", isActive: true },
+    { $set: { poster: POSTER, backdrop: BACKDROP, screenshots: SCREENSHOTS } }
+  );
+
+  if (result.matchedCount === 0) {
+    console.log("Zelda game not found");
+  } else {
+    console.log("Fixed The Legend of Zelda: Breath of the Wild media");
+    console.log(`  poster: ${POSTER}`);
+    console.log(`  screenshots: ${SCREENSHOTS.length} official Nintendo images`);
+  }
+
+  await mongoose.disconnect();
+}
+
 // ─── restoreGameMedia ─────────────────────────────────────
 export async function restoreGameMedia() {
   await connectDB();
@@ -233,7 +269,7 @@ export async function findAndReplaceVertical() {
 }
 
 // ─── CLI dispatch ─────────────────────────────────────────
-const tasks = { fixPosters, fixBrokenMedia, fixWolverinePoster, updateNintendoPosters, restoreGameMedia, findAndReplaceVertical };
+const tasks = { fixPosters, fixBrokenMedia, fixWolverinePoster, updateNintendoPosters, fixZeldaMedia, restoreGameMedia, findAndReplaceVertical };
 const task = process.argv[2];
 if (tasks[task]) tasks[task]().catch((e) => { console.error(e); process.exit(1); });
 else console.log(`Usage: node fixGameMedia.js <${Object.keys(tasks).join("|")}>`);

@@ -9,7 +9,7 @@ const API_BASE_URL = normalizeBaseUrl(
 );
 
 export { API_BASE_URL };
-const CACHE_PREFIX = 'gh_v5_';
+const CACHE_PREFIX = 'gh_v6_';
 const CACHE_TTL = 30 * 60 * 1000;
 
 function purgeLegacyCache() {
