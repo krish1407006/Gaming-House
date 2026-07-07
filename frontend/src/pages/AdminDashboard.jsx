@@ -88,9 +88,9 @@ export default function AdminDashboard({ onGameChange }) {
   const isAdmin = isUserAdmin(user);
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
+    if (!isLoaded || !isSignedIn || !isAdmin) return;
     loadgames(1);
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, isAdmin]);
 
   const loadgames = async (pageNum = page) => {
     try {
@@ -112,7 +112,12 @@ export default function AdminDashboard({ onGameChange }) {
       }
     } catch (error) {
       console.error("Error loading games:", error);
-      setLoadError(error.message || "Failed to load games");
+      const message = error.message || "Failed to load games";
+      setLoadError(
+        message.includes("Admin access required")
+          ? "Backend rejected admin access. Set ADMIN_EMAILS on Render, or run backend/scripts/promoteAdmin.js to grant your Clerk account the admin role."
+          : message
+      );
       setgames([]);
     } finally {
       setLoading(false);
