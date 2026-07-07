@@ -116,6 +116,7 @@ export const getAllGames = async (req, res) => {
       sortOrder,
       activeOnly: activeOnly === "true",
       featuredOnly: featuredOnly === "true",
+      includeAllFields: true,
     });
 
     if (!result.success) {

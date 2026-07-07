@@ -174,17 +174,25 @@ export const deleteUser = async (userId) => {
   }
 };
 
+const ADMIN_ROLES = ["admin", "super_admin", "moderator"];
+
 export const isUserAdmin = async (userId) => {
   try {
     const user = await clerkClient.users.getUser(userId);
-    
-    // Get admin emails from environment variable
+
+    const userRole = user.publicMetadata?.role;
+    if (userRole && ADMIN_ROLES.includes(userRole)) {
+      return true;
+    }
+
     const adminEmailsString = process.env.ADMIN_EMAILS || "";
-    const ADMIN_EMAILS = adminEmailsString.split(",").map(email => email.trim()).filter(email => email);
-    
-    // Check if user email is in admin emails list
+    const adminEmails = adminEmailsString
+      .split(",")
+      .map((email) => email.trim())
+      .filter(Boolean);
+
     const userEmail = user.emailAddresses?.[0]?.emailAddress;
-    if (userEmail && ADMIN_EMAILS.includes(userEmail)) {
+    if (userEmail && adminEmails.includes(userEmail)) {
       return true;
     }
 

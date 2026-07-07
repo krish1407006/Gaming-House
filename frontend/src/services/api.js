@@ -186,20 +186,15 @@ class ApiService {
   }
 
   async getAuthToken() {
-    // This will be implemented with Clerk's getToken method
     try {
-      if (window.__clerk_token_getter) {
+      if (!window.__clerk_token_getter) return null;
+
+      for (let attempt = 0; attempt < 3; attempt++) {
         const token = await window.__clerk_token_getter();
-        // Only log token status occasionally to reduce spam
-        if (Math.random() < 0.1) { // Log ~10% of the time
-          console.log(
-            "Auth token retrieved:",
-            token ? "✓ Token exists" : "✗ No token"
-          );
+        if (token) return token;
+        if (attempt < 2) {
+          await sleep(200 * (attempt + 1));
         }
-        return token;
-      } else if (Math.random() < 0.1) {
-        console.warn("No token getter available");
       }
     } catch (error) {
       console.warn("Failed to get auth token:", error);
@@ -362,6 +357,12 @@ class ApiService {
   }
 
   // Admin Methods for Game Management
+  async getAdminGames(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = `/api/admin/games${queryString ? `?${queryString}` : ""}`;
+    return this.request(endpoint);
+  }
+
   async createGame(gameData) {
     try {
       console.log("� Creating new game:", gameData.title);
@@ -436,15 +437,6 @@ class ApiService {
     const limit = parseInt(params.limit) || 20;
 
     try {
-      if (page === 1 && limit <= 8) {
-        const staticData = await this.fetchStaticSnapshot("trending.json");
-        if (staticData) {
-          setCache(cacheKey, staticData);
-          this.refreshInBackground(endpoint, cacheKey);
-          return staticData;
-        }
-      }
-
       const cached = getCache(cacheKey);
       if (cached) {
         this.refreshInBackground(endpoint, cacheKey);
@@ -516,15 +508,6 @@ class ApiService {
     const cacheKey = 'homepage_' + page + '_' + limit;
 
     try {
-      if (page === 1 && limit <= 8) {
-        const staticData = await this.fetchStaticSnapshot("homepage.json");
-        if (staticData) {
-          setCache(cacheKey, staticData);
-          this.refreshInBackground(endpoint, cacheKey);
-          return staticData;
-        }
-      }
-
       const cached = getCache(cacheKey);
       if (cached) {
         this.refreshInBackground(endpoint, cacheKey);

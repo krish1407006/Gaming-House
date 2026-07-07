@@ -1,5 +1,5 @@
 import React from "react";
-import StarRating from "./StarRating";
+import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 function GameCard({ game, priority = false }) {
@@ -17,11 +17,11 @@ function GameCard({ game, priority = false }) {
     return (imageUrl && imageUrl.trim() !== '' && imageUrl !== null && imageUrl !== undefined) ? imageUrl : fallbackImage;
   };
 
-  const year = game.year ||
-    (game.releaseDate
-      ? new Date(game.releaseDate).getFullYear()
-      : null);
-
+  const title = game.name || game.title || 'Untitled Game';
+  const year = game.year || (game.releaseDate ? new Date(game.releaseDate).getFullYear() : null);
+  const primaryGenre = Array.isArray(game.genre) ? game.genre[0] : game.genre;
+  const hasRatings = (game.totalRatings || 0) > 0;
+  const rating = game.averageRating || 0;
   const description = game.desc || game.description;
 
   return (
@@ -32,7 +32,7 @@ function GameCard({ game, priority = false }) {
       <div className="aspect-[16/9] relative overflow-hidden bg-[var(--bg-primary)]">
         <img
           src={getImageSrc() || fallbackImage}
-          alt={game.name || game.title || 'Game poster'}
+          alt={title}
           className="w-full h-full object-contain object-center transition-all duration-700 ease-out"
           loading={priority ? "eager" : "lazy"}
           decoding="async"
@@ -46,6 +46,18 @@ function GameCard({ game, priority = false }) {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent group-hover:from-black/70 group-hover:via-black/40 group-hover:to-black/5 transition-all duration-500" />
 
+        <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm border border-white/20">
+          <FaStar className="text-amber-400 text-[10px] sm:text-xs shrink-0" />
+          <span className="text-[10px] sm:text-xs font-bold text-white tabular-nums">
+            {hasRatings ? rating.toFixed(1) : '—'}
+          </span>
+          {hasRatings && (
+            <span className="text-[9px] sm:text-[10px] text-white/60 hidden sm:inline">
+              ({game.totalRatings})
+            </span>
+          )}
+        </div>
+
         {year && (
           <span className="absolute top-3 right-3 bg-white/25 backdrop-blur-sm text-[var(--accent-color)] text-[10px] sm:text-xs font-bold px-2.5 py-1 tracking-[0.15em] border border-white/30">
             {year}
@@ -54,23 +66,13 @@ function GameCard({ game, priority = false }) {
 
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-5">
           <h3 className="text-sm sm:text-base lg:text-lg font-heading font-bold text-[var(--accent-color)] leading-tight mb-1">
-            {game.name || game.title}
+            {title}
           </h3>
-
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <div className="flex-shrink-0 scale-[0.65] sm:scale-75 origin-left group-hover:animate-pulse">
-              {game.totalRatings > 0 ? (
-                <StarRating rating={game.averageRating || 0} />
-              ) : (
-                <span className="text-[10px] text-[var(--text-muted)]">No ratings</span>
-              )}
-            </div>
-            {game.totalRatings > 0 && (
-              <span className="text-[10px] text-[var(--text-muted)]">
-                ({game.totalRatings})
-              </span>
-            )}
-          </div>
+          {primaryGenre && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-white/10 text-[var(--accent-color)] border border-white/20">
+              {primaryGenre}
+            </span>
+          )}
         </div>
       </div>
 
@@ -87,7 +89,6 @@ function GameCard({ game, priority = false }) {
           )}
         </div>
       )}
-
     </Link>
   );
 }

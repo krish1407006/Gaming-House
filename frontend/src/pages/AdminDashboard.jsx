@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import { Icon } from "../components/Icons";
-import ApiService from "../services/api";
+import ApiService, { API_BASE_URL } from "../services/api";
 
 import { isUserAdmin } from "../adminDetails";
 
 export default function AdminDashboard({ onGameChange }) {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+  const { isSignedIn } = useAuth();
   const [games, setgames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editinggame, setEditinggame] = useState(null);
 
@@ -28,7 +30,7 @@ export default function AdminDashboard({ onGameChange }) {
         console.log('❌ Admin access needed. Options:');
         console.log('1. Add your email to ADMIN_EMAILS in adminDetails.js');
         console.log('2. Or run this in console to make yourself admin:');
-        console.log(`fetch('https://criticscore.onrender.com/api/dev/make-admin', {
+        console.log(`fetch('${API_BASE_URL}/dev/make-admin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: '${userEmail}' })
@@ -85,15 +87,22 @@ export default function AdminDashboard({ onGameChange }) {
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
 
-  // Load games
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
     loadgames(1);
-  }, []);
+  }, [isLoaded, isSignedIn]);
 
   const loadgames = async (pageNum = page) => {
     try {
       setLoading(true);
-      const response = await ApiService.getGames({ page: pageNum, limit: ADMIN_PAGE_SIZE, sortBy: 'createdAt', sortOrder: 'desc' });
+      setLoadError(null);
+      const response = await ApiService.getAdminGames({
+        page: pageNum,
+        limit: ADMIN_PAGE_SIZE,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+        activeOnly: "false",
+      });
       const gameData = Array.isArray(response) ? response : response.games || [];
       setgames(gameData);
       const pag = response?.pagination;
@@ -103,6 +112,8 @@ export default function AdminDashboard({ onGameChange }) {
       }
     } catch (error) {
       console.error("Error loading games:", error);
+      setLoadError(error.message || "Failed to load games");
+      setgames([]);
     } finally {
       setLoading(false);
     }
@@ -117,7 +128,10 @@ export default function AdminDashboard({ onGameChange }) {
     if (!formData.description.trim()) errors.description = "Description is required";
     if (!formData.director.trim()) errors.director = "Director is required";
     if (!formData.year) errors.year = "Release year is required";
-    if (!formData.runtime || formData.runtime <= 0) errors.runtime = "Valid runtime is required";
+    const runtimeNum = parseInt(formData.runtime, 10);
+    if (!formData.runtime || Number.isNaN(runtimeNum) || runtimeNum <= 0) {
+      errors.runtime = "Valid runtime is required";
+    }
     if (!formData.language.trim()) errors.language = "Language is required";
     if (!formData.country.trim()) errors.country = "Country is required";
     
@@ -177,17 +191,15 @@ export default function AdminDashboard({ onGameChange }) {
         trailer: formData.trailer.trim() || undefined,
         backdrop: formData.backdrop.trim() || undefined,
         screenshots: [formData.screenshot1, formData.screenshot2, formData.screenshot3, formData.screenshot4, formData.screenshot5].filter(Boolean),
-        // Convert year to proper releaseDate for backend
-        releaseDate: formData.year ? new Date(`${formData.year}-01-01`) : new Date(),
-        // Convert runtime to duration (number) for backend
-        duration: parseInt(formData.runtime) || 120,
+        releaseDate: formData.year ? `${formData.year}-01-01T00:00:00.000Z` : new Date().toISOString(),
+        duration: parseInt(formData.runtime, 10) || 120,
         // Convert genre string to array for backend
         genre: formData.genre ? formData.genre.split(',').map(g => g.trim()).filter(g => g) : [],
         language: formData.language || 'English',
         country: formData.country || 'USA',
-        budget: formData.budget ? parseInt(formData.budget) : undefined,
-        boxOffice: formData.boxOffice ? parseInt(formData.boxOffice) : undefined,
-        steamAppId: formData.steamAppId ? parseInt(formData.steamAppId) : undefined,
+        budget: formData.budget ? parseInt(formData.budget, 10) : undefined,
+        boxOffice: formData.boxOffice ? parseInt(formData.boxOffice, 10) : undefined,
+        steamAppId: formData.steamAppId ? parseInt(formData.steamAppId, 10) : undefined,
         featured: formData.featured,
         trending: formData.trending,
         isActive: formData.isActive,
@@ -198,7 +210,11 @@ export default function AdminDashboard({ onGameChange }) {
       console.log('📤 Sending game data to backend:', gameData);
 
       if (editinggame) {
-        await ApiService.updateGame(editinggame._id, gameData);
+        const gameId = editinggame._id || editinggame.id;
+        if (!gameId) {
+          throw new Error("Missing game ID — please close the form and try editing again.");
+        }
+        await ApiService.updateGame(String(gameId), gameData);
   console.log('✅ Game updated successfully');
   alert("Game updated successfully!");
       } else {
@@ -222,8 +238,7 @@ export default function AdminDashboard({ onGameChange }) {
     }
   };
 
-  const handleEdit = (game) => {
-    setEditinggame(game);
+  const populateFormFromGame = (game) => {
     setFormData({
       title: game.title || "",
       description: game.description || "",
@@ -235,22 +250,39 @@ export default function AdminDashboard({ onGameChange }) {
       screenshot3: game.screenshots?.[2] || "",
       screenshot4: game.screenshots?.[3] || "",
       screenshot5: game.screenshots?.[4] || "",
-      year: game.year || new Date(game.releaseDate).getFullYear() || "",
+      year: game.year || (game.releaseDate ? new Date(game.releaseDate).getFullYear() : ""),
       runtime: game.runtime || game.duration || "",
       genre: Array.isArray(game.genre) ? game.genre.join(", ") : game.genre || "",
       director: game.director || "",
       language: game.language || "English",
       country: game.country || "USA",
-      budget: game.budget || "",
-      boxOffice: game.boxOffice || "",
+      budget: game.budget ?? "",
+      boxOffice: game.boxOffice ?? "",
       awards: game.awards || "",
       steamAppId: game.steamAppId ? String(game.steamAppId) : "",
       featured: game.featured || false,
       trending: game.trending || false,
       isActive: game.isActive !== false,
     });
+  };
+
+  const handleEdit = async (game) => {
+    const gameId = game._id || game.id;
+    setEditinggame(game);
     setFormErrors({});
     setShowCreateForm(true);
+
+    populateFormFromGame(game);
+
+    if (!gameId) return;
+
+    try {
+      const fullGame = await ApiService.getGameById(gameId);
+      setEditinggame(fullGame);
+      populateFormFromGame(fullGame);
+    } catch (error) {
+      console.warn("Could not load full game details, using list data:", error);
+    }
   };
 
   const openTrendingModal = async () => {
@@ -511,8 +543,7 @@ export default function AdminDashboard({ onGameChange }) {
     
     try {
       const userEmail = user.emailAddresses?.[0]?.emailAddress;
-      const API_BASE_URL = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${API_BASE_URL}api/dev/make-admin`, {
+      const response = await fetch(`${API_BASE_URL}/dev/make-admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail })
@@ -702,12 +733,25 @@ export default function AdminDashboard({ onGameChange }) {
               </h2>
           </div>
           
+          {loadError && !loading && (
+            <div className="p-6 m-4 rounded-lg border border-red-500/40 bg-red-500/10">
+              <p className="text-red-400 font-semibold mb-2">Could not load games</p>
+              <p className="text-sm theme-text-secondary mb-4">{loadError}</p>
+              <button
+                onClick={() => loadgames(page)}
+                className="px-4 py-2 theme-button-primary rounded-lg text-sm font-semibold"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           {loading ? (
             <div className="p-8 text-center">
               <div className="settings-loading-spinner w-8 h-8 mx-auto mb-4"></div>
               <p>Loading games...</p>
             </div>
-          ) : (
+          ) : !loadError ? (
             <div className="overflow-x-auto table-scrollbar">
               <table className="w-full min-w-[600px]">
                 <thead className="theme-bg-secondary">
@@ -796,10 +840,15 @@ export default function AdminDashboard({ onGameChange }) {
                   ))}
                 </tbody>
               </table>
+              {games.length === 0 && (
+                <div className="p-8 text-center theme-text-secondary">
+                  <p>No games found. Add your first game using the button above.</p>
+                </div>
+              )}
             </div>
-          )}
+          ) : null}
 
-          {totalPages > 1 && (
+          {totalPages > 1 && !loadError && (
             <div className="flex items-center justify-center gap-2 p-4 border-t theme-border">
               <button
                 onClick={() => loadgames(Math.max(1, page - 1))}

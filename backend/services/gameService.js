@@ -4,6 +4,55 @@ import Rating from "../models/Rating.js";
 
 const LISTING_FIELDS = "title poster description releaseDate averageRating totalRatings genre";
 
+const VALID_GENRES = [
+  "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
+  "Documentary", "Drama", "Family", "Fantasy", "History", "Horror",
+  "Music", "Mystery", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western",
+];
+
+export function sanitizeGameUpdateData(updateData = {}) {
+  const {
+    averageRating,
+    totalRatings,
+    addedBy,
+    _id,
+    __v,
+    createdAt,
+    updatedAt,
+    reviews,
+    userRating,
+    ...rest
+  } = updateData;
+
+  const sanitized = { ...rest };
+
+  if (sanitized.releaseDate) {
+    const parsed = new Date(sanitized.releaseDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      sanitized.releaseDate = parsed;
+    } else {
+      delete sanitized.releaseDate;
+    }
+  }
+
+  if (Array.isArray(sanitized.genre)) {
+    sanitized.genre = sanitized.genre.filter((g) => VALID_GENRES.includes(g));
+  }
+
+  for (const key of ["duration", "budget", "boxOffice", "steamAppId"]) {
+    if (sanitized[key] !== undefined) {
+      const num = Number(sanitized[key]);
+      if (Number.isNaN(num)) {
+        delete sanitized[key];
+      } else {
+        sanitized[key] = num;
+      }
+    }
+  }
+
+  return sanitized;
+}
+
 let totalActiveCount = null;
 let totalActiveCountTime = 0;
 const COUNT_CACHE_TTL = 60000;
@@ -29,6 +78,7 @@ export const getGames = async (options = {}) => {
       sortOrder = "desc",
       activeOnly = true,
       featuredOnly = false,
+      includeAllFields = false,
     } = options;
 
     const skip = (page - 1) * limit;
@@ -71,10 +121,13 @@ export const getGames = async (options = {}) => {
     const sort = {};
     sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
+    let queryBuilder = Game.find(query).sort(sort).skip(skip).limit(parseInt(limit));
+    if (!includeAllFields) {
+      queryBuilder = queryBuilder.select(LISTING_FIELDS);
+    }
+
     const [found, totalCount] = await Promise.all([
-      Game.find(query)
-        .select(LISTING_FIELDS)
-        .sort(sort).skip(skip).limit(parseInt(limit)).lean(),
+      queryBuilder.lean(),
       Game.countDocuments(query),
     ]);
 
@@ -168,8 +221,7 @@ export const createGame = async (gameData, adminUserId) => {
 
 export const updateGame = async (gameId, updateData) => {
   try {
-    const { averageRating, totalRatings, addedBy, ...validUpdateData } =
-      updateData;
+    const validUpdateData = sanitizeGameUpdateData(updateData);
 
     const game = await Game.findByIdAndUpdate(gameId, validUpdateData, {
       new: true,

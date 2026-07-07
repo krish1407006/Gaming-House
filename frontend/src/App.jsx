@@ -35,12 +35,10 @@ function App() {
   const navigate = useNavigate();
   const searchTimeout = useRef(null);
 
-  // Set up auth token for API service
-  React.useEffect(() => {
-    if (getToken) {
-      window.__clerk_token_getter = getToken;
-    }
-  }, [getToken]);
+  // Register before child effects run so admin/API calls have a token on first load
+  if (getToken) {
+    window.__clerk_token_getter = getToken;
+  }
 
   // Search function with debounce
   const handleSearch = useCallback((value) => {
