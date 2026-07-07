@@ -671,8 +671,7 @@ export default function GameDetailPage() {
                               href={dl.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20 cursor-pointer"
-                              style={{ background: 'linear-gradient(135deg, rgba(27,40,56,0.9), rgba(42,71,94,0.9))' }}
+                              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/20 cursor-pointer bg-black/20 backdrop-blur-sm"
                             >
                               <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-white/10">
                                 <FaExternalLinkAlt className="text-sm text-emerald-400" />
@@ -697,8 +696,8 @@ export default function GameDetailPage() {
                               href={dl.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
-                              style={{ background: 'linear-gradient(135deg, rgba(220,38,38,0.25), rgba(220,38,38,0.08))', border: '1px solid rgba(220,38,38,0.35)' }}
+                              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] bg-black/20 backdrop-blur-sm"
+                              style={{ border: '1px solid rgba(220,38,38,0.35)' }}
                             >
                               <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444)', boxShadow: '0 0 16px rgba(220,38,38,0.4)' }}>
                                 <FaDownload className="text-white text-sm" />
