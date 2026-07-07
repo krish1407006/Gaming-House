@@ -599,11 +599,9 @@ export default function GameDetailPage() {
             </div>
 
             {(downloads.steamAppId || downloads.downloads.some(d => d.type === 'genuine') || downloads.downloads.some(d => d.type === 'piracy')) && (
-              <div className="rounded-xl overflow-hidden relative group/downloads">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/40 via-blue-600/20 to-cyan-600/40 opacity-60 group-hover/downloads:opacity-80 transition-opacity duration-500"></div>
-                <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 40px rgba(139,92,246,0.15)' }}></div>
+              <div className="rounded-xl overflow-hidden relative group/downloads theme-bg-glass">
                 <div className="relative">
-                  <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-3 lg:pb-4 border-b border-white/10" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.2), rgba(6,182,212,0.3))' }}>
+                  <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-3 lg:pb-4 border-b border-white/5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #a855f7, #3b82f6)' }}>
@@ -621,7 +619,7 @@ export default function GameDetailPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 lg:p-5 space-y-3" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6))' }}>
+                  <div className="p-4 lg:p-5 space-y-3">
                     {(downloads.steamAppId || downloads.downloads.some(d => d.type === 'genuine')) && (
                       <>
                         <p className="text-[11px] font-bold text-emerald-400 tracking-wider uppercase">Official Sources</p>

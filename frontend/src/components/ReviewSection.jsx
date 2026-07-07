@@ -241,7 +241,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
                 </div>
 
                 {userRating.review && (
-                  <div className="theme-bg-tertiary rounded-lg p-4">
+                  <div className="bg-black/20 backdrop-blur-sm rounded-lg p-4 border border-white/5">
                     <p className="theme-text-primary leading-relaxed">
                       {userRating.review}
                     </p>
@@ -367,7 +367,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="theme-bg-tertiary rounded-lg p-4 border-l-4 theme-border-accent"
+                className="bg-black/20 backdrop-blur-sm rounded-lg p-4 border-l-4 theme-border-accent border border-white/5"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
