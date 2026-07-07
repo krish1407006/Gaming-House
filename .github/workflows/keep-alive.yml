@@ -1,17 +1,30 @@
-name: Keep Render Server Awake
+name: Sync Static Game Data
 
 on:
   schedule:
-    # Render free tier sleeps after ~15 min idle — ping every 10 min
-    - cron: "*/10 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  ping:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping health endpoint
-        run: curl -fsS --max-time 90 "https://gaming-house.onrender.com/health"
+      - uses: actions/checkout@v4
 
-      - name: Warm games API
-        run: curl -fsS --max-time 90 "https://gaming-house.onrender.com/api/games/homepage?page=1&limit=8"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Update static game snapshots
+        run: node frontend/scripts/sync-static-games.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/data/
+          git diff --staged --quiet || git commit -m "chore: refresh static game snapshots"
+          git push

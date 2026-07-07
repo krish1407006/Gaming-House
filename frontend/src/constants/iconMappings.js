@@ -35,7 +35,7 @@ import {
   FiCheckCircle,
   FiXCircle,
   
-  // Movies & Entertainment
+  // Games & Entertainment
   FiFilm,
   FiPlay,
   FiStar,
@@ -60,9 +60,11 @@ import {
   FiShare2,
 } from 'react-icons/fi';
 
+import { FaGamepad } from 'react-icons/fa';
+
 import {
   // Genre specific icons
-  MdLocalMovies, // Action (movie icon)
+  MdLocalMovies, // Action (gaming icon)
   MdExplore, // Adventure
   MdAnimation, // Animation
   MdSentimentVerySatisfied, // Comedy
@@ -79,7 +81,7 @@ import {
   MdRocket, // Science Fiction
   MdSecurity, // War
   MdLandscape, // Western
-  MdMovie, // General movie icon
+  MdMovie, // General gaming media icon
 } from 'react-icons/md';
 
 // Icon configuration object
@@ -119,8 +121,9 @@ export const AppIcons = {
   checkCircle: FiCheckCircle,
   xCircle: FiXCircle,
   
-  // Movies & Entertainment
+  // Games & Entertainment
   film: FiFilm,
+  game: FaGamepad,
   play: FiPlay,
   star: FiStar,
   heart: FiHeart,

@@ -660,7 +660,7 @@ export default function AdminDashboard({ onGameChange }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
           <div className="theme-card p-4 lg:p-6 rounded-xl">
             <div className="flex items-center gap-3 lg:gap-4">
-              <Icon name="film" size={32} className="theme-accent lg:w-10 lg:h-10" />
+              <Icon name="game" size={32} className="theme-accent lg:w-10 lg:h-10" />
               <div>
                 <h3 className="text-xl lg:text-2xl font-bold">{games.length}</h3>
                 <p className="theme-text-secondary text-sm lg:text-base">Total Games</p>
@@ -839,7 +839,7 @@ export default function AdminDashboard({ onGameChange }) {
                   <div className="space-y-6">
                     <div className="border-b theme-border pb-4">
                       <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Icon name="film" size={20} />
+                        <Icon name="game" size={20} />
                         Basic Information
                       </h4>
                       

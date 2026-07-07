@@ -17,7 +17,6 @@ if (!PUBLISHABLE_KEY) {
 }
 
 apiService.prefetchCritical();
-apiService.startKeepAlive();
 
 // Clerk appearance configuration
 const clerkAppearance = {

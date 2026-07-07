@@ -16,7 +16,7 @@ export default function SettingsPage() {
     defaultRatingSystem: "numbers",
     language: "en",
     showAdultContent: false,
-    movieListView: "grid",
+    gameListView: "grid",
     itemsPerPage: 20,
     enableKeyboardShortcuts: true,
     showRatingCounts: true,
@@ -30,6 +30,10 @@ export default function SettingsPage() {
     if (savedSettings) {
       try {
         const parsedSettings = JSON.parse(savedSettings);
+        if (parsedSettings.movieListView && !parsedSettings.gameListView) {
+          parsedSettings.gameListView = parsedSettings.movieListView;
+          delete parsedSettings.movieListView;
+        }
         setSettings(parsedSettings);
       } catch (error) {
         console.error("Error parsing saved settings:", error);

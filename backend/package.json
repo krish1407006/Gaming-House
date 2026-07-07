@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "seed": "node scripts/seedMovies.js"
+    "seed": "node scripts/seedGames.js"
   },
   "keywords": [],
   "author": "",

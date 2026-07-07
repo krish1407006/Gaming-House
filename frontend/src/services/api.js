@@ -1,6 +1,14 @@
 import { errorHandler } from '../utils/errorHandler.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gaming-house.onrender.com";
+function normalizeBaseUrl(url) {
+  return (url || "").trim().replace(/\/+$/, "");
+}
+
+const API_BASE_URL = normalizeBaseUrl(
+  import.meta.env.VITE_API_URL || "https://gaming-house.onrender.com"
+);
+
+export { API_BASE_URL };
 const CACHE_PREFIX = 'gh_';
 const CACHE_TTL = 30 * 60 * 1000;
 
@@ -16,12 +24,17 @@ function isPublicEndpoint(endpoint) {
   return /^\/api\/games\/[^/]+(\/ratings|\/downloads)?$/.test(endpoint);
 }
 
-function getCache(key) {
+function getCache(key, { allowStale = false } = {}) {
   try {
     const raw = localStorage.getItem(CACHE_PREFIX + key);
     if (!raw) return null;
     const { data, expiry } = JSON.parse(raw);
-    if (Date.now() > expiry) { localStorage.removeItem(CACHE_PREFIX + key); return null; }
+    if (Date.now() > expiry) {
+      if (!allowStale) {
+        localStorage.removeItem(CACHE_PREFIX + key);
+        return null;
+      }
+    }
     return data;
   } catch { return null; }
 }
@@ -81,8 +94,29 @@ class ApiService {
     this.baseURL = API_BASE_URL;
   }
 
+  buildUrl(endpoint) {
+    return `${this.baseURL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  }
+
+  async fetchStaticSnapshot(filename) {
+    try {
+      const res = await fetch(`/data/${filename}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data?.games?.length ? data : null;
+    } catch {
+      return null;
+    }
+  }
+
+  refreshInBackground(endpoint, cacheKey) {
+    this.request(endpoint)
+      .then((r) => { if (r) setCache(cacheKey, r); })
+      .catch(() => {});
+  }
+
   async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    const url = this.buildUrl(endpoint);
     
     // Reduce logging for frequently called endpoints
     const isWatchlistRequest = endpoint.includes('/watchlist/check/');
@@ -128,9 +162,25 @@ class ApiService {
       }
       return result;
     } catch (error) {
-      // Use error handler for better error management
       const shouldSilence = isWatchlistRequest || isGameRequest;
       errorHandler.handleApiError(error, endpoint, shouldSilence);
+
+      if (isGameRequest && (options.method || "GET") === "GET") {
+        const cacheKey = endpoint.includes("/homepage")
+          ? "homepage_" + (new URL(url).searchParams.get("page") || "1") + "_" + (new URL(url).searchParams.get("limit") || "20")
+          : endpoint.includes("/trending")
+            ? "trending_" + new URL(url).searchParams.toString()
+            : endpoint.startsWith("/api/games/") && !endpoint.includes("/rate")
+              ? "game_" + endpoint.split("/")[3]?.split("?")[0]
+              : endpoint.startsWith("/api/games")
+                ? "games_" + new URL(url).searchParams.toString()
+                : null;
+        if (cacheKey) {
+          const stale = getCache(cacheKey, { allowStale: true });
+          if (stale) return stale;
+        }
+      }
+
       throw error;
     }
   }
@@ -379,19 +429,35 @@ class ApiService {
   }
 
   async getTrending(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = `/api/games/trending${queryString ? `?${queryString}` : ""}`;
+    const cacheKey = 'trending_' + queryString;
+    const page = parseInt(params.page) || 1;
+    const limit = parseInt(params.limit) || 20;
+
     try {
-      const queryString = new URLSearchParams(params).toString();
-      const endpoint = `/api/games/trending${queryString ? `?${queryString}` : ""}`;
-      const cacheKey = 'trending_' + queryString;
+      if (page === 1 && limit <= 8) {
+        const staticData = await this.fetchStaticSnapshot("trending.json");
+        if (staticData) {
+          setCache(cacheKey, staticData);
+          this.refreshInBackground(endpoint, cacheKey);
+          return staticData;
+        }
+      }
+
       const cached = getCache(cacheKey);
       if (cached) {
-        this.request(endpoint).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+        this.refreshInBackground(endpoint, cacheKey);
         return cached;
       }
       const data = await this.request(endpoint);
       if (data) setCache(cacheKey, data);
       return data;
     } catch (error) {
+      const stale = getCache(cacheKey, { allowStale: true });
+      if (stale) return stale;
+      const staticData = page === 1 ? await this.fetchStaticSnapshot("trending.json") : null;
+      if (staticData) return staticData;
       console.error("Error fetching trending games:", error);
       throw error;
     }
@@ -441,23 +507,37 @@ class ApiService {
     }
   }
 
-  peekHomepage(page = 1, limit = 20) {
-    return getCache('homepage_' + page + '_' + limit);
+  peekHomepage(page = 1, limit = 20, { allowStale = false } = {}) {
+    return getCache('homepage_' + page + '_' + limit, { allowStale });
   }
 
   async getHomepage(page = 1, limit = 20) {
+    const endpoint = `/api/games/homepage?page=${page}&limit=${limit}`;
+    const cacheKey = 'homepage_' + page + '_' + limit;
+
     try {
-      const endpoint = `/api/games/homepage?page=${page}&limit=${limit}`;
-      const cacheKey = 'homepage_' + page + '_' + limit;
+      if (page === 1 && limit <= 8) {
+        const staticData = await this.fetchStaticSnapshot("homepage.json");
+        if (staticData) {
+          setCache(cacheKey, staticData);
+          this.refreshInBackground(endpoint, cacheKey);
+          return staticData;
+        }
+      }
+
       const cached = getCache(cacheKey);
       if (cached) {
-        this.request(endpoint).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+        this.refreshInBackground(endpoint, cacheKey);
         return cached;
       }
       const data = await this.request(endpoint);
       if (data) setCache(cacheKey, data);
       return data;
     } catch (error) {
+      const stale = getCache(cacheKey, { allowStale: true });
+      if (stale) return stale;
+      const staticData = page === 1 ? await this.fetchStaticSnapshot("homepage.json") : null;
+      if (staticData) return staticData;
       console.error("Error fetching homepage games:", error);
       throw error;
     }
@@ -474,19 +554,11 @@ class ApiService {
   }
 
   async prefetchCritical() {
-    const tasks = [
+    await Promise.allSettled([
+      fetch("/data/homepage.json").catch(() => {}),
+      fetch("/data/trending.json").catch(() => {}),
       this.getHomepage(1, 8).catch(() => {}),
-      this.request('/health').catch(() => {}),
-    ];
-    await Promise.allSettled(tasks);
-  }
-
-  startKeepAlive() {
-    if (typeof window === 'undefined' || this._keepAliveStarted) return;
-    this._keepAliveStarted = true;
-    setInterval(() => {
-      this.request('/health').catch(() => {});
-    }, 5 * 60 * 1000);
+    ]);
   }
 
   async getAdminHomepage() {

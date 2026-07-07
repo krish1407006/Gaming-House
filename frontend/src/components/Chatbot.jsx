@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaRobot, FaTimes, FaArrowUp, FaGamepad, FaUser } from "react-icons/fa";
 import "../styles/chatbot.css";
+import { API_BASE_URL } from "../services/api.js";
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,8 +63,6 @@ export default function Chatbot() {
 
     try {
       const thinkingTime = 1500 + Math.random() * 1000;
-
-      const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
       const response = await fetch(
         `${API_BASE_URL}/api/chat`,

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/sync-static-games.js && vite build",
+    "sync:games": "node scripts/sync-static-games.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

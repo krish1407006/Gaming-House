@@ -24,9 +24,21 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 checkSuperAdmin();
 
+const allowedOrigins = new Set([
+  "https://gaming-house-ten.vercel.app",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+]);
+
 app.use(cors({
-  origin: '*',
-  credentials: true
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: false,
 }));
 app.use(clerkMiddleware());
 app.use(express.json());

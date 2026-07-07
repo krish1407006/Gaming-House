@@ -1,10 +1,8 @@
-# Gaming House Movie Rating App
+# Gaming House
 
-A movie rating web app built with React, Vite, and Tailwind CSS.
+A game rating web app built with React, Vite, and Tailwind CSS.
 
 ## Getting Started
-
-
 
 1. Install dependencies:
    ```sh
@@ -18,10 +16,4 @@ A movie rating web app built with React, Vite, and Tailwind CSS.
 
 ## Setup Environment Variables
 
-1. Create a `.env` file in the root directory.
-2. Add your Clerk Publishable Key:
-   ```
-   VITE_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
-   ```
-   Replace `YOUR_PUBLISHABLE_KEY` with your actual Clerk Publishable Key.
-3. Paste `data.json` in the `src` folder.
+Create a `.env` file in the frontend directory with your Clerk publishable key and API URL.

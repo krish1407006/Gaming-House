@@ -4,8 +4,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
-import SlowLoadNotice from "../components/SlowLoadNotice";
-import { useSlowLoadNotice } from "../hooks/useSlowLoadNotice";
+
 
 const PAGE_SIZE = 8;
 
@@ -19,8 +18,6 @@ export default function HomePage() {
   const [hasMore, setHasMore] = useState(true);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
   const fetchingRef = useRef(false);
-  const showSlowNotice = useSlowLoadNotice(loading);
-
   useEffect(() => {
     const id = setInterval(() => {
       setCurrentBgIndex((prev) =>
@@ -56,7 +53,21 @@ export default function HomePage() {
         setHasMore(false);
       }
     } catch (err) {
-      setError(err.message || "Failed to load games");
+      const fallbackGames = isInitial
+        ? (apiService.peekHomepage(pageNum, PAGE_SIZE, { allowStale: true })?.games ?? [])
+        : [];
+
+      setGames((prev) => {
+        const next = prev.length > 0 ? prev : fallbackGames;
+        if (next.length === 0) {
+          setError(
+            err.message?.includes("Failed to fetch")
+              ? "Could not reach the game server. Check your connection or try again in a moment."
+              : (err.message || "Failed to load games")
+          );
+        }
+        return next;
+      });
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -124,7 +135,6 @@ export default function HomePage() {
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
-        <SlowLoadNotice show={showSlowNotice} />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <SkeletonCard count={8} />

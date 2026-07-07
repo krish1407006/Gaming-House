@@ -8,7 +8,7 @@ const connectDB = async () => {
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
 
-    // Drop stale index from old schema (movieId was renamed to gameId)
+    // Drop stale index from old schema (gameId field was previously stored as movieId)
     try {
       const ratingsCollection = conn.connection.db.collection("ratings");
       const indexes = await ratingsCollection.indexes();

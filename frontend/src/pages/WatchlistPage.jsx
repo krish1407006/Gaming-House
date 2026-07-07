@@ -25,7 +25,7 @@ export default function WatchlistPage() {
         console.log("Watchlist items type:", typeof watchlistItems, "Array?", Array.isArray(watchlistItems));
 
         if (Array.isArray(watchlistItems)) {
-          const gameIds = watchlistItems.map((item) => String(item.gameId || item.movieId));
+          const gameIds = watchlistItems.map((item) => String(item.gameId || item.movieId)); // movieId: legacy DB field
 
           const response = await ApiService.getGames({ ids: gameIds.join(","), limit: 100 });
           const games = response?.games || [];

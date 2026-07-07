@@ -39,16 +39,16 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       }
 
       // Load game details including user rating
-      const movieData = await apiService.getGameById(gameId);
+      const gameData = await apiService.getGameById(gameId);
 
-      if (movieData.userRating) {
-        setUserRating(movieData.userRating);
+      if (gameData.userRating) {
+        setUserRating(gameData.userRating);
         setReviewForm({
-          rating: movieData.userRating.rating,
-          review: movieData.userRating.review || "",
+          rating: gameData.userRating.rating,
+          review: gameData.userRating.review || "",
           isPublic:
-            movieData.userRating.isPublic !== undefined
-              ? movieData.userRating.isPublic
+            gameData.userRating.isPublic !== undefined
+              ? gameData.userRating.isPublic
               : true,
         });
       } else {

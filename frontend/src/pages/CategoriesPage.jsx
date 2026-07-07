@@ -4,8 +4,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
-import SlowLoadNotice from "../components/SlowLoadNotice";
-import { useSlowLoadNotice } from "../hooks/useSlowLoadNotice";
+
 
 const PAGE_SIZE = 8;
 
@@ -25,8 +24,6 @@ export default function CategoriesPage() {
   const [hasMore, setHasMore] = useState(true);
   const [activeGenre, setActiveGenre] = useState(null);
   const fetchingRef = useRef(false);
-  const showSlowNotice = useSlowLoadNotice(loading);
-
   const fetchGames = useCallback(async (pageNum, genre) => {
     fetchingRef.current = true;
     const isInitial = pageNum === 1;
@@ -138,7 +135,6 @@ export default function CategoriesPage() {
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
-        <SlowLoadNotice show={showSlowNotice} />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <SkeletonCard count={8} />

@@ -104,12 +104,12 @@ export const getGameRatings = async (req, res) => {
     const { id } = req.params;
     const { page, limit, sortBy, sortOrder } = req.query;
 
-    const movieResult = await gameService.getGameById(id, false);
-    if (!movieResult.success) {
+    const gameResult = await gameService.getGameById(id, false);
+    if (!gameResult.success) {
       return res.status(404).json({ error: "game not found" });
     }
 
-    if (!movieResult.data.isActive && !req.isAdmin) {
+    if (!gameResult.data.isActive && !req.isAdmin) {
       return res.status(404).json({ error: "game not found" });
     }
 
@@ -144,12 +144,12 @@ export const rateGame = async (req, res) => {
       });
     }
 
-    const movieResult = await gameService.getGameById(gameId, false);
-    if (!movieResult.success) {
+    const gameResult = await gameService.getGameById(gameId, false);
+    if (!gameResult.success) {
       return res.status(404).json({ error: "game not found" });
     }
 
-    if (!movieResult.data.isActive) {
+    if (!gameResult.data.isActive) {
       return res.status(400).json({ error: "Cannot rate inactive game" });
     }
 

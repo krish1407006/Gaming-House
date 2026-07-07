@@ -132,7 +132,7 @@ export const getAllGames = async (req, res) => {
 export const createGame = async (req, res) => {
   try {
     const { userId } = getAuth(req);
-    const movieData = req.body;
+    const gameData = req.body;
 
     const requiredFields = [
       "title",
@@ -144,14 +144,14 @@ export const createGame = async (req, res) => {
       "country",
     ];
     for (const field of requiredFields) {
-      if (!movieData[field]) {
+      if (!gameData[field]) {
         return res.status(400).json({
           error: `${field} is required`,
         });
       }
     }
 
-    const result = await gameService.createGame(movieData, userId);
+    const result = await gameService.createGame(gameData, userId);
 
     if (!result.success) {
       return res.status(400).json({ error: result.error });

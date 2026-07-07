@@ -33,7 +33,7 @@ export const removeFromWatchlist = async (userId, gameId) => {
       userId,
       $or: [
         { gameId },
-        { movieId: gameId },
+        { movieId: gameId }, // legacy DB field from pre-gaming migration
       ],
     });
 
@@ -76,7 +76,7 @@ export const isInWatchlist = async (userId, gameId) => {
       userId,
       $or: [
         { gameId },
-        { movieId: gameId },
+        { movieId: gameId }, // legacy DB field from pre-gaming migration
       ],
     });
     return { success: true, data: { isInWatchlist: !!watchlistItem } };

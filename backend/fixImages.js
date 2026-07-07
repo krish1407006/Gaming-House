@@ -19,11 +19,11 @@ async function fixBrokenImages() {
 
     console.log(`Updated ${result1.modifiedCount + result2.modifiedCount} broken poster URLs`);
     
-    // List all movies to verify
-    const movies = await Game.find({});
-    console.log('\nCurrent movies in database:');
-    movies.forEach(movie => {
-      console.log(`- ${movie.title}: ${movie.poster}`);
+    // List all games to verify
+    const games = await Game.find({});
+    console.log('\nCurrent games in database:');
+    games.forEach((game) => {
+      console.log(`- ${game.title}: ${game.poster}`);
     });
     
     process.exit(0);

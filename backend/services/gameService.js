@@ -139,10 +139,10 @@ export const getGameById = async (gameId, includeReviews = true) => {
   }
 };
 
-export const createGame = async (movieData, adminUserId) => {
+export const createGame = async (gameData, adminUserId) => {
   try {
     const game = new Game({
-      ...movieData,
+      ...gameData,
       addedBy: adminUserId,
     });
 

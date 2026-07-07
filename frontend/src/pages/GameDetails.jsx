@@ -39,7 +39,7 @@ export default function GameDetailPage() {
     }
   }, [getToken]);
 
-  const loadMovieData = useCallback(async () => {
+  const loadGameData = useCallback(async () => {
     const cached = apiService.peekGameById(id);
     if (!cached) {
       setLoading(true);
@@ -53,10 +53,10 @@ export default function GameDetailPage() {
     }
 
     try {
-      const movieData = await apiService.getGameById(id);
+      const gameData = await apiService.getGameById(id);
 
-      if (movieData && (movieData._id || movieData.id)) {
-        setGame(movieData);
+      if (gameData && (gameData._id || gameData.id)) {
+        setGame(gameData);
         setLoading(false);
 
         const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
@@ -65,7 +65,7 @@ export default function GameDetailPage() {
         setIsWatchlisted(watchlist.includes(id));
         setIsLiked(liked.includes(id));
 
-        const gameId = movieData._id || movieData.id || id;
+        const gameId = gameData._id || gameData.id || id;
         const [relatedResult, downloadResult] = await Promise.allSettled([
           apiService.getGames({ limit: 6, sortBy: "createdAt", sortOrder: "desc" }),
           apiService.getGameDownloads(gameId),
@@ -73,7 +73,7 @@ export default function GameDetailPage() {
 
         if (relatedResult.status === "fulfilled" && relatedResult.value?.games) {
           const shuffled = [...relatedResult.value.games].sort(() => Math.random() - 0.5);
-          setRelatedGames(shuffled.filter((g) => (g._id || g.id) !== movieData._id).slice(0, 3));
+          setRelatedGames(shuffled.filter((g) => (g._id || g.id) !== gameData._id).slice(0, 3));
         }
 
         if (downloadResult.status === "fulfilled") {
@@ -91,8 +91,8 @@ export default function GameDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    loadMovieData();
-  }, [loadMovieData]);
+    loadGameData();
+  }, [loadGameData]);
 
   useEffect(() => {
     const checkWatchlistStatus = async () => {
@@ -248,7 +248,7 @@ export default function GameDetailPage() {
     } else {
       showNotification("Review deleted successfully!");
     }
-    loadMovieData();
+    loadGameData();
   };
 
   if (loading) {

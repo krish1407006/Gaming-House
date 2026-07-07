@@ -1,0 +1,10 @@
+---
+pid: 22068
+cwd: "D:\Gaming House\Gaming House"
+command: "cd \"D:\\Gaming House\\Gaming House\\backend\"; node -e \"import('./index.js').catch(e=>console.error(e.message))\" 2>&1 | Select-Object -First 5"
+started_at: 2026-07-07T14:02:19.311Z
+running_for_ms: 205003   
+---
+Server running on http://localhost:3000
+Environment: development
+MongoDB Connected: ac-cd7c5vg-shard-00-00.yo7a5qa.mongodb.net
