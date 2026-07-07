@@ -91,9 +91,9 @@
 }
 
 .theme-bg-glass {
-  background-color: rgba(10, 10, 10, 0.3);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(15, 15, 15, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -766,7 +766,7 @@ body,
 }
 
 body {
-  background-color: var(--bg-primary);
+  background: radial-gradient(ellipse at 50% 0%, #0f0f0f 0%, #000000 70%);
 }
 
 
