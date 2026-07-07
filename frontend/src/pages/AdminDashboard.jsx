@@ -82,33 +82,38 @@ export default function AdminDashboard({ onGameChange }) {
   const [newGenuineLabel, setNewGenuineLabel] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const ADMIN_PAGE_SIZE = 20;
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
+  const ADMIN_PAGE_SIZE = 100;
 
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);
 
-  useEffect(() => {
-    if (!isLoaded || !isSignedIn || !isAdmin) return;
-    loadgames(1);
-  }, [isLoaded, isSignedIn, isAdmin]);
-
-  const loadgames = async (pageNum = page) => {
+  const loadgames = async (pageNum = page, search = searchInput) => {
     try {
       setLoading(true);
       setLoadError(null);
-      const response = await ApiService.getAdminGames({
+      const params = {
         page: pageNum,
         limit: ADMIN_PAGE_SIZE,
         sortBy: "createdAt",
         sortOrder: "desc",
         activeOnly: "false",
-      });
+      };
+      const trimmedSearch = search.trim();
+      if (trimmedSearch) {
+        params.search = trimmedSearch;
+      }
+      const response = await ApiService.getAdminGames(params);
       const gameData = Array.isArray(response) ? response : response.games || [];
       setgames(gameData);
       const pag = response?.pagination;
       if (pag) {
         setPage(pag.currentPage || 1);
         setTotalPages(pag.totalPages || 1);
+        setTotalCount(pag.totalCount ?? gameData.length);
+      } else {
+        setTotalCount(gameData.length);
       }
     } catch (error) {
       console.error("Error loading games:", error);
@@ -122,6 +127,21 @@ export default function AdminDashboard({ onGameChange }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !isAdmin) return;
+
+    const delay = searchInput.trim() ? 350 : 0;
+    const timer = setTimeout(() => {
+      loadgames(1, searchInput);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [searchInput, isLoaded, isSignedIn, isAdmin]);
+
+  const handleClearSearch = () => {
+    setSearchInput("");
   };
 
   // Form validation - matches backend requirements
@@ -698,7 +718,7 @@ export default function AdminDashboard({ onGameChange }) {
             <div className="flex items-center gap-3 lg:gap-4">
               <Icon name="game" size={32} className="theme-accent lg:w-10 lg:h-10" />
               <div>
-                <h3 className="text-xl lg:text-2xl font-bold">{games.length}</h3>
+                <h3 className="text-xl lg:text-2xl font-bold">{totalCount || games.length}</h3>
                 <p className="theme-text-secondary text-sm lg:text-base">Total Games</p>
               </div>
             </div>
@@ -731,11 +751,43 @@ export default function AdminDashboard({ onGameChange }) {
 
   {/* Gaming Table */}
         <div className="theme-card rounded-xl overflow-hidden">
-          <div className="p-4 lg:p-6 border-b theme-border">
+          <div className="p-4 lg:p-6 border-b theme-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
               <h2 className="text-lg lg:text-xl font-semibold flex items-center gap-2">
                 <Icon name="list" size={20} className="lg:w-6 lg:h-6" />
-              All Games
+                {searchInput.trim() ? "Search Results" : "All Games"}
               </h2>
+              {totalCount > 0 && (
+                <p className="text-sm theme-text-secondary mt-1">
+                  Showing {games.length} of {totalCount} games
+                  {totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ""}
+                </p>
+              )}
+            </div>
+            <div className="relative w-full sm:max-w-md">
+              <Icon
+                name="search"
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 theme-text-secondary pointer-events-none"
+              />
+              <input
+                type="search"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search games by title, director..."
+                className="settings-input w-full pl-10 pr-10 py-2.5 rounded-lg text-sm"
+              />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 theme-text-secondary hover:theme-text-primary text-lg leading-none"
+                  title="Clear search"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </div>
           
           {loadError && !loading && (
@@ -743,7 +795,7 @@ export default function AdminDashboard({ onGameChange }) {
               <p className="text-red-400 font-semibold mb-2">Could not load games</p>
               <p className="text-sm theme-text-secondary mb-4">{loadError}</p>
               <button
-                onClick={() => loadgames(page)}
+                onClick={() => loadgames(page, searchInput)}
                 className="px-4 py-2 theme-button-primary rounded-lg text-sm font-semibold"
               >
                 Retry
@@ -847,16 +899,27 @@ export default function AdminDashboard({ onGameChange }) {
               </table>
               {games.length === 0 && (
                 <div className="p-8 text-center theme-text-secondary">
-                  <p>No games found. Add your first game using the button above.</p>
+                  <p>
+                    {searchInput.trim()
+                      ? `No games found matching "${searchInput.trim()}".`
+                      : "No games found. Add your first game using the button above."}
+                  </p>
                 </div>
               )}
             </div>
           ) : null}
 
           {totalPages > 1 && !loadError && (
-            <div className="flex items-center justify-center gap-2 p-4 border-t theme-border">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-4 border-t theme-border">
               <button
-                onClick={() => loadgames(Math.max(1, page - 1))}
+                onClick={() => loadgames(1, searchInput)}
+                disabled={page <= 1}
+                className="px-3 py-1.5 rounded theme-bg-secondary hover:theme-bg-hover disabled:opacity-30 text-sm font-semibold"
+              >
+                First
+              </button>
+              <button
+                onClick={() => loadgames(Math.max(1, page - 1), searchInput)}
                 disabled={page <= 1}
                 className="px-3 py-1.5 rounded theme-bg-secondary hover:theme-bg-hover disabled:opacity-30 text-sm font-semibold"
               >
@@ -866,11 +929,18 @@ export default function AdminDashboard({ onGameChange }) {
                 Page {page} of {totalPages}
               </span>
               <button
-                onClick={() => loadgames(Math.min(totalPages, page + 1))}
+                onClick={() => loadgames(Math.min(totalPages, page + 1), searchInput)}
                 disabled={page >= totalPages}
                 className="px-3 py-1.5 rounded theme-bg-secondary hover:theme-bg-hover disabled:opacity-30 text-sm font-semibold"
               >
                 Next
+              </button>
+              <button
+                onClick={() => loadgames(totalPages, searchInput)}
+                disabled={page >= totalPages}
+                className="px-3 py-1.5 rounded theme-bg-secondary hover:theme-bg-hover disabled:opacity-30 text-sm font-semibold"
+              >
+                Last
               </button>
             </div>
           )}
