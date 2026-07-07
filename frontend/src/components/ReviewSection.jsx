@@ -357,7 +357,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
       </div>
 
       {/* Other Reviews Section */}
-      <div className="theme-bg-glass rounded-xl p-4 lg:p-6 border border-white/5">
+      <div className="theme-bg-glass rounded-xl p-4 lg:p-6">
         <h3 className="text-lg lg:text-xl font-bold theme-text-primary mb-3 lg:mb-4">
           Reviews ({reviews.length})
         </h3>
@@ -367,7 +367,7 @@ export default function ReviewSection({ gameId, onReviewUpdate }) {
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="bg-black/20 backdrop-blur-sm rounded-lg p-4 border-l-4 theme-border-accent border border-white/5"
+                className="bg-black/20 backdrop-blur-sm rounded-lg p-4 border border-white/5"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
