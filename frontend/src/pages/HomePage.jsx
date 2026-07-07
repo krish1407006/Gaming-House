@@ -5,7 +5,7 @@ import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { discoveryBackgrounds } from "../constants/backgroundImages";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 8;
 
 export default function HomePage() {
   const [games, setGames] = useState([]);
@@ -119,7 +119,7 @@ export default function HomePage() {
       <div className="min-h-[300px] lg:min-h-[400px] relative">
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            <SkeletonCard count={6} />
+            <SkeletonCard count={8} />
           </div>
         ) : error ? (
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
