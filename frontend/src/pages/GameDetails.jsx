@@ -17,7 +17,7 @@ import { Link, useParams } from "react-router-dom";
 import GameCard from "../components/GameCard";
 import ReviewSection from "../components/ReviewSection";
 import apiService from "../services/api";
-import { normalizeImageUrl } from "../utils/imageUrl";
+import { getGameImageUrl, getScreenshotImageUrl } from "../utils/imageUrl";
 
 export default function GameDetailPage() {
   const { id } = useParams();
@@ -40,8 +40,8 @@ export default function GameDetailPage() {
     }
   }, [getToken]);
 
-  const loadGameData = useCallback(async () => {
-    const cached = apiService.peekGameById(id);
+  const loadGameData = useCallback(async ({ forceRefresh = false } = {}) => {
+    const cached = forceRefresh ? null : apiService.peekGameById(id);
     if (!cached) {
       setLoading(true);
     }
@@ -54,7 +54,7 @@ export default function GameDetailPage() {
     }
 
     try {
-      const gameData = await apiService.getGameById(id);
+      const gameData = await apiService.getGameById(id, { forceRefresh });
 
       if (gameData && (gameData._id || gameData.id)) {
         setGame(gameData);
@@ -94,6 +94,34 @@ export default function GameDetailPage() {
   useEffect(() => {
     loadGameData();
   }, [loadGameData]);
+
+  useEffect(() => {
+    const handleGameUpdated = (event) => {
+      const { gameId, game: updatedGame } = event.detail || {};
+      if (updatedGame && gameId === id) {
+        setGame(updatedGame);
+      }
+    };
+
+    const handleCacheCleared = () => {
+      loadGameData({ forceRefresh: true });
+    };
+
+    const handleStorage = (event) => {
+      if (event.key === "gh_cache_invalidated_at") {
+        loadGameData({ forceRefresh: true });
+      }
+    };
+
+    window.addEventListener("gh:game-updated", handleGameUpdated);
+    window.addEventListener("gh:cache-cleared", handleCacheCleared);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("gh:game-updated", handleGameUpdated);
+      window.removeEventListener("gh:cache-cleared", handleCacheCleared);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [id, loadGameData]);
 
   useEffect(() => {
     const checkWatchlistStatus = async () => {
@@ -323,7 +351,7 @@ export default function GameDetailPage() {
         <div className="relative mb-6 lg:mb-8 rounded-xl lg:rounded-2xl shadow-2xl">
           <div className="absolute inset-0 theme-gradient-overlay z-10"></div>
           <img
-            src={normalizeImageUrl(game.poster)}
+            src={getGameImageUrl(game)}
             alt={game.title}
             className="w-full h-48 sm:h-64 lg:h-96 object-cover object-center"
             referrerPolicy="no-referrer"
@@ -331,7 +359,7 @@ export default function GameDetailPage() {
           <div className="absolute inset-0 z-20 flex items-center px-4 sm:px-8 lg:px-12">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 items-center max-w-4xl w-full">
               <img
-                src={normalizeImageUrl(game.poster)}
+                src={getGameImageUrl(game)}
                 alt={game.title}
                 className="w-20 sm:w-32 lg:w-48 h-auto rounded-lg lg:rounded-xl shadow-2xl border-2 theme-border-accent shrink-0"
                 referrerPolicy="no-referrer"
@@ -488,7 +516,7 @@ export default function GameDetailPage() {
                       onClick={() => handleImageClick(index)}
                     >
                       <img
-                        src={normalizeImageUrl(screenshot)}
+                        src={getScreenshotImageUrl(game, screenshot)}
                         alt={`${game.title} game image ${index + 1}`}
                         className="w-full h-24 sm:h-32 lg:h-40 object-cover"
                         referrerPolicy="no-referrer"
@@ -524,7 +552,7 @@ export default function GameDetailPage() {
                 </button>
 
                 <img
-                  src={normalizeImageUrl(game.screenshots[selectedImageIndex])}
+                  src={getScreenshotImageUrl(game, game.screenshots[selectedImageIndex])}
                   alt={`${game.title} game image ${selectedImageIndex + 1}`}
                   className="select-none"
                   referrerPolicy="no-referrer"
@@ -604,7 +632,7 @@ export default function GameDetailPage() {
               </div>
               <div className="p-4 lg:p-6">
                 <img
-                  src={normalizeImageUrl(game.poster)}
+                  src={getGameImageUrl(game)}
                   alt={game.title}
                   className="w-full rounded-lg shadow-lg"
                   referrerPolicy="no-referrer"

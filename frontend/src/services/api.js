@@ -10,6 +10,7 @@ const API_BASE_URL = normalizeBaseUrl(
 
 export { API_BASE_URL };
 const CACHE_PREFIX = 'gh_v6_';
+const CACHE_INVALIDATION_KEY = 'gh_cache_invalidated_at';
 const CACHE_TTL = 30 * 60 * 1000;
 
 function purgeLegacyCache() {
@@ -102,6 +103,26 @@ function clearGameCache(gameId) {
   } catch {}
 }
 
+function getUpdatedAtMs(data) {
+  if (!data) return 0;
+  if (data.updatedAt) {
+    const ts = new Date(data.updatedAt).getTime();
+    return Number.isNaN(ts) ? 0 : ts;
+  }
+  if (Array.isArray(data.games)) {
+    return Math.max(0, ...data.games.map((game) => getUpdatedAtMs(game)));
+  }
+  return 0;
+}
+
+function isDataNewer(fresh, cached) {
+  return getUpdatedAtMs(fresh) > getUpdatedAtMs(cached);
+}
+
+function dispatchCacheEvent(type, detail) {
+  window.dispatchEvent(new CustomEvent(`gh:${type}`, { detail }));
+}
+
 
 
 class ApiService {
@@ -129,6 +150,21 @@ class ApiService {
   _clearAllCaches() {
     clearGameCache();
     this._memCache = {};
+    try {
+      localStorage.setItem(CACHE_INVALIDATION_KEY, String(Date.now()));
+    } catch {}
+    dispatchCacheEvent("cache-cleared");
+  }
+
+  _storeFreshGame(response) {
+    const game = response?.data || response;
+    const gameId = game?._id || game?.id;
+    if (!gameId) return;
+
+    const cacheKey = "game_" + gameId;
+    setCache(cacheKey, game);
+    this._memCache[cacheKey] = game;
+    dispatchCacheEvent("game-updated", { gameId: String(gameId), game });
   }
 
   _refreshHomepageAndTrendingCache() {
@@ -159,8 +195,16 @@ class ApiService {
   }
 
   refreshInBackground(endpoint, cacheKey) {
+    const cached = this._memCache[cacheKey] || getCache(cacheKey);
     this.request(endpoint)
-      .then((r) => { if (r) setCache(cacheKey, r); })
+      .then((r) => {
+        if (!r) return;
+        if (cached && !isDataNewer(r, cached)) return;
+
+        setCache(cacheKey, r);
+        this._memCache[cacheKey] = r;
+        dispatchCacheEvent("cache-updated", { cacheKey, data: r });
+      })
       .catch(() => {});
   }
 
@@ -257,11 +301,14 @@ class ApiService {
     const cacheKey = 'games_' + queryString;
     const cached = getCache(cacheKey);
     if (cached) {
-      this.request(endpoint).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+      this.refreshInBackground(endpoint, cacheKey);
       return cached;
     }
     const result = await this.request(endpoint);
-    if (result) setCache(cacheKey, result);
+    if (result) {
+      setCache(cacheKey, result);
+      this._memCache[cacheKey] = result;
+    }
     return result;
   }
 
@@ -276,7 +323,16 @@ class ApiService {
     }
     const cached = getCache(cacheKey);
     if (cached && !forceRefresh) {
-      this.request(`/api/games/${gameId}`).then((r) => { if (r) setCache(cacheKey, r); }).catch(() => {});
+      this.request(`/api/games/${gameId}`)
+        .then((r) => {
+          if (!r) return;
+          if (!isDataNewer(r, cached)) return;
+
+          setCache(cacheKey, r);
+          this._memCache[cacheKey] = r;
+          dispatchCacheEvent("game-updated", { gameId: String(gameId), game: r });
+        })
+        .catch(() => {});
       return cached;
     }
     const result = await this.request(`/api/games/${gameId}`);
@@ -446,6 +502,7 @@ class ApiService {
         body: JSON.stringify(gameData),
       });
       this._clearAllCaches();
+      this._storeFreshGame(result);
       await Promise.race([
         this._refreshHomepageAndTrendingCache(),
         new Promise(resolve => setTimeout(resolve, 3000)),

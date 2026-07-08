@@ -82,6 +82,29 @@ export default function HomePage() {
     fetchGames(1);
   }, [fetchGames]);
 
+  useEffect(() => {
+    const handleCacheRefresh = (event) => {
+      const cacheKey = event?.detail?.cacheKey;
+      if (cacheKey && !cacheKey.startsWith("homepage_")) return;
+      fetchGames(1);
+    };
+
+    const handleStorage = (event) => {
+      if (event.key === "gh_cache_invalidated_at") {
+        fetchGames(1);
+      }
+    };
+
+    window.addEventListener("gh:cache-cleared", handleCacheRefresh);
+    window.addEventListener("gh:cache-updated", handleCacheRefresh);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("gh:cache-cleared", handleCacheRefresh);
+      window.removeEventListener("gh:cache-updated", handleCacheRefresh);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [fetchGames]);
+
   const loadMore = useCallback(() => {
     if (!fetchingRef.current && hasMore) {
       fetchGames(page + 1);

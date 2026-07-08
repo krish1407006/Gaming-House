@@ -5,6 +5,7 @@ import { Icon } from "../components/Icons";
 import apiService from "../services/api";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { dedupeGamesById } from "../utils/dedupeGames";
+import { getGameImageUrl } from "../utils/imageUrl";
 
 
 const PAGE_SIZE = 8;
@@ -59,6 +60,29 @@ export default function TrendingPage() {
     fetchTrending(1);
   }, [fetchTrending]);
 
+  useEffect(() => {
+    const handleCacheRefresh = (event) => {
+      const cacheKey = event?.detail?.cacheKey;
+      if (cacheKey && !cacheKey.startsWith("trending_")) return;
+      fetchTrending(1);
+    };
+
+    const handleStorage = (event) => {
+      if (event.key === "gh_cache_invalidated_at") {
+        fetchTrending(1);
+      }
+    };
+
+    window.addEventListener("gh:cache-cleared", handleCacheRefresh);
+    window.addEventListener("gh:cache-updated", handleCacheRefresh);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("gh:cache-cleared", handleCacheRefresh);
+      window.removeEventListener("gh:cache-updated", handleCacheRefresh);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [fetchTrending]);
+
   const loadMore = useCallback(() => {
     if (!fetchingRef.current && hasMore) {
       fetchTrending(page + 1);
@@ -71,7 +95,7 @@ export default function TrendingPage() {
     loading: loading || loadingMore,
   });
 
-  const bannerImg = trendinggames[0]?.poster || trendinggames[0]?.image || null;
+  const bannerImg = trendinggames[0] ? getGameImageUrl(trendinggames[0]) : null;
 
   return (
     <section className="px-4 lg:px-8 py-4 lg:py-6">

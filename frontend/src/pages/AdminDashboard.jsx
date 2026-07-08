@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { Icon } from "../components/Icons";
 import ApiService, { API_BASE_URL } from "../services/api";
+import { getGameImageUrl } from "../utils/imageUrl";
 
 import { isUserAdmin } from "../adminDetails";
 
@@ -827,9 +828,10 @@ export default function AdminDashboard({ onGameChange }) {
                       <td className="p-2 lg:p-4">
                         <div className="flex items-center gap-2 lg:gap-3">
                           <img
-                            src={game.poster}
+                            src={getGameImageUrl(game)}
                             alt={game.title}
                             className="w-8 h-10 lg:w-12 lg:h-16 object-cover rounded"
+                            referrerPolicy="no-referrer"
                           />
                           <div className="min-w-0 flex-1">
                             <h4 className="font-semibold text-sm lg:text-base truncate">{game.title}</h4>
