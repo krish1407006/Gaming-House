@@ -482,19 +482,31 @@ class ApiService {
     const limit = parseInt(params.limit) || 20;
 
     try {
+      const memCached = this._memCache[cacheKey];
+      if (memCached) {
+        this.refreshInBackground(endpoint, cacheKey);
+        return memCached;
+      }
       const cached = getCache(cacheKey);
       if (cached) {
         this.refreshInBackground(endpoint, cacheKey);
         return cached;
       }
       const data = await this.request(endpoint);
-      if (data) setCache(cacheKey, data);
+      if (data) {
+        setCache(cacheKey, data);
+        this._memCache[cacheKey] = data;
+      }
       return data;
     } catch (error) {
-      const stale = getCache(cacheKey, { allowStale: true });
+      const stale = this._memCache[cacheKey] || getCache(cacheKey, { allowStale: true });
       if (stale) return stale;
       const staticData = page === 1 ? await this.fetchStaticSnapshot("trending.json") : null;
-      if (staticData) return staticData;
+      if (staticData) {
+        setCache(cacheKey, staticData);
+        this._memCache[cacheKey] = staticData;
+        return staticData;
+      }
       console.error("Error fetching trending games:", error);
       throw error;
     }
