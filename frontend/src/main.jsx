@@ -16,7 +16,16 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Add your Clerk Publishable Key to the .env file");
 }
 
-apiService.prefetchCritical();
+// Load static snapshots into cache before rendering so games show instantly
+// Static files served from the same Vercel CDN, typically loading in <50ms
+const staticDataPromise = apiService.loadStaticDataIntoCache();
+
+// Warm the API endpoint in background (non-blocking)
+apiService.getHomepage(1, 8).catch(() => {});
+
+// Safety timeout: render even if static data takes too long (3s max)
+const renderTimeout = new Promise(resolve => setTimeout(resolve, 3000));
+const readyPromise = Promise.race([staticDataPromise, renderTimeout]);
 
 // Clerk appearance configuration
 const clerkAppearance = {
@@ -41,17 +50,20 @@ const clerkAppearance = {
   }
 };
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <ClerkProvider 
-        publishableKey={PUBLISHABLE_KEY}
-        appearance={clerkAppearance}
-      >
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </ClerkProvider>
-    </BrowserRouter>
-  </StrictMode>
-);
+// Ensure static data is cached before first render for instant game display
+readyPromise.finally(() => {
+  createRoot(document.getElementById("root")).render(
+    <StrictMode>
+      <BrowserRouter>
+        <ClerkProvider 
+          publishableKey={PUBLISHABLE_KEY}
+          appearance={clerkAppearance}
+        >
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </ClerkProvider>
+      </BrowserRouter>
+    </StrictMode>
+  );
+});
