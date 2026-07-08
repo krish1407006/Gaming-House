@@ -61,7 +61,7 @@ export function peekCache(key) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function fetchWithRetry(url, config, { retries = 2, retryDelay = 4000, timeout = 90000 } = {}) {
+async function fetchWithRetry(url, config, { retries = 2, retryDelay = 1000, timeout = 60000 } = {}) {
   let lastError;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -107,6 +107,8 @@ function clearGameCache(gameId) {
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
+    this._memCache = {};
+    this._staticDataPromise = null;
   }
 
   buildUrl(endpoint) {
@@ -122,6 +124,27 @@ class ApiService {
     } catch {
       return null;
     }
+  }
+
+  async loadStaticDataIntoCache() {
+    if (this._staticDataPromise) return this._staticDataPromise;
+
+    this._staticDataPromise = Promise.allSettled([
+      this.fetchStaticSnapshot("homepage.json").then(data => {
+        if (data?.games?.length) {
+          setCache('homepage_1_8', data);
+          this._memCache['homepage_1_8'] = data;
+        }
+      }),
+      this.fetchStaticSnapshot("trending.json").then(data => {
+        if (data?.games?.length) {
+          setCache('trending_page=1&limit=8', data);
+          this._memCache['trending_page=1&limit=8'] = data;
+        }
+      }),
+    ]);
+
+    return this._staticDataPromise;
   }
 
   refreshInBackground(endpoint, cacheKey) {
@@ -522,7 +545,10 @@ class ApiService {
   }
 
   peekHomepage(page = 1, limit = 20, { allowStale = false } = {}) {
-    return getCache('homepage_' + page + '_' + limit, { allowStale });
+    const key = 'homepage_' + page + '_' + limit;
+    const memCached = this._memCache[key];
+    if (memCached) return memCached;
+    return getCache(key, { allowStale });
   }
 
   async getHomepage(page = 1, limit = 20) {
@@ -550,7 +576,10 @@ class ApiService {
 
   peekTrending(params = {}) {
     const queryString = new URLSearchParams(params).toString();
-    return getCache('trending_' + queryString);
+    const key = 'trending_' + queryString;
+    const memCached = this._memCache[key];
+    if (memCached) return memCached;
+    return getCache(key);
   }
 
   peekGames(params = {}) {
