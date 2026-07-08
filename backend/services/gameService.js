@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Game from "../models/Game.js";
 import Rating from "../models/Rating.js";
 
-const LISTING_FIELDS = "title poster description releaseDate averageRating totalRatings genre";
+const LISTING_FIELDS = "title poster description releaseDate averageRating totalRatings genre updatedAt";
 
 function buildSort(sortBy = "createdAt", sortOrder = "desc") {
   const sort = {};

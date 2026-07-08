@@ -20,5 +20,13 @@ export function normalizeImageUrl(url) {
 
 export function getGameImageUrl(game) {
   const raw = game?.image || game?.poster || "";
-  return normalizeImageUrl(raw);
+  let url = normalizeImageUrl(raw);
+  if (url && game?.updatedAt) {
+    const ts = new Date(game.updatedAt).getTime();
+    if (!Number.isNaN(ts)) {
+      const separator = url.includes("?") ? "&" : "?";
+      url += separator + "v=" + ts;
+    }
+  }
+  return url;
 }
