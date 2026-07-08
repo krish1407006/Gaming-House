@@ -126,6 +126,17 @@ class ApiService {
     }
   }
 
+  _clearAllCaches() {
+    clearGameCache();
+    this._memCache = {};
+  }
+
+  _refreshHomepageAndTrendingCache() {
+    const hpPromise = this.getHomepage(1, 8).catch(() => {});
+    const trPromise = this.getTrending({ page: 1, limit: 8 }).catch(() => {});
+    return Promise.allSettled([hpPromise, trPromise]);
+  }
+
   async loadStaticDataIntoCache() {
     if (this._staticDataPromise) return this._staticDataPromise;
 
@@ -415,7 +426,8 @@ class ApiService {
         method: "POST",
         body: JSON.stringify(gameData),
       });
-      clearGameCache();
+      this._clearAllCaches();
+      this._refreshHomepageAndTrendingCache();
       return result;
     } catch (error) {
       console.error("Error creating game:", error);
@@ -430,7 +442,8 @@ class ApiService {
         method: "PUT",
         body: JSON.stringify(gameData),
       });
-      clearGameCache();
+      this._clearAllCaches();
+      this._refreshHomepageAndTrendingCache();
       return result;
     } catch (error) {
       console.error("Error updating game:", error);
@@ -444,7 +457,8 @@ class ApiService {
       const result = await this.request(`/api/admin/games/${gameId}`, {
         method: "DELETE",
       });
-      clearGameCache();
+      this._clearAllCaches();
+      this._refreshHomepageAndTrendingCache();
       return result;
     } catch (error) {
       console.error("Error deleting game:", error);
