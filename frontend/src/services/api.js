@@ -613,8 +613,7 @@ class ApiService {
 
   async prefetchCritical() {
     await Promise.allSettled([
-      fetch("/data/homepage.json").catch(() => {}),
-      fetch("/data/trending.json").catch(() => {}),
+      this.loadStaticDataIntoCache(),
       this.getHomepage(1, 8).catch(() => {}),
     ]);
   }
