@@ -427,7 +427,10 @@ class ApiService {
         body: JSON.stringify(gameData),
       });
       this._clearAllCaches();
-      this._refreshHomepageAndTrendingCache();
+      await Promise.race([
+        this._refreshHomepageAndTrendingCache(),
+        new Promise(resolve => setTimeout(resolve, 3000)),
+      ]);
       return result;
     } catch (error) {
       console.error("Error creating game:", error);
@@ -443,7 +446,10 @@ class ApiService {
         body: JSON.stringify(gameData),
       });
       this._clearAllCaches();
-      this._refreshHomepageAndTrendingCache();
+      await Promise.race([
+        this._refreshHomepageAndTrendingCache(),
+        new Promise(resolve => setTimeout(resolve, 3000)),
+      ]);
       return result;
     } catch (error) {
       console.error("Error updating game:", error);
@@ -458,7 +464,10 @@ class ApiService {
         method: "DELETE",
       });
       this._clearAllCaches();
-      this._refreshHomepageAndTrendingCache();
+      await Promise.race([
+        this._refreshHomepageAndTrendingCache(),
+        new Promise(resolve => setTimeout(resolve, 3000)),
+      ]);
       return result;
     } catch (error) {
       console.error("Error deleting game:", error);
