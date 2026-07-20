@@ -7,8 +7,7 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { dedupeGamesById } from "../utils/dedupeGames";
 import { getGameImageUrl } from "../utils/imageUrl";
 
-
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 12;
 
 export default function TrendingPage() {
   const cachedInitial = apiService.peekTrending({ page: 1, limit: PAGE_SIZE });
@@ -19,8 +18,11 @@ export default function TrendingPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const fetchingRef = useRef(false);
+
   const fetchTrending = useCallback(async (pageNum) => {
+    if (fetchingRef.current) return;
     fetchingRef.current = true;
+
     const isInitial = pageNum === 1;
     if (isInitial) {
       if (!apiService.peekTrending({ page: pageNum, limit: PAGE_SIZE })) {
@@ -41,10 +43,13 @@ export default function TrendingPage() {
       );
 
       if (pagination) {
-        setPage(pagination.currentPage || 1);
-        setHasMore(pagination.hasNextPage);
+        setPage(pagination.currentPage || pageNum);
+        setHasMore(
+          pagination.hasNextPage ??
+            (pagination.currentPage < pagination.totalPages)
+        );
       } else {
-        setHasMore(false);
+        setHasMore(newGames.length >= PAGE_SIZE);
       }
     } catch (err) {
       console.error("Error fetching trending games:", err);
@@ -121,14 +126,14 @@ export default function TrendingPage() {
 
       <div className="flex items-center justify-between mb-4 lg:mb-6">
         <h3 className="text-xl lg:text-2xl font-bold text-[var(--accent-color)] tracking-wide font-heading">
-          Trending Now ({trendinggames.length} gaming)
+          Trending Now ({trendinggames.length} games)
         </h3>
       </div>
 
       <div className="min-h-[300px] lg:min-h-[400px] relative">
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            <SkeletonCard count={8} />
+            <SkeletonCard count={PAGE_SIZE} />
           </div>
         ) : error ? (
           <div className="flex items-center justify-center w-full h-32 text-lg lg:text-xl font-bold px-4" style={{ color: 'var(--accent-color)' }}>
@@ -182,7 +187,13 @@ export default function TrendingPage() {
             )}
 
             {hasMore && !loadingMore && (
-              <div ref={sentinelRef} className="h-4" />
+              <div ref={sentinelRef} className="h-4" aria-hidden="true" />
+            )}
+
+            {!hasMore && trendinggames.length > 0 && (
+              <p className="text-center text-sm theme-text-secondary py-6">
+                You&apos;ve reached the end
+              </p>
             )}
           </>
         )}

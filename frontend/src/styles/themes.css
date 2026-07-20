@@ -157,7 +157,6 @@
 .theme-error-border {
   border-color: var(--error-color);
 }
-
 .theme-error-text {
   color: var(--error-color);
 }

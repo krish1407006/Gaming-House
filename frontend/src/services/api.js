@@ -168,8 +168,8 @@ class ApiService {
   }
 
   _refreshHomepageAndTrendingCache() {
-    const hpPromise = this.getHomepage(1, 8).catch(() => {});
-    const trPromise = this.getTrending({ page: 1, limit: 8 }).catch(() => {});
+    const hpPromise = this.getHomepage(1, 12).catch(() => {});
+    const trPromise = this.getTrending({ page: 1, limit: 12 }).catch(() => {});
     return Promise.allSettled([hpPromise, trPromise]);
   }
 
@@ -179,12 +179,17 @@ class ApiService {
     this._staticDataPromise = Promise.allSettled([
       this.fetchStaticSnapshot("homepage.json").then(data => {
         if (data?.games?.length) {
+          setCache('homepage_1_12', data);
+          this._memCache['homepage_1_12'] = data;
+          // Keep legacy key for any older callers
           setCache('homepage_1_8', data);
           this._memCache['homepage_1_8'] = data;
         }
       }),
       this.fetchStaticSnapshot("trending.json").then(data => {
         if (data?.games?.length) {
+          setCache('trending_page=1&limit=12', data);
+          this._memCache['trending_page=1&limit=12'] = data;
           setCache('trending_page=1&limit=8', data);
           this._memCache['trending_page=1&limit=8'] = data;
         }
@@ -694,7 +699,7 @@ class ApiService {
   async prefetchCritical() {
     await Promise.allSettled([
       this.loadStaticDataIntoCache(),
-      this.getHomepage(1, 8).catch(() => {}),
+      this.getHomepage(1, 12).catch(() => {}),
     ]);
   }
 

@@ -85,7 +85,7 @@ export default function AdminDashboard({ onGameChange }) {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchInput, setSearchInput] = useState("");
-  const ADMIN_PAGE_SIZE = 100;
+  const ADMIN_PAGE_SIZE = 24;
 
   // Check if user is admin using centralized admin details
   const isAdmin = isUserAdmin(user);

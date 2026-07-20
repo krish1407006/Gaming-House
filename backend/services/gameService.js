@@ -565,16 +565,21 @@ export const reorderTrending = async (orderedIds) => {
 
 export const getHomepageGames = async (page = 1, limit = 20) => {
   try {
-    if (page === 1) {
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.max(1, parseInt(limit) || 20);
+
+    if (pageNum === 1) {
       const [games, totalCurated, totalAllActive] = await Promise.all([
         Game.find({ isActive: true, showOnHomepage: true })
           .sort({ homepagePosition: 1 })
-          .limit(limit)
+          .limit(limitNum)
           .select(LISTING_FIELDS)
           .lean(),
         Game.countDocuments({ isActive: true, showOnHomepage: true }),
         getTotalActiveCount(),
       ]);
+
+      const totalPages = Math.ceil(totalAllActive / limitNum) || 1;
 
       return {
         success: true,
@@ -582,34 +587,42 @@ export const getHomepageGames = async (page = 1, limit = 20) => {
           games,
           pagination: {
             currentPage: 1,
-            totalPages: Math.ceil(totalAllActive / limit) || 1,
+            totalPages,
+            totalCount: totalAllActive,
             totalCurated,
+            hasNextPage: totalPages > 1,
+            hasPrevPage: false,
           },
         },
       };
     }
 
-    const skip = (page - 2) * limit;
+    const skip = (pageNum - 2) * limitNum;
 
     const [games, totalCount, curatedCount] = await Promise.all([
       Game.find({ isActive: true, showOnHomepage: false })
         .select(LISTING_FIELDS)
         .sort({ createdAt: -1, _id: 1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limitNum)
         .lean(),
       Game.countDocuments({ isActive: true, showOnHomepage: false }),
       Game.countDocuments({ isActive: true, showOnHomepage: true }),
     ]);
+
+    const totalPages = Math.ceil((totalCount + curatedCount) / limitNum) || 1;
 
     return {
       success: true,
       data: {
         games,
         pagination: {
-          currentPage: page,
-          totalPages: Math.ceil((totalCount + curatedCount) / limit) || 1,
+          currentPage: pageNum,
+          totalPages,
+          totalCount: totalCount + curatedCount,
           totalCurated: curatedCount,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
         },
       },
     };
